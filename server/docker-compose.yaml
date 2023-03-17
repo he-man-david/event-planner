@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:14.6
+    environment:
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: event_planner
+    ports:
+      - "5432:5432" # left is outside compose network, right is in compose network
