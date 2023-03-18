@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Bars3Icon,
   BellIcon,
@@ -9,6 +10,9 @@ import {
 import { classNames } from "utils/common";
 
 const NavBar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const user = {
     name: "Jaser Trudeau",
     email: "jaser@jaser.com",
@@ -16,13 +20,26 @@ const NavBar = () => {
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
   };
   const navigation = [
-    { name: "My Events", href: "#", current: false },
-    { name: "About Us", href: "#", current: false },
+    { name: "My Events", href: "my-events", current: false },
+    { name: "About Us", href: "about-us", current: false },
   ];
   const userNavigation = [
-    { name: "Profile", href: "#" },
-    { name: "Sign out", href: "#" },
+    { name: "Profile", href: "profile" },
+    { name: "Sign out", href: "signout" },
   ];
+
+  const newEventButton = () => {
+    return location.pathname !== "/new-event" ? (
+      <button
+        type="button"
+        className="relative inline-flex items-center gap-x-1.5 rounded-md bg-emerald-500 mx-7 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
+        onClick={() => navigate("/new-event")}
+      >
+        <PlusIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
+        New Event
+      </button>
+    ) : null;
+  };
 
   return (
     <Disclosure
@@ -63,6 +80,7 @@ const NavBar = () => {
               </div>
               <div className="flex lg:hidden">
                 {/* Mobile menu button */}
+                {newEventButton()}
                 <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-indigo-600 p-2 text-indigo-200 hover:bg-indigo-500 hover:bg-opacity-75 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-600">
                   <span className="sr-only">Open main menu</span>
                   {open ? (
@@ -74,13 +92,7 @@ const NavBar = () => {
               </div>
               <div className="hidden lg:ml-4 lg:block">
                 <div className="flex items-center">
-                  <button
-                    type="button"
-                    className="relative inline-flex items-center gap-x-1.5 rounded-md bg-emerald-500 mx-7 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
-                  >
-                    <PlusIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
-                    New Event
-                  </button>
+                  {newEventButton()}
                   <button
                     type="button"
                     className="flex-shrink-0 rounded-full bg-indigo-600 p-1 text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-600"
@@ -97,7 +109,7 @@ const NavBar = () => {
                         <img
                           className="h-8 w-8 rounded-full"
                           src={user.imageUrl}
-                          alt=""
+                          alt="notifications"
                         />
                       </Menu.Button>
                     </div>

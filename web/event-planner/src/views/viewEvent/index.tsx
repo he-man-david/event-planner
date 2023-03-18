@@ -1,15 +1,20 @@
-import NavBar from "components/navBar";
+import { useEffect } from "react";
 import EventBody from "components/eventBody";
 import Comments from "components/comments";
 import NewComment from "components/newComment";
+import { useParams } from "react-router-dom";
 import "./styles.css";
 import MembersModal from "components/membersModal";
 
 const ViewEvent = () => {
+  const params = useParams();
+
+  useEffect(() => {
+    console.log("event_id from param: ", params.id);
+  });
   return (
     <div className="view-event-container min-h-full">
       <div className="header-container bg-indigo-600 pb-20">
-        <NavBar />
         <header className="py-10">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <h1 className="topic-title text-3xl font-bold tracking-tight text-white">
