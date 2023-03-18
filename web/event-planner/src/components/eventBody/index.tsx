@@ -1,98 +1,146 @@
 import { useState } from "react";
-import { RadioGroup } from "@headlessui/react";
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
 import { classNames } from "utils/common";
+import LinkPreview from "components/linkPreview";
+import pic1 from "static/airbnb-1.jpeg";
+import pic2 from "static/airbnb-2.jpeg";
+import pic3 from "static/airbnb-3.jpeg";
+import pic4 from "static/airbnb-4.jpeg";
+import pic5 from "static/airbnb-5.jpeg";
 
-const mailingLists = [
+const data = [
   {
     id: 1,
-    title: "Newsletter",
-    description: "Last message sent an hour ago",
-    users: "621 users",
+    title: "Downtown",
+    linkPreview: {
+      imageUrl: pic1,
+      title: "This is link title",
+      desc: "This is description from the link preview itself. Link preview description.",
+      link: "https://airbnb.com",
+    },
+    desc: "Close to trains",
+    votes: 0,
+    voted: false,
   },
   {
     id: 2,
-    title: "Existing Customers",
-    description: "Last message sent 2 weeks ago",
-    users: "1200 users",
+    title: "Downtown 2",
+    linkPreview: {
+      imageUrl: pic2,
+      title: "This is link title",
+      desc: "This is description from the link preview itself. Link preview description.",
+      link: "https://airbnb.com",
+    },
+    desc: "A bit smaller only 2bd",
+    votes: 2,
+    voted: false,
   },
   {
     id: 3,
-    title: "Trial Users",
-    description: "Last message sent 4 days ago",
-    users: "2740 users",
+    title: "Midtown",
+    linkPreview: {
+      imageUrl: pic3,
+      title: "This is link title",
+      desc: "This is description from the link preview itself. Link preview description.",
+      link: "https://airbnb.com",
+    },
+    desc: "Good location",
+    votes: 1,
+    voted: false,
+  },
+  {
+    id: 4,
+    title: "Midtown Central",
+    linkPreview: {
+      imageUrl: pic4,
+      title: "This is link title",
+      desc: "This is description from the link preview itself. Link preview description.",
+      link: "https://airbnb.com",
+    },
+    desc: "A bit smaller but cheaper",
+    votes: 6,
+    voted: false,
+  },
+  {
+    id: 5,
+    title: "Uptown",
+    linkPreview: {
+      imageUrl: pic5,
+      title: "This is link title",
+      desc: "This is description from the link preview itself. Link preview description.",
+      link: "https://airbnb.com",
+    },
+    desc: "Bit more expensive, I am down if yall are",
+    votes: 3,
+    voted: false,
   },
 ];
 
 const EventBody = () => {
-  const [selectedMailingLists, setSelectedMailingLists] = useState(
-    mailingLists[0]
-  );
+  const [voteOptions, setVoteOptions] = useState(data);
+
+  const handleVote = (position: number) => {
+    const newVoteOptions = voteOptions.map((voteOption, idx) => {
+      if (position === idx) {
+        if (voteOption.voted) {
+          voteOption.voted = false;
+          voteOption.votes--;
+        } else {
+          voteOption.voted = true;
+          voteOption.votes++;
+        }
+      }
+      return voteOption;
+    });
+
+    setVoteOptions(newVoteOptions);
+  };
 
   return (
-    <RadioGroup value={selectedMailingLists} onChange={setSelectedMailingLists}>
-      <RadioGroup.Label className="text-base font-semibold leading-6 text-gray-900">
-        Select your votes below
-      </RadioGroup.Label>
-
-      <div className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-3 sm:gap-x-4">
-        {mailingLists.map((mailingList) => (
-          <RadioGroup.Option
-            key={mailingList.id}
-            value={mailingList}
-            className={({ checked, active }) =>
-              classNames([
-                checked ? "border-transparent" : "border-gray-300",
-                active ? "border-indigo-600 ring-2 ring-indigo-600" : "",
-                "relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none",
-              ])
-            }
+    <ul className="grid grid-cols-1 gap-6 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-2">
+      {voteOptions.map(
+        ({ id, title, linkPreview, desc, votes, voted }, idx) => (
+          <li
+            key={title + id}
+            className={classNames([
+              voted ? "border-indigo-600 border-2" : "border",
+              "col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow  max-w-sm",
+            ])}
           >
-            {({ checked, active }) => (
-              <>
-                <span className="flex flex-1">
-                  <span className="flex flex-col">
-                    <RadioGroup.Label
-                      as="span"
-                      className="block text-sm font-medium text-gray-900"
-                    >
-                      {mailingList.title}
-                    </RadioGroup.Label>
-                    <RadioGroup.Description
-                      as="span"
-                      className="mt-1 flex items-center text-sm text-gray-500"
-                    >
-                      {mailingList.description}
-                    </RadioGroup.Description>
-                    <RadioGroup.Description
-                      as="span"
-                      className="mt-6 text-sm font-medium text-gray-900"
-                    >
-                      {mailingList.users}
-                    </RadioGroup.Description>
-                  </span>
-                </span>
-                <CheckCircleIcon
-                  className={classNames([
-                    !checked ? "invisible" : "",
-                    "h-5 w-5 text-indigo-600",
-                  ])}
-                  aria-hidden="true"
-                />
-                <span
-                  className={classNames([
-                    active ? "border" : "border-2",
-                    checked ? "border-indigo-600" : "border-transparent",
-                    "pointer-events-none absolute -inset-px rounded-lg",
-                  ])}
-                  aria-hidden="true"
-                />
-              </>
-            )}
-          </RadioGroup.Option>
-        ))}
-      </div>
-    </RadioGroup>
+            <div className="flex flex-1 flex-col p-8">
+              <h3 className="text-md font-medium text-gray-900">{title}</h3>
+              <div className="mt-1 flex flex-grow flex-col justify-between">
+                <p className="text-md text-gray-500 pb-3">{desc}</p>
+                <LinkPreview {...linkPreview} />
+              </div>
+            </div>
+            <div>
+              <div className="-mt-px flex divide-x divide-gray-200">
+                <div className="flex w-0 flex-1">
+                  <p className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+                    {votes + " votes"}
+                  </p>
+                </div>
+                <div
+                  className="-ml-px flex w-0 flex-1"
+                  onClick={() => handleVote(idx)}
+                >
+                  {voted ? (
+                    <button className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+                      <CheckCircleIcon className="text-indigo-600 h-5 w-5" />
+                    </button>
+                  ) : (
+                    <button className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+                      Vote
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </li>
+        )
+      )}
+    </ul>
   );
 };
 

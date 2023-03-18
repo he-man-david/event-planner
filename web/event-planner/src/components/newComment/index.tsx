@@ -1,4 +1,14 @@
+import { useState } from "react";
+
 const NewComment = () => {
+  const [comment, setComment] = useState<string>("");
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    alert("this is comment: " + comment);
+    setComment("");
+  };
+
   return (
     <div className="flex items-start space-x-4">
       <div className="flex-shrink-0">
@@ -9,7 +19,7 @@ const NewComment = () => {
         />
       </div>
       <div className="min-w-0 flex-1">
-        <form action="#">
+        <form onSubmit={handleSubmit}>
           <div className="border-b border-gray-200 focus-within:border-indigo-600">
             <label htmlFor="comment" className="sr-only">
               Add your comment
@@ -20,7 +30,8 @@ const NewComment = () => {
               id="comment"
               className="block w-full resize-none border-0 border-b border-transparent p-0 pb-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-600 focus:ring-0 sm:text-sm sm:leading-6"
               placeholder="Add your comment..."
-              defaultValue={""}
+              onChange={(e) => setComment(e.target.value)}
+              value={comment}
             />
           </div>
           <div className="flex-shrink-0 pt-2 float-right">

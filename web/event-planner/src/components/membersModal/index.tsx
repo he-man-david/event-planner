@@ -126,10 +126,12 @@ const MembersModal = () => {
                       <div className="relative mt-6 flex-1 px-4 sm:px-6 overflow-auto">
                         {MembersData.map(({ name, imageUrl }, idx) => {
                           return (
-                            <div className="flex items-center my-5">
+                            <div
+                              key={name + "-avatar-row-" + idx}
+                              className="flex items-center my-5"
+                            >
                               <div>
                                 <img
-                                  key={name + "-avatar-row-" + idx}
                                   className="relative z-30 inline-block h-10 w-10 rounded-full ring-2 ring-white"
                                   src={imageUrl}
                                   alt={name}

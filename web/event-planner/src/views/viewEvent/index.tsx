@@ -13,7 +13,7 @@ const ViewEvent = () => {
         <header className="py-10">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <h1 className="topic-title text-3xl font-bold tracking-tight text-white">
-              Where to eat dinner on Saturday?
+              Which Airbnb do yall prefer?
             </h1>
           </div>
         </header>
