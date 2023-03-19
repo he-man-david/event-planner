@@ -1,6 +1,6 @@
 export interface LinkPreviewParam {
-  title: string;
-  desc: string;
+  title?: string;
+  desc?: string;
   link: string;
-  imageUrl: string;
+  imageUrl?: string;
 }

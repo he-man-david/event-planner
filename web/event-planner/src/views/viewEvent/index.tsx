@@ -1,15 +1,23 @@
-import NavBar from "components/navBar";
+import { useState, useEffect } from "react";
 import EventBody from "components/eventBody";
 import Comments from "components/comments";
 import NewComment from "components/newComment";
-import "./styles.css";
+import { useParams } from "react-router-dom";
 import MembersModal from "components/membersModal";
+import { EventOptionData } from "mockData";
+import { EventOption } from "components/eventBody/types";
 
 const ViewEvent = () => {
+  const [eventOptions, setEventOptions] =
+    useState<EventOption[]>(EventOptionData);
+  const params = useParams();
+
+  useEffect(() => {
+    console.log("event_id from param: ", params.id);
+  });
   return (
     <div className="view-event-container min-h-full">
       <div className="header-container bg-indigo-600 pb-20">
-        <NavBar />
         <header className="py-10">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <h1 className="topic-title text-3xl font-bold tracking-tight text-white">
@@ -26,7 +34,10 @@ const ViewEvent = () => {
             <div className="grid grid-cols-1 gap-4 lg:col-span-2">
               <div className="overflow-hidden rounded-lg bg-white shadow">
                 <div className="p-6">
-                  <EventBody />
+                  <EventBody
+                    voteOptions={eventOptions}
+                    setVoteOptions={setEventOptions}
+                  />
                 </div>
               </div>
             </div>
