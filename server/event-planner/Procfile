@@ -1,1 +1,0 @@
-web: cd server/event-planner && npm run start
