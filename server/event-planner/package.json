@@ -5,11 +5,9 @@
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./src/index.ts",
-    "format": "npx prettier --write src",
-    "build": "npx prettier --check src && tsc",
-    "start-dev": "npm run format && ts-node ./src/index.ts",
-    "start-prod": "npm run build && node ./build/index.js",
+    "start": "node build/index.js",
+    "build": "tsc",
+    "postinstall": "npm run build",
     "db-migrate": "cd sequelize && npx sequelize db:migrate --config ./config.json --migrations-path ./migrations"
   },
   "author": "",
