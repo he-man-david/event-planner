@@ -1,1 +1,1 @@
-web: cd server/event-planner && npm run start-prod
+web: cd server/event-planner/build && node index.js
