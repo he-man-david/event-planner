@@ -1,0 +1,12 @@
+{
+  "name": "event-planner",
+  "version": "1.0.0",
+  "description": "A simple event planner app",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "cd server/event-planner && npm install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
