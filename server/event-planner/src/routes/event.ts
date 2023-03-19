@@ -1,20 +1,18 @@
 import { Router } from "express";
 import { v4 } from "uuid";
-// import {
-//   getEventDetails,
-//   saveNewEventDetails,
-// } from "../repositories/event_planner";
 
 const router = Router();
 
 router.get("/:eventId", async (req, res) => {
+  console.log("Received event get request!");
   // const result = await getEventDetails(req.params.eventId);
   const result = {
     title: "DUMMY",
     description: "DUMMY DESCRIPTION",
     author: "David",
-    id: Math.random(),
+    id: req.params.eventId,
   };
+  console.log("Returning", result);
   res.send(result);
 });
 
@@ -28,7 +26,7 @@ router.post("/", async (req, res) => {
     title,
     description,
     author,
-    id: Math.random(),
+    id: v4(),
   };
   res.send(result);
 });
@@ -37,5 +35,14 @@ router.put("/:eventId", (req, res) => {
   res.status(500);
   res.send("Not implemented yet!");
 });
+
+router.get("/thread/", (req, res) => {
+  res.send([]);
+});
+
+router.post("/thread/", (req, res) => {
+  res.send(req.body);
+});
+
 
 export default router;

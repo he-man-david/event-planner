@@ -10,7 +10,7 @@
     "build": "npx tsc",
     "start-dev": "ts-node ./src/app.ts",
     "db-migrate": "cd sequelize && npx sequelize db:migrate --config ./config.json --migrations-path ./migrations",
-    "postbuild": "cp package.json ./build/package.json && cd build && npm install --only=production --omit=dev"
+    "elasticbean-build": "npx tsc && cp package.json ./build/package.json && cd build && npm install --only=production --omit=dev"
   },
   "author": "",
   "license": "ISC",
