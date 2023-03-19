@@ -1,12 +1,15 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import EventBody from "components/eventBody";
 import Comments from "components/comments";
 import NewComment from "components/newComment";
 import { useParams } from "react-router-dom";
-import "./styles.css";
 import MembersModal from "components/membersModal";
+import { EventOptionData } from "mockData";
+import { EventOption } from "components/eventBody/types";
 
 const ViewEvent = () => {
+  const [eventOptions, setEventOptions] =
+    useState<EventOption[]>(EventOptionData);
   const params = useParams();
 
   useEffect(() => {
@@ -31,7 +34,10 @@ const ViewEvent = () => {
             <div className="grid grid-cols-1 gap-4 lg:col-span-2">
               <div className="overflow-hidden rounded-lg bg-white shadow">
                 <div className="p-6">
-                  <EventBody />
+                  <EventBody
+                    voteOptions={eventOptions}
+                    setVoteOptions={setEventOptions}
+                  />
                 </div>
               </div>
             </div>

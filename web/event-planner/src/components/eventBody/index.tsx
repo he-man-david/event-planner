@@ -1,93 +1,24 @@
-import { useState } from "react";
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
 import { classNames } from "utils/common";
 import LinkPreview from "components/linkPreview";
-import pic1 from "static/airbnb-1.jpeg";
-import pic2 from "static/airbnb-2.jpeg";
-import pic3 from "static/airbnb-3.jpeg";
-import pic4 from "static/airbnb-4.jpeg";
-import pic5 from "static/airbnb-5.jpeg";
+import { EventOption, EventBodyParam } from "./types";
 
-const data = [
-  {
-    id: 1,
-    title: "Downtown",
-    linkPreview: {
-      imageUrl: pic1,
-      title: "This is link title",
-      desc: "This is description from the link preview itself. Link preview description.",
-      link: "https://airbnb.com",
-    },
-    desc: "Close to trains",
-    votes: 0,
-    voted: false,
-  },
-  {
-    id: 2,
-    title: "Downtown 2",
-    linkPreview: {
-      imageUrl: pic2,
-      title: "This is link title",
-      desc: "This is description from the link preview itself. Link preview description.",
-      link: "https://airbnb.com",
-    },
-    desc: "A bit smaller only 2bd",
-    votes: 2,
-    voted: false,
-  },
-  {
-    id: 3,
-    title: "Midtown",
-    linkPreview: {
-      imageUrl: pic3,
-      title: "This is link title",
-      desc: "This is description from the link preview itself. Link preview description.",
-      link: "https://airbnb.com",
-    },
-    desc: "Good location",
-    votes: 1,
-    voted: false,
-  },
-  {
-    id: 4,
-    title: "Midtown Central",
-    linkPreview: {
-      imageUrl: pic4,
-      title: "This is link title",
-      desc: "This is description from the link preview itself. Link preview description.",
-      link: "https://airbnb.com",
-    },
-    desc: "A bit smaller but cheaper",
-    votes: 6,
-    voted: false,
-  },
-  {
-    id: 5,
-    title: "Uptown",
-    linkPreview: {
-      imageUrl: pic5,
-      title: "This is link title",
-      desc: "This is description from the link preview itself. Link preview description.",
-      link: "https://airbnb.com",
-    },
-    desc: "Bit more expensive, I am down if yall are",
-    votes: 3,
-    voted: false,
-  },
-];
-
-const EventBody = () => {
-  const [voteOptions, setVoteOptions] = useState(data);
-
+const EventBody = ({
+  voteOptions,
+  setVoteOptions,
+  editVoteOptions,
+  delVoteOptions,
+  editMode,
+}: EventBodyParam) => {
   const handleVote = (position: number) => {
-    const newVoteOptions = voteOptions.map((voteOption, idx) => {
+    const newVoteOptions: EventOption[] = voteOptions.map((voteOption, idx) => {
       if (position === idx) {
         if (voteOption.voted) {
           voteOption.voted = false;
-          voteOption.votes--;
+          voteOption.votes!--;
         } else {
           voteOption.voted = true;
-          voteOption.votes++;
+          voteOption.votes!++;
         }
       }
       return voteOption;
@@ -96,8 +27,16 @@ const EventBody = () => {
     setVoteOptions(newVoteOptions);
   };
 
+  const handleEdit = (pos: number) => {
+    if (editVoteOptions) editVoteOptions(pos);
+  };
+
+  const handleDelete = (pos: number) => {
+    if (delVoteOptions) delVoteOptions(pos);
+  };
+
   return (
-    <ul className="grid grid-cols-1 gap-6 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-2">
+    <ul className="grid grid-cols-1 gap-6 sm:grid-cols-1 md:grid-cols-2">
       {voteOptions.map(
         ({ id, title, linkPreview, desc, votes, voted }, idx) => (
           <li
@@ -114,28 +53,49 @@ const EventBody = () => {
                 <LinkPreview {...linkPreview} />
               </div>
             </div>
-            <div>
-              <div className="-mt-px flex divide-x divide-gray-200">
-                <div className="flex w-0 flex-1">
-                  <p className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
-                    {votes + " votes"}
-                  </p>
-                </div>
-                <div
-                  className="-ml-px flex w-0 flex-1"
-                  onClick={() => handleVote(idx)}
-                >
-                  {voted ? (
-                    <button className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
-                      <CheckCircleIcon className="text-indigo-600 h-5 w-5" />
+            <div className="-mt-px flex divide-x divide-gray-200">
+              {editMode ? (
+                <>
+                  <div className="flex w-0 flex-1  hover:bg-gray-100">
+                    <button
+                      className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
+                      onClick={() => handleEdit(idx)}
+                    >
+                      Edit
                     </button>
-                  ) : (
-                    <button className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
-                      Vote
+                  </div>
+                  <div className="-ml-px flex w-0 flex-1 hover:bg-gray-100">
+                    <button
+                      className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-red-600"
+                      onClick={() => handleDelete(idx)}
+                    >
+                      Delete
                     </button>
-                  )}
-                </div>
-              </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex w-0 flex-1">
+                    <p className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+                      {votes + " votes"}
+                    </p>
+                  </div>
+                  <div
+                    className="-ml-px flex w-0 flex-1"
+                    onClick={() => handleVote(idx)}
+                  >
+                    {voted ? (
+                      <button className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+                        <CheckCircleIcon className="text-indigo-600 h-5 w-5" />
+                      </button>
+                    ) : (
+                      <button className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+                        Vote
+                      </button>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </li>
         )

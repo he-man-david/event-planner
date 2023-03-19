@@ -1,12 +1,57 @@
 import { useState } from "react";
 import { PlusIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 import CreateEventOptionModal from "components/createEventOptionModal";
+import EventBody from "components/eventBody";
+import { EventOption } from "components/eventBody/types";
 import "./styles.css";
 
 const CreateEvent = () => {
+  const [eventTitle, setEventTitle] = useState<string>("");
+  const [eventOptions, setEventOptions] = useState<EventOption[]>([]);
   const [showAddOptionForm, setShowAddOptionForm] = useState<boolean>(false);
+  const [editOptionInfo, setEditOptionInfo] = useState<EventOption | null>(
+    null
+  );
+  const [editOptionPos, setEditOptionPos] = useState<number>(-1);
 
   const createEvent = () => {};
+
+  const createOption = (option: EventOption) => {
+    // TODO:
+    // 1) call backend to get link preview infos
+    // 2) set preview info in data structure
+    const newEvtOptions = [...eventOptions];
+    if (editOptionPos >= 0) {
+      newEvtOptions.splice(editOptionPos, 1, option);
+      setEditOptionPos(-1);
+    } else {
+      newEvtOptions.unshift(option);
+    }
+    setEditOptionInfo(null);
+    setEventOptions(newEvtOptions);
+  };
+
+  const handleEdit = (position: number) => {
+    setEditOptionPos(position);
+    setEditOptionInfo(() => {
+      setShowAddOptionForm(true);
+      return eventOptions[position];
+    });
+  };
+
+  const handleDelete = (position: number) => {
+    const newEvtOptions = [...eventOptions];
+    newEvtOptions.splice(position, 1);
+    setEventOptions(newEvtOptions);
+  };
+
+  const handleOptionModalDisplay = (open: boolean) => {
+    if (!open) {
+      setEditOptionPos(-1);
+      setEditOptionInfo(null);
+    }
+    setShowAddOptionForm(open);
+  };
 
   const submitButton = () => {
     return (
@@ -41,6 +86,8 @@ const CreateEvent = () => {
                 id="event-title"
                 className="block w-full lg:h-20 md:h-18 sm:h-16 h-12 rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:italic placeholder:text-gray-400 lg:placeholder:text-4xl md:placeholder:text-3xl sm:placeholder:text-2xl lg:text-4xl md:text-3xl sm:text-2xl focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:leading-6"
                 placeholder="The perfect Airbnb for Vegas!!"
+                onChange={(e) => setEventTitle(e.target.value)}
+                value={eventTitle}
               />
             </div>
           </div>
@@ -53,21 +100,29 @@ const CreateEvent = () => {
           </p>
           <button
             type="button"
-            className="relative inline-flex items-center gap-x-1.5 rounded-md bg-indigo-500 mx-7 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+            className="relative mb-9 inline-flex items-center gap-x-1.5 rounded-md bg-indigo-500 mx-7 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
             onClick={() => setShowAddOptionForm(true)}
           >
             <PlusIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
-            Event Option
+            Add option
           </button>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-2">
-            show EventBody here
+          <div>
+            <EventBody
+              voteOptions={eventOptions}
+              setVoteOptions={setEventOptions}
+              editVoteOptions={handleEdit}
+              delVoteOptions={handleDelete}
+              editMode
+            />
           </div>
         </div>
       </main>
       {submitButton()}
       <CreateEventOptionModal
         open={showAddOptionForm}
-        setOpen={setShowAddOptionForm}
+        setOpen={handleOptionModalDisplay}
+        createOption={createOption}
+        editOptionInfo={editOptionInfo}
       />
     </div>
   );

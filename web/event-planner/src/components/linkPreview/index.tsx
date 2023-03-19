@@ -1,3 +1,4 @@
+import { ArrowUpRightIcon } from "@heroicons/react/24/outline";
 import { LinkPreviewParam } from "./types";
 
 const LinkPreview = ({ title, desc, link, imageUrl }: LinkPreviewParam) => {
@@ -17,9 +18,10 @@ const LinkPreview = ({ title, desc, link, imageUrl }: LinkPreviewParam) => {
             href={link}
             target="_blank"
             rel="noreferrer"
-            className="w-full rounded-md bg-white bg-opacity-75 py-2 px-4 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter hover:bg-indigo-600 hover:text-white"
+            className="w-full rounded-md bg-white bg-opacity-75 py-2 px-4 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter hover:bg-indigo-600 hover:text-white flex items-center justify-center"
           >
-            Open Link
+            <p>Open</p>
+            <ArrowUpRightIcon className="ml-2 h-3 w-3" aria-hidden="true" />
           </a>
         </div>
       </div>
