@@ -1,5 +1,4 @@
 import express from "express";
-import { PORT } from "./config/env";
 import eventRoutes from "./routes/event";
 import threadRoutes from "./routes/thread";
 
@@ -26,5 +25,5 @@ app.get("/event/:eventId", (_, res) => {
 app.use("/event", eventRoutes);
 app.use("/thread", threadRoutes);
 
-console.log(`Server starting at port ${PORT}`);
-app.listen(PORT);
+console.log(`Server starting at port 8080`);
+app.listen(8080);

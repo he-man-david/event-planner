@@ -1,0 +1,19 @@
+{
+  "name": "event-planner",
+  "version": "1.0.0",
+  "description": "A simple event planner app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/he-man-david/event-planner.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/he-man-david/event-planner/issues"
+  },
+  "homepage": "https://github.com/he-man-david/event-planner#readme"
+}

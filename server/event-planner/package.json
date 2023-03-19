@@ -5,10 +5,10 @@
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run start-dev",
+    "start": "n app.js",
     "format": "npx prettier --write src",
-    "build": "npx prettier --check src && tsc",
-    "start-dev": "npm run format && ts-node ./src/app.ts",
+    "build": "npx tsc",
+    "start-dev": "ts-node ./src/app.ts",
     "db-migrate": "cd sequelize && npx sequelize db:migrate --config ./config.json --migrations-path ./migrations",
     "postbuild": "cp package.json ./build/package.json && cd build && npm install --only=production --omit=dev"
   },
