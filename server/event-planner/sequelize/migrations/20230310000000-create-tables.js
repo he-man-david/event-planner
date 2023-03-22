@@ -3,12 +3,12 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('EventDetails', {
+    await queryInterface.createTable('Events', {
       id: {
         allowNull: false,
+        default: Sequelize.fn('uuid_generate_v4'),
         primaryKey: true,
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
+        type: Sequelize.UUID
       },
       title: {
         type: Sequelize.STRING
