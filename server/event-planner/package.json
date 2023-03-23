@@ -7,10 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
     "format": "npx prettier --write src",
-    "build": "npx tsc",
+    "build": "tsc",
     "start-dev": "ts-node ./src/app.ts",
-    "db-migrate": "cd sequelize && npx sequelize db:migrate --config ./config.json --migrations-path ./migrations",
-    "elasticbean-build": "npx tsc && cp package.json ./build/package.json && cd build && npm install --only=production --omit=dev"
+    "elasticbean-build": "npm run build && cp package.json ./build/package.json && cd build && npm install --only=production --omit=dev"
   },
   "author": "",
   "license": "ISC",
