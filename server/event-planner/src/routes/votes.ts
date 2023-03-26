@@ -2,11 +2,12 @@ import { Router } from "express";
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  res.send([]);
+router.get("/:eventOptionId", (req, res) => {
+  res.status(500);
+  res.send("Not implemented yet!");
 });
 
-router.post("/", (req, res) => {
+router.post("/:eventOptionId", (req, res) => {
   res.status(500);
   res.send("Not implemented yet!");
 });

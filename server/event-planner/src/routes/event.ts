@@ -1,5 +1,6 @@
 import { Router } from "express";
 import eventPlannerRepo from "../repositories/event_planner";
+import { CreateEventRequest } from "../types/event_types";
 
 const router = Router();
 
@@ -12,28 +13,16 @@ router.get("/:eventId", async (req, res) => {
 
 router.post("/", async (req, res) => {
   console.log(`req is ${req.body}`);
-  const title = String(req.body.title || "");
-  const description = String(req.body.description || "");
-  const author = String(req.body.author || "");
-  const result = await eventPlannerRepo.saveNewEventDetails({
-    title,
-    description,
-    author,
-  });
+  const createdEventRequest = CreateEventRequest.parse(req.body);
+  const result = await eventPlannerRepo.saveNewEventDetails(
+    createdEventRequest
+  );
   res.send(result);
 });
 
 router.put("/:eventId", (req, res) => {
   res.status(500);
   res.send("Not implemented yet!");
-});
-
-router.get("/thread/", (req, res) => {
-  res.send([]);
-});
-
-router.post("/thread/", (req, res) => {
-  res.send(req.body);
 });
 
 export default router;

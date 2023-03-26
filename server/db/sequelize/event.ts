@@ -1,5 +1,15 @@
-import { DataTypes, Sequelize } from "sequelize";
+import {
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  Sequelize,
+} from "sequelize";
 import { SequelizeParams } from "..";
+
+// interface EventModel extends Model<InferAttributes<EventModel>, InferCreationAttributes<EventModel>> {
+//   id: Creation string
+// }
 
 export const EVENT_SEQUELIZE_PARAMS: SequelizeParams = [
   "Event",

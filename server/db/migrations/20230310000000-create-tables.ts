@@ -3,8 +3,8 @@ import { EVENT_SEQUELIZE_PARAMS } from "../sequelize/event";
 import { EVENT_ATTENDEES_SEQUELIZE_PARAMS } from "../sequelize/event_attendees";
 import { EVENT_COMMENTS_SEQUELIZE_PARAMS } from "../sequelize/event_comments";
 import { EVENT_OPTION_VOTES_SEQUELIZE_PARAMS } from "../sequelize/event_option_votes";
-import { EVENT_OPTION_DETAILS_SEQUELIZE_PARAMS } from "../sequelize/event_option_details";
 import { EVENT_OPTIONS_SEQUELIZE_PARAMS } from "../sequelize/event_options";
+import { EVENT_OPTIONS_LOOKUP_SEQUELIZE_PARAMS } from "../sequelize/event_options_lookup";
 import { USER_SEQUELIZE_PARAMS } from "../sequelize/user";
 import { SequelizeParams } from "..";
 
@@ -14,8 +14,8 @@ const SEQUELIZE_TABLE_PARAMS: SequelizeParams[] = [
   EVENT_SEQUELIZE_PARAMS,
   EVENT_ATTENDEES_SEQUELIZE_PARAMS,
   EVENT_COMMENTS_SEQUELIZE_PARAMS,
-  EVENT_OPTION_DETAILS_SEQUELIZE_PARAMS,
   EVENT_OPTIONS_SEQUELIZE_PARAMS,
+  EVENT_OPTIONS_LOOKUP_SEQUELIZE_PARAMS,
   EVENT_OPTION_VOTES_SEQUELIZE_PARAMS,
 ];
 
