@@ -5,18 +5,19 @@
   "main": "index.js",
   "scripts": {
     "format": "npx prettier --write .",
-    "build": "npm run format && tsc",
+    "build": "npm run format && tsc && npx prisma generate",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db-migrate": "npx sequelize db:migrate --config ./config.json --migrations-path ./build/migrations"
+    "db-migrate:dry-run": "npx prisma migrate dev --create-only",
+    "db-migrate:execute": "npx prisma migrate dev"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^4.11.0",
     "pg": "^8.10.0",
     "prettier": "^2.8.6",
-    "sequelize": "^6.29.3",
-    "sequelize-cli": "^6.6.0",
+    "prisma": "^4.11.0",
     "typescript": "^5.0.2"
   }
 }
