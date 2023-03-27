@@ -3,7 +3,7 @@ import {
   EventAttendee,
   EventOption,
   PrismaClient,
-} from "../../../db/prisma";
+} from "../../../../db/prisma";
 import { CreateEventRequest, UUID } from "../types";
 
 const prisma = new PrismaClient();

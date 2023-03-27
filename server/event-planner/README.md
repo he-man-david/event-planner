@@ -1,5 +1,5 @@
 ## Local dev
-- first build in `../db` folder
+- first build in `/db` folder
 - start app with `npm run start-dev`
 
 
