@@ -8,10 +8,13 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { classNames } from "utils/common";
+import { routes } from "const/routes";
+import { useStytch } from "@stytch/react";
 
 const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const stytch = useStytch();
 
   const user = {
     name: "Jaser Trudeau",
@@ -20,20 +23,23 @@ const NavBar = () => {
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
   };
   const navigation = [
-    { name: "My Events", href: "my-events", current: false },
-    { name: "About Us", href: "about-us", current: false },
+    { name: "My Events", href: routes.HOME, current: false },
+    { name: "About Us", href: routes.ABOUT_US, current: false },
   ];
-  const userNavigation = [
-    { name: "Profile", href: "profile" },
-    { name: "Sign out", href: "signout" },
-  ];
+  const userNavigation = [{ name: "Profile", href: routes.PROFILE }];
+
+  const handleLogout = async () => {
+    await stytch.session.revoke();
+    console.log("Logging out...");
+    navigate(routes.LOGIN);
+  };
 
   const newEventButton = () => {
-    return location.pathname !== "/new-event" ? (
+    return location.pathname !== routes.NEW_EVENT ? (
       <button
         type="button"
         className="relative inline-flex items-center gap-x-1.5 rounded-md bg-emerald-500 mx-7 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
-        onClick={() => navigate("/new-event")}
+        onClick={() => navigate(routes.NEW_EVENT)}
       >
         <PlusIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
         New Event
@@ -123,8 +129,8 @@ const NavBar = () => {
                       leaveTo="transform opacity-0 scale-95"
                     >
                       <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        {userNavigation.map((item) => (
-                          <Menu.Item key={item.name}>
+                        {userNavigation.map((item, idx) => (
+                          <Menu.Item key={item.name + idx}>
                             {({ active }) => (
                               <a
                                 href={item.href}
@@ -138,6 +144,19 @@ const NavBar = () => {
                             )}
                           </Menu.Item>
                         ))}
+                        <Menu.Item>
+                          {({ active }) => (
+                            <span
+                              onClick={handleLogout}
+                              className={classNames([
+                                active ? "bg-gray-100" : "",
+                                "block py-2 px-4 text-sm text-gray-700",
+                              ])}
+                            >
+                              Log out
+                            </span>
+                          )}
+                        </Menu.Item>
                       </Menu.Items>
                     </Transition>
                   </Menu>
@@ -201,6 +220,13 @@ const NavBar = () => {
                     {item.name}
                   </Disclosure.Button>
                 ))}
+                <Disclosure.Button
+                  as="span"
+                  onClick={handleLogout}
+                  className="block rounded-md py-2 px-3 text-base font-medium text-white hover:bg-indigo-500 hover:bg-opacity-75"
+                >
+                  Log out
+                </Disclosure.Button>
               </div>
             </div>
           </Disclosure.Panel>
