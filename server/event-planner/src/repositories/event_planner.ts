@@ -1,54 +1,63 @@
-import { Sequelize } from "sequelize";
-import { DB_HOST, DB_PASSWORD, DB_PORT, DB_USERNAME } from "../config/env";
-import { EVENT_SEQUELIZE_PARAMS } from "../../../db/sequelize/event";
-import { EVENT_ATTENDEES_SEQUELIZE_PARAMS } from "../../../db/sequelize/event_attendees";
-import { EVENT_COMMENTS_SEQUELIZE_PARAMS } from "../../../db/sequelize/event_comments";
-import { EVENT_OPTION_VOTES_SEQUELIZE_PARAMS } from "../../../db/sequelize/event_option_votes";
-import { EVENT_OPTIONS_LOOKUP_SEQUELIZE_PARAMS } from "../../../db/sequelize/event_options_lookup";
-import { EVENT_OPTIONS_SEQUELIZE_PARAMS } from "../../../db/sequelize/event_options";
-import { USER_SEQUELIZE_PARAMS } from "../../../db/sequelize/user";
-import { CreateEventRequest } from "../types/event_types";
+import {
+  Event,
+  EventAttendee,
+  EventOption,
+  PrismaClient,
+} from "../../../../db/prisma";
+import { CreateEventRequest, UUID } from "../types";
 
-const sequelizeInstance = new Sequelize({
-  username: DB_USERNAME,
-  password: DB_PASSWORD,
-  database: "event_planner",
-  host: DB_HOST,
-  port: DB_PORT,
-  dialect: "postgres",
-});
+const prisma = new PrismaClient();
 
-const User = sequelizeInstance.define(...USER_SEQUELIZE_PARAMS);
-const Event = sequelizeInstance.define(...EVENT_SEQUELIZE_PARAMS);
-const EventAttendees = sequelizeInstance.define(
-  ...EVENT_ATTENDEES_SEQUELIZE_PARAMS
-);
-const EventOptionsLookup = sequelizeInstance.define(
-  ...EVENT_OPTIONS_LOOKUP_SEQUELIZE_PARAMS
-);
-const EventOptions = sequelizeInstance.define(
-  ...EVENT_OPTIONS_SEQUELIZE_PARAMS
-);
-const EventOptionVotes = sequelizeInstance.define(
-  ...EVENT_OPTION_VOTES_SEQUELIZE_PARAMS
-);
-const EventComments = sequelizeInstance.define(
-  ...EVENT_COMMENTS_SEQUELIZE_PARAMS
-);
-
-const getEventDetails = async (id: string) => {
-  const result = await Event.findByPk(id);
-  return result;
+type EventWithAttendeesAndOption = Event & {
+  attendees: EventAttendee[];
+  options: EventOption[];
 };
 
-const saveNewEventDetails = async (
-  newEvent: typeof CreateEventRequest._type
-) => {
-  const result = await Event.create(newEvent);
-  return result;
+const getEvent = async (
+  eventId: typeof UUID._type
+): Promise<EventWithAttendeesAndOption | null> => {
+  return await prisma.event.findFirst({
+    where: {
+      id: eventId,
+    },
+    include: {
+      attendees: true,
+      options: true,
+    },
+  });
+};
+
+const saveEvent = async (
+  req: typeof CreateEventRequest._type
+): Promise<EventWithAttendeesAndOption | null> => {
+  const event = await prisma.event.create({
+    data: {
+      title: req.title,
+      createdBy: req.createdBy,
+    },
+  });
+
+  const attendeeData =
+    req.attendees?.map((uid) => {
+      return { userId: uid, eventId: event.id };
+    }) || [];
+  await prisma.eventAttendee.createMany({ data: attendeeData });
+
+  const optionsData =
+    req.options?.map((opt) => {
+      return {
+        eventId: event.id,
+        title: opt.title,
+        description: opt.description,
+        linkPreview: { link: opt.link },
+      };
+    }) || [];
+  await prisma.eventOption.createMany({ data: optionsData });
+
+  return getEvent(event.id);
 };
 
 export default {
-  getEventDetails,
-  saveNewEventDetails,
+  saveEvent,
+  getEvent,
 };

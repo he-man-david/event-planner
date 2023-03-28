@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  relationMode = "foreignKeys"
+}
+
+model Event {
+  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title         String
+  eventStart    DateTime?
+  createdBy     String          @db.Uuid
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  attendees EventAttendee[]
+  options  EventOption[]
+
+  @@index([createdAt(sort: Desc)])
+}
+
+model EventOption {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  title       String
+  description String?
+  linkPreview Json
+
+  eventId String @db.Uuid
+  event   Event  @relation(fields: [eventId], references: [id])
+
+  eventOptionVote EventOptionVote[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([eventId, createdAt(sort: Desc)])
+}
+
+model EventOptionVote {
+  eventOption EventOption @relation(fields: [eventOptionId], references: [id])
+  eventOptionId String @db.Uuid
+
+  user User @relation(fields: [userId], references: [id])
+  userId        String @db.Uuid
+
+  @@id([eventOptionId, userId])
+}
+
+model EventComment {
+  eventId   String   @db.Uuid
+  createdAt DateTime @default(now())
+  createdBy String   @db.Uuid
+  content   String
+  id        String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  @@id([createdAt, eventId])
+  @@index([createdAt(sort: Desc)])
+}
+
+model EventAttendee {
+  event   Event  @relation(fields: [eventId], references: [id])
+  eventId String @db.Uuid
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String @db.Uuid
+
+  @@id([eventId, userId])
+}
+
+model User {
+  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username      String
+  profileName   String
+  profileImgUrl String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  eventAttendee EventAttendee[]
+  eventOptionVote EventOptionVote[]
+}
