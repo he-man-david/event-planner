@@ -1,15 +1,12 @@
-import { BrowserRouter } from "react-router-dom";
 import NavBar from "components/navBar";
-import Router from "./routes";
+import Router from "utils/routes";
 import "./App.css";
 
-function App() {
+const App = () => {
   return (
     <div className="App">
-      <BrowserRouter>
-        <NavBar />
-        <Router />
-      </BrowserRouter>
+      <NavBar />
+      <Router />
       <footer>
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
           <div className="border-t border-gray-200 py-8 text-center text-sm text-gray-500 sm:text-left">
@@ -22,6 +19,6 @@ function App() {
       </footer>
     </div>
   );
-}
+};
 
 export default App;
