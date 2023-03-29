@@ -1,6 +1,6 @@
-import { EventOption } from "components/eventBody/types";
+import { EventOption } from "types";
 
-export interface CreateEventOptionModalParam {
+export interface EditEventOptionModalParam {
   open: boolean;
   editOptionInfo?: EventOption | null;
   setOpen: (t: boolean) => void;

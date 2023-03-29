@@ -111,11 +111,10 @@ const NavBar = () => {
                   <Menu as="div" className="relative ml-3 flex-shrink-0">
                     <div>
                       <Menu.Button className="flex rounded-full bg-indigo-600 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-600">
-                        <span className="sr-only">Open user menu</span>
                         <img
                           className="h-8 w-8 rounded-full"
                           src={user.imageUrl}
-                          alt="notifications"
+                          alt="profile"
                         />
                       </Menu.Button>
                     </div>

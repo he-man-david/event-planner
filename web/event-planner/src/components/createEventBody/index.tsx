@@ -1,15 +1,16 @@
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
 import { classNames } from "utils/common";
 import LinkPreview from "components/linkPreview";
-import { EventOption, EventBodyParam } from "./types";
+import { CreateEventBodyParam } from "./types";
+import { EventOption } from "types";
 
-const EventBody = ({
+const CreateEventBody = ({
   voteOptions,
   setVoteOptions,
   editVoteOptions,
   delVoteOptions,
   editMode,
-}: EventBodyParam) => {
+}: CreateEventBodyParam) => {
   const handleVote = (position: number) => {
     const newVoteOptions: EventOption[] = voteOptions.map((voteOption, idx) => {
       if (position === idx) {
@@ -27,14 +28,6 @@ const EventBody = ({
     setVoteOptions(newVoteOptions);
   };
 
-  const handleEdit = (pos: number) => {
-    if (editVoteOptions) editVoteOptions(pos);
-  };
-
-  const handleDelete = (pos: number) => {
-    if (delVoteOptions) delVoteOptions(pos);
-  };
-
   return (
     <ul className="grid grid-cols-1 gap-6 sm:grid-cols-1 md:grid-cols-2">
       {voteOptions.map(
@@ -50,7 +43,18 @@ const EventBody = ({
               <h3 className="text-md font-medium text-gray-900">{title}</h3>
               <div className="mt-1 flex flex-grow flex-col justify-between">
                 <p className="text-md text-gray-500 pb-3">{desc}</p>
-                <LinkPreview {...linkPreview} />
+                {linkPreview.imageUrl ? (
+                  <LinkPreview {...linkPreview} />
+                ) : (
+                  <a
+                    href={linkPreview.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-indigo-600 hover:text-indigo-500 underline"
+                  >
+                    {linkPreview.link}
+                  </a>
+                )}
               </div>
             </div>
             <div className="-mt-px flex divide-x divide-gray-200">
@@ -59,7 +63,7 @@ const EventBody = ({
                   <div className="flex w-0 flex-1  hover:bg-gray-100">
                     <button
                       className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
-                      onClick={() => handleEdit(idx)}
+                      onClick={() => editVoteOptions(idx)}
                     >
                       Edit
                     </button>
@@ -67,7 +71,7 @@ const EventBody = ({
                   <div className="-ml-px flex w-0 flex-1 hover:bg-gray-100">
                     <button
                       className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-red-600"
-                      onClick={() => handleDelete(idx)}
+                      onClick={() => delVoteOptions(idx)}
                     >
                       Delete
                     </button>
@@ -104,4 +108,4 @@ const EventBody = ({
   );
 };
 
-export default EventBody;
+export default CreateEventBody;

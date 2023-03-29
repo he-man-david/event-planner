@@ -22,7 +22,7 @@ const Authenticate = () => {
       console.log("redirecting to next_route: ", nextRoute);
       if (nextRoute && routesArray.includes(nextRoute)) {
         navigate(nextRoute);
-      }
+      } else if (nextRoute === null) navigate(0);
       console.error("Route is illegal! Unable to redirect!");
     },
     [navigate]
