@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { PlusIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
-import CreateEventOptionModal from "components/createEventOptionModal";
-import EventBody from "components/eventBody";
-import { EventOption } from "components/eventBody/types";
-import "./styles.css";
+import EditEventOptionModal from "components/editEventOptionModal";
+import CreateEventBody from "components/createEventBody";
+import { EventOption } from "types";
 
 const CreateEvent = () => {
   const [eventTitle, setEventTitle] = useState<string>("");
@@ -14,7 +13,9 @@ const CreateEvent = () => {
   );
   const [editOptionPos, setEditOptionPos] = useState<number>(-1);
 
-  const createEvent = () => {};
+  const createEvent = () => {
+    // TODO: create the event here
+  };
 
   const createOption = (option: EventOption) => {
     // TODO:
@@ -71,11 +72,10 @@ const CreateEvent = () => {
     <div className="min-h-full">
       <div className="bg-indigo-600 pb-32">
         <header className="py-10">
-          {submitButton()}
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <label
               htmlFor="event-title"
-              className="block lg:text-4xl md:text-3xl text-2xl font-medium leading-6 text-white mb-5"
+              className="block lg:float-left md:float-left text-2xl font-medium leading-6 text-white mb-5"
             >
               Event Title:
             </label>
@@ -84,7 +84,7 @@ const CreateEvent = () => {
                 type="text"
                 name="event-title"
                 id="event-title"
-                className="block w-full lg:h-20 md:h-18 sm:h-16 h-12 rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:italic placeholder:text-gray-400 lg:placeholder:text-4xl md:placeholder:text-3xl sm:placeholder:text-2xl lg:text-4xl md:text-3xl sm:text-2xl focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:leading-6"
+                className="block w-full h-10 md:h-12 lg:h-14 rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:italic placeholder:text-gray-400 lg:placeholder:text-3xl md:placeholder:text-2xl sm:placeholder:text-1xl lg:text-3xl md:text-2xl sm:text-1xl focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:leading-6"
                 placeholder="The perfect Airbnb for Vegas!!"
                 onChange={(e) => setEventTitle(e.target.value)}
                 value={eventTitle}
@@ -107,7 +107,7 @@ const CreateEvent = () => {
             Add option
           </button>
           <div>
-            <EventBody
+            <CreateEventBody
               voteOptions={eventOptions}
               setVoteOptions={setEventOptions}
               editVoteOptions={handleEdit}
@@ -118,7 +118,7 @@ const CreateEvent = () => {
         </div>
       </main>
       {submitButton()}
-      <CreateEventOptionModal
+      <EditEventOptionModal
         open={showAddOptionForm}
         setOpen={handleOptionModalDisplay}
         createOption={createOption}

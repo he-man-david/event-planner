@@ -3,7 +3,7 @@ import pic2 from "static/airbnb-2.jpeg";
 import pic3 from "static/airbnb-3.jpeg";
 import pic4 from "static/airbnb-4.jpeg";
 import pic5 from "static/airbnb-5.jpeg";
-import { EventOption } from "components/eventBody/types";
+import { EventOption } from "types";
 
 export const EventOptionData: EventOption[] = [
   {
