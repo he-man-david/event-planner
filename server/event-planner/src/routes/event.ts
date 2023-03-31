@@ -18,7 +18,7 @@ router.post(
   "/",
   asyncHandler(async (req, res) => {
     const createdEventRequest = CreateEventRequest.parse(req.body);
-    const result = await eventPlannerRepo.saveEvent(createdEventRequest);
+    const result = await eventPlannerRepo.createEvent(createdEventRequest);
     res.send(result);
   })
 );
