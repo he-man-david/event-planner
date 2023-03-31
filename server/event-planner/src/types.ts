@@ -32,4 +32,6 @@ export const AddUserToEventRequest = z.object({
 export const RemoveUsersFromEventRequest = z.object({
   userIds: z.array(UUID),
   eventId: UUID,
+  options: z.array(CreateEventOptionRequest).optional(),
+  attendees: z.array(UUID).optional(),
 });

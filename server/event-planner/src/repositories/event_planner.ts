@@ -86,6 +86,22 @@ const createEvent = async (
   });
 
   await createEventOptions({ eventId: event.id, options: req.options || [] });
+  const attendeeData =
+    req.attendees?.map((uid) => {
+      return { userId: uid, eventId: event.id };
+    }) || [];
+  await prisma.eventAttendee.createMany({ data: attendeeData });
+
+  const optionsData =
+    req.options?.map((opt) => {
+      return {
+        eventId: event.id,
+        title: opt.title,
+        description: opt.description,
+        linkPreview: { link: opt.link },
+      };
+    }) || [];
+  await prisma.eventOption.createMany({ data: optionsData });
 
   return getEvent(event.id);
 };
@@ -96,5 +112,5 @@ export default {
   addUserToEvent,
   removeUsersFromEvent,
   createEventOptions,
-  deleteEventOption
+  deleteEventOption,
 };
