@@ -11,16 +11,25 @@
 
 ### API
 
+POST /create-event
+
 GET /event/:eventId
-POST /event 
-PUT /event/:eventId
+PUT /event <= {eventId}
 
 GET /comments/:eventId?offset=0&size=20
-POST /comments/:eventId
+POST /comments <= {eventId, ...comment stuff}
+
+POST /attendees <= {eventId, userId}
+DELETE /attendees <= {eventId, userId[]}
+
+GET /options/:eventOption
+POST /options <= {}
+PUT /options/:eventOptionsId <= {}
+DELETE /options <= {eventOptionId}
 
 GET /votes/:eventOptionId
-POST /votes/:eventOptionId
+POST /votes <= {eventOtionId, userId}
 
 GET /user/:userId
 POST /user
-PUT /user/:userId
+PUT /user <= {userId, ...user stuff}

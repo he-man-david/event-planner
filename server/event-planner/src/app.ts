@@ -11,6 +11,8 @@ const app = express();
 
 app.use(express.json());
 
+// TODO: add stytch middleware here
+
 // health check endpoint
 app.get("/", (_, res) => {
   res.send(true);
