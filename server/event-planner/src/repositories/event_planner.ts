@@ -12,6 +12,7 @@ import {
   CreateEventOption,
   CreateEventOptionRequest,
   DeleteEventOptionRequest,
+  AddEventCommentRequest,
 } from "../types";
 
 const prisma = new PrismaClient();
@@ -20,6 +21,19 @@ type EventWithAttendeesAndOption = Event & {
   attendees: EventAttendee[];
   options: EventOption[];
 };
+
+const addEventComment = async (data: typeof AddEventCommentRequest._type) => {
+  return await prisma.eventComment.create({data});
+}
+
+const getEventComments = async(eventId: typeof UUID._type) => {
+  return await prisma.eventComment.findMany({
+    where: {
+      eventId
+    },
+    take: 10 // TODO - pass these in
+  });
+}
 
 const addUserToEvent = async (
   data: typeof AddUserToEventRequest._type
@@ -69,8 +83,14 @@ const getEvent = async (
       id: eventId,
     },
     include: {
-      attendees: true,
-      options: true,
+      attendees: {
+        skip: 0,
+        take: 10
+      },
+      options: {
+        skip: 0,
+        take: 10
+      },
     },
   });
 };
@@ -84,14 +104,6 @@ const createEvent = async (
       createdBy: req.createdBy,
     },
   });
-
-  await createEventOptions({ eventId: event.id, options: req.options || [] });
-  const attendeeData =
-    req.attendees?.map((uid) => {
-      return { userId: uid, eventId: event.id };
-    }) || [];
-  await prisma.eventAttendee.createMany({ data: attendeeData });
-
   const optionsData =
     req.options?.map((opt) => {
       return {
@@ -113,4 +125,6 @@ export default {
   removeUsersFromEvent,
   createEventOptions,
   deleteEventOption,
+  addEventComment,
+  getEventComments
 };
