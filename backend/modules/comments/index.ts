@@ -1,7 +1,7 @@
 import { Router } from "express";
 import asyncHandler from "express-async-handler";
 import repo from "../../db";
-import { AddEventCommentRequest, UUID } from "../../types";
+import { PostEventCommentRequestBody, UUID } from "../../types";
 
 const router = Router();
 
@@ -20,7 +20,7 @@ router.get(
 router.post(
   "/",
   asyncHandler(async (req, res) => {
-    const addEventCommentReq = AddEventCommentRequest.parse(req.body);
+    const addEventCommentReq = PostEventCommentRequestBody.parse(req.body);
     res.send(await repo.addEventComment(addEventCommentReq));
   })
 );

@@ -1,18 +1,18 @@
 import { Event, EventMember, EventOption, PrismaClient } from "@prisma/client";
 import {
-  CreateEventRequest,
-  AddUserToEventRequest,
+  PostEventRequestBody,
+  PostEventMemberRequestBody,
   UUID,
-  RemoveUsersFromEventRequest,
-  CreateEventOptionRequest,
-  DeleteEventOptionRequest,
-  AddEventCommentRequest,
-  ToggleEventOptionVoteRequest,
+  DeleteManyEventMembersRequestBody,
+  PostEventOptionRequestBody,
+  DeleteEventOptionRequestBody,
+  PostEventCommentRequestBody,
+  PostEventOptionVoteRequestBody,
 } from "../types";
 
 const prisma = new PrismaClient();
 
-type EventWithAttendeesAndOption = Event & {
+export type EventWithAttendeesAndOption = Event & {
   attendees: EventMember[];
   options: EventOption[];
 };
@@ -24,7 +24,7 @@ const getEventOptionVotes = async (eventOptionId: typeof UUID._type) => {
 };
 
 const toggleEventOptionVote = async (
-  data: typeof ToggleEventOptionVoteRequest._type
+  data: typeof PostEventOptionVoteRequestBody._type
 ) => {
   try {
     return await prisma.eventOptionVote.delete({
@@ -37,7 +37,7 @@ const toggleEventOptionVote = async (
   }
 };
 
-const addEventComment = async (data: typeof AddEventCommentRequest._type) => {
+const addEventComment = async (data: typeof PostEventCommentRequestBody._type) => {
   return await prisma.eventComment.create({ data });
 };
 
@@ -55,7 +55,7 @@ const getEventMembers = async (eventId: typeof UUID._type) => {
 };
 
 const addUserToEvent = async (
-  data: typeof AddUserToEventRequest._type
+  data: typeof PostEventMemberRequestBody._type
 ): Promise<EventMember | null> => {
   return await prisma.eventMember.create({ data });
 };
@@ -77,9 +77,7 @@ const getEventOptions = async (eventId: typeof UUID._type) => {
   return await prisma.eventOption.findMany({ where: { eventId }, take: 20 });
 };
 
-const createEventOptions = async (
-  req: typeof CreateEventOptionRequest._type
-) => {
+const createEventOptions = async (req: typeof PostEventOptionRequestBody._type) => {
   const optionsData =
     req.options.map((opt) => {
       return {
@@ -93,7 +91,7 @@ const createEventOptions = async (
 };
 
 const deleteEventOption = async (
-  req: typeof DeleteEventOptionRequest._type
+  req: typeof DeleteEventOptionRequestBody._type
 ) => {
   return await prisma.eventOption.delete({ where: { id: req.eventOptionId } });
 };
@@ -119,7 +117,7 @@ const getEvent = async (
 };
 
 const createEvent = async (
-  req: typeof CreateEventRequest._type
+  req: typeof PostEventRequestBody._type
 ): Promise<EventWithAttendeesAndOption | null> => {
   const event = await prisma.event.create({
     data: {

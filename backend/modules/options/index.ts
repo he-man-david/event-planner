@@ -1,8 +1,8 @@
 import { Router } from "express";
 import asyncHandler from "express-async-handler";
 import {
-  CreateEventOptionRequest,
-  DeleteEventOptionRequest,
+  PostEventOptionRequestBody,
+  DeleteEventOptionRequestBody,
   UUID,
 } from "../../types";
 import eventPlannerRepo from "../../db";
@@ -24,7 +24,7 @@ router.get(
 router.post(
   "/",
   asyncHandler(async (req, res) => {
-    const createEventOptionReq = CreateEventOptionRequest.parse(req.body);
+    const createEventOptionReq = PostEventOptionRequestBody.parse(req.body);
     const result = await eventPlannerRepo.createEventOptions(
       createEventOptionReq
     );
@@ -43,7 +43,7 @@ router.put(
 router.delete(
   "/",
   asyncHandler(async (req, res) => {
-    const deleteEventOptionReq = DeleteEventOptionRequest.parse(req.body);
+    const deleteEventOptionReq = DeleteEventOptionRequestBody.parse(req.body);
     const result = await eventPlannerRepo.deleteEventOption(
       deleteEventOptionReq
     );

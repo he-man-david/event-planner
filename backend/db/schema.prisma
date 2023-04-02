@@ -23,7 +23,7 @@ model Event {
   attendees EventMember[]
   options  EventOption[]
 
-  @@index([updatedAt(sort: Desc)])
+  @@index([updatedAt(sort: Desc), eventStart(sort: Desc)])
 }
 
 model EventOption {
@@ -34,8 +34,7 @@ model EventOption {
   eventId String @db.Uuid
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  type String
-
+  
   event   Event @relation(fields: [eventId], references: [id])
   eventOptionVote EventOptionVote[]
 

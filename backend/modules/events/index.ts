@@ -1,6 +1,6 @@
 import { Router } from "express";
 import eventPlannerRepo from "../../db";
-import { CreateEventRequest, UUID } from "../../types";
+import { PostEventRequestBody, UUID } from "../../types";
 import asyncHandler from "express-async-handler";
 
 const router = Router();
@@ -17,7 +17,7 @@ router.get(
 router.post(
   "/",
   asyncHandler(async (req, res) => {
-    const createdEventRequest = CreateEventRequest.parse(req.body);
+    const createdEventRequest = PostEventRequestBody.parse(req.body);
     const result = await eventPlannerRepo.createEvent(createdEventRequest);
     res.send(result);
   })

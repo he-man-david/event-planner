@@ -1,8 +1,8 @@
 import { Router } from "express";
 import asyncHandler from "express-async-handler";
 import {
-  AddUserToEventRequest,
-  RemoveUsersFromEventRequest,
+  PostEventMemberRequestBody,
+  DeleteManyEventMembersRequestBody,
   UUID,
 } from "../../types";
 import db from "../../db";
@@ -24,7 +24,7 @@ router.get(
 router.post(
   "/",
   asyncHandler(async (req, res) => {
-    const addUserToEventRequest = AddUserToEventRequest.parse(req.body);
+    const addUserToEventRequest = PostEventMemberRequestBody.parse(req.body);
     const result = await db.addUserToEvent(addUserToEventRequest);
     res.send(result);
   })
@@ -33,7 +33,7 @@ router.post(
 router.delete(
   "/",
   asyncHandler(async (req, res) => {
-    const removeUsersFromEventRequest = RemoveUsersFromEventRequest.parse(
+    const removeUsersFromEventRequest = DeleteManyEventMembersRequestBody.parse(
       req.body
     );
     const result = await db.removeUsersFromEvent(removeUsersFromEventRequest);
