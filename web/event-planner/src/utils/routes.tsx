@@ -4,6 +4,8 @@ import ViewEvent from "views/viewEvent";
 import CreateEvent from "views/createEvent";
 import Login from "views/login";
 import Authenticate from "views/authenticate";
+import MyEvents from "views/myEvents";
+import Calendar from "views/calendar";
 import { routes } from "const/routes";
 
 const Router = () => {
@@ -20,14 +22,11 @@ const Router = () => {
     { path: routes.EVENT_ID, element: <ViewEvent /> },
     {
       path: routes.MY_EVENTS,
-      element: user ? (
-        <h1>
-          This is the my events page showing a list of events, and activity
-          history timeline.
-        </h1>
-      ) : (
-        <Navigate to="/login" />
-      ),
+      element: user ? <MyEvents /> : <Navigate to="/login" />,
+    },
+    {
+      path: routes.CALENDAR,
+      element: user ? <Calendar /> : <Navigate to="/login" />,
     },
     {
       path: routes.HOME,

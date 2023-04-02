@@ -17,7 +17,10 @@ const NavBar = () => {
   const stytch = useStytch();
   const { user } = useStytchUser();
 
-  const navigation = [{ name: "My Events", href: routes.HOME, current: false }];
+  const navigation = [
+    { name: "My Events", href: routes.HOME, current: false },
+    { name: "Calendar", href: routes.CALENDAR, current: false },
+  ];
 
   const handleLogout = async () => {
     await stytch.session.revoke();
@@ -165,7 +168,7 @@ const NavBar = () => {
             <div className="relative flex h-16 items-center justify-between lg:border-b lg:border-indigo-400 lg:border-opacity-25">
               {/* Logo icon */}
               <div className="flex items-center px-2 lg:px-0">
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 mr-12 lg:mr-3 md:mr-3">
                   <img
                     className="block h-8 w-8"
                     src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=300"
