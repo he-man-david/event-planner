@@ -14,7 +14,7 @@ export type EventWithAttendeesAndOptionCounts = Event & {
   options: number;
 };
 
-export type EventOptionWithVoteCounts = EventOption & {votes: number};
+export type EventOptionWithVoteCounts = EventOption & { votes: number };
 
 export const CommonGetByEventIdQuery = z.object({
   eventId: UUID,
@@ -84,7 +84,7 @@ export const PostEventMemberRequestBody = z.object({
   userId: UUID,
   eventId: UUID,
 });
-export type PostEventMemberResponse = EventMember;
+export type PostEventMemberResponse = EventMember | null;
 
 export const DeleteManyEventMembersRequestBody = z.object({
   eventMemberIds: z.array(UUID),

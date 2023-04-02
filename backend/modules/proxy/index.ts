@@ -4,7 +4,7 @@ import eventRoutes from "../events";
 import commentRoutes from "../comments";
 import optionsRoutes from "../options";
 import votesRoutes from "../votes";
-import attendeesRoutes from "../attendees";
+import attendeesRoutes from "../members";
 import asyncHandler from "express-async-handler";
 import { PORT } from "./env";
 

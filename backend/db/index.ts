@@ -37,7 +37,9 @@ const toggleEventOptionVote = async (
   }
 };
 
-const addEventComment = async (data: typeof PostEventCommentRequestBody._type) => {
+const addEventComment = async (
+  data: typeof PostEventCommentRequestBody._type
+) => {
   return await prisma.eventComment.create({ data });
 };
 
@@ -77,7 +79,9 @@ const getEventOptions = async (eventId: typeof UUID._type) => {
   return await prisma.eventOption.findMany({ where: { eventId }, take: 20 });
 };
 
-const createEventOptions = async (req: typeof PostEventOptionRequestBody._type) => {
+const createEventOptions = async (
+  req: typeof PostEventOptionRequestBody._type
+) => {
   const optionsData =
     req.options.map((opt) => {
       return {
