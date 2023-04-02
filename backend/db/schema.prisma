@@ -34,7 +34,7 @@ model EventOption {
   eventId String @db.Uuid
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  type String 
+  type String
 
   event   Event @relation(fields: [eventId], references: [id])
   eventOptionVote EventOptionVote[]

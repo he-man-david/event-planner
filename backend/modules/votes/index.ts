@@ -6,10 +6,14 @@ import { ToggleEventOptionVoteRequest, UUID } from "../../types";
 const router = Router();
 
 router.get(
-  "/:eventOptionId",
+  "/",
   asyncHandler(async (req, res) => {
-    const eventOptionId = UUID.parse(req.params.eventOptionId);
-    res.send(await repo.getEventOptionVotes(eventOptionId));
+    if (req.query.eventOptionId) {
+      const eventOptionId = UUID.parse(req.params.eventOptionId);
+      res.send(await repo.getEventOptionVotes(eventOptionId));
+    } else {
+      res.send([]);
+    }
   })
 );
 
