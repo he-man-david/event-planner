@@ -1,8 +1,7 @@
 export const routes = {
   NEW_EVENT: "/new-event",
-  PROFILE: "/profile",
+  MY_EVENTS: "/my-events",
   LOGIN: "/login",
-  ABOUT_US: "/about-us",
   EVENT_ID: "/event/:id",
   AUTH: "/authenticate",
   HOME: "/",

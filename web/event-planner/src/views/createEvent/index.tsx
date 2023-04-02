@@ -14,7 +14,10 @@ const CreateEvent = () => {
   const [editOptionPos, setEditOptionPos] = useState<number>(-1);
 
   const createEvent = () => {
-    // TODO: create the event here
+    // TODO: If user is logged in, create event API.
+    // If not, save to local storage create-event Request body, open Stytch auth
+    // on redirect back, send create-event API.
+    // then route to /event/:id page
   };
 
   const createOption = (option: EventOption) => {
