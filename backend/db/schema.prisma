@@ -19,67 +19,63 @@ model Event {
   createdBy     String          @db.Uuid
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
-  attendees EventAttendee[]
+
+  attendees EventMember[]
   options  EventOption[]
 
-  @@index([createdAt(sort: Desc)])
+  @@index([updatedAt(sort: Desc)])
 }
 
 model EventOption {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-
   title       String
   description String?
   linkPreview Json
-
   eventId String @db.Uuid
-  event   Event @relation(fields: [eventId], references: [id])
-
-  eventOptionVote EventOptionVote[]
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([eventId, createdAt(sort: Desc)])
+  event   Event @relation(fields: [eventId], references: [id])
+  eventOptionVote EventOptionVote[]
+
+  @@index([eventId, updatedAt(sort: Desc)])
+  @@index([updatedAt(sort: Desc)])
 }
 
 model EventOptionVote {
-  eventOption EventOption @relation(fields: [eventOptionId], references: [id])
   eventOptionId String @db.Uuid
+  eventMemberId String @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id])
-  userId        String @db.Uuid
+  eventMember EventMember @relation(fields: [eventMemberId], references: [id])
+  eventOption EventOption @relation(fields: [eventOptionId], references: [id])
 
-  @@id([eventOptionId, userId])
+  @@id([eventOptionId, eventMemberId])
+  @@index([updatedAt(sort: Desc)])
 }
 
 model EventComment {
   eventId   String   @db.Uuid
-  createdAt DateTime @default(now())
   createdBy String   @db.Uuid
   content   String
   id        String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@id([createdAt, eventId])
-  @@index([createdAt(sort: Desc)])
+  @@index([updatedAt(sort: Desc)])
 }
 
-model EventAttendee {
-  event   Event  @relation(fields: [eventId], references: [id])
+model EventMember {
+  id      String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   eventId String @db.Uuid
-  user    User   @relation(fields: [userId], references: [id])
   userId  String @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@id([eventId, userId])
-}
-
-model User {
-  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  username      String
-  profileName   String
-  profileImgUrl String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  eventAttendee EventAttendee[]
+  event   Event  @relation(fields: [eventId], references: [id])
   eventOptionVote EventOptionVote[]
+
+  @@index([eventId, userId, updatedAt(sort: Desc)])
 }

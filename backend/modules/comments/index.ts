@@ -1,7 +1,7 @@
 import { Router } from "express";
 import asyncHandler from "express-async-handler";
-import repo from '../repositories/event_planner';
-import { AddEventCommentRequest, UUID } from "../types";
+import repo from "../../db";
+import { AddEventCommentRequest, UUID } from "../../types";
 
 const router = Router();
 

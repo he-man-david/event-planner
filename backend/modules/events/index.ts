@@ -1,6 +1,6 @@
 import { Router } from "express";
-import eventPlannerRepo from "../repositories/event_planner";
-import { CreateEventRequest, UUID } from "../types";
+import eventPlannerRepo from "../../db";
+import { CreateEventRequest, UUID } from "../../types";
 import asyncHandler from "express-async-handler";
 
 const router = Router();

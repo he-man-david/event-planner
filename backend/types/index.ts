@@ -14,7 +14,7 @@ export const CreateEventOptionRequest = z.object({
 });
 
 export const DeleteEventOptionRequest = z.object({
-  eventOptionId: UUID
+  eventOptionId: UUID,
 });
 
 export const CreateEventRequest = z.object({
@@ -29,15 +29,15 @@ export const AddUserToEventRequest = z.object({
   eventId: UUID,
 });
 
-export const RemoveUsersFromEventRequest = z.object({
-  userIds: z.array(UUID),
-  eventId: UUID,
-  options: z.array(CreateEventOptionRequest).optional(),
-  attendees: z.array(UUID).optional(),
-});
+export const RemoveUsersFromEventRequest = z.array(UUID);
 
 export const AddEventCommentRequest = z.object({
   createdBy: UUID,
   content: z.string(),
   eventId: UUID,
+});
+
+export const ToggleEventOptionVoteRequest = z.object({
+  eventOptionId: UUID,
+  eventMemberId: UUID,
 });
