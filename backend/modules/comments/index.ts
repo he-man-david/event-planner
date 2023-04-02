@@ -6,10 +6,14 @@ import { AddEventCommentRequest, UUID } from "../../types";
 const router = Router();
 
 router.get(
-  "/:eventId",
+  "/",
   asyncHandler(async (req, res) => {
-    const eventId = UUID.parse(req.params.eventId);
-    res.send(await repo.getEventComments(eventId));
+    if (req.query.eventId) {
+      const eventId = UUID.parse(req.query.eventId);
+      res.send(await repo.getEventComments(eventId));
+    } else {
+      res.send([]);
+    }
   })
 );
 

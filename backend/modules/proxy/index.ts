@@ -20,6 +20,7 @@ app.get("/", (_, res) => {
   res.send(true);
 });
 
+// TODO change to memebers
 app.use("/attendees", asyncHandler(attendeesRoutes));
 app.use("/comments", asyncHandler(commentRoutes));
 app.use("/events", asyncHandler(eventRoutes));

@@ -10,10 +10,14 @@ import db from "../../db";
 const router = Router();
 
 router.get(
-  "/:eventId",
+  "/",
   asyncHandler(async (req, res) => {
-    const eventId = UUID.parse(req.params.eventId);
-    res.send(await db.getEventMembers(eventId));
+    if (req.query.eventId) {
+      const eventId = UUID.parse(req.query.eventId);
+      res.send(await db.getEventMembers(eventId));
+    } else {
+      res.send([]);
+    }
   })
 );
 

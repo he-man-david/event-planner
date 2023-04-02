@@ -23,7 +23,7 @@ GET /attendees/:eventId?offset=0&size=20
 POST /attendees <= {eventId, userId}
 DELETE /attendees <= {eventId, userId[]}
 
-GET /options/:eventOption
+GET /options/:eventId?offset=0&size=20
 POST /options <= {}
 PUT /options/:eventOptionsId <= {}
 DELETE /options <= {eventOptionId}

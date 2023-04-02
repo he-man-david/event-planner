@@ -73,6 +73,10 @@ const removeUsersFromEvent = async (
   return result.count;
 };
 
+const getEventOptions = async (eventId: typeof UUID._type) => {
+  return await prisma.eventOption.findMany({ where: { eventId }, take: 20 });
+};
+
 const createEventOptions = async (
   req: typeof CreateEventOptionRequest._type
 ) => {
@@ -144,6 +148,7 @@ export default {
   getEvent,
   addUserToEvent,
   removeUsersFromEvent,
+  getEventOptions,
   createEventOptions,
   deleteEventOption,
   addEventComment,
