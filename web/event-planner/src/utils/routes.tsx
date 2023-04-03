@@ -3,8 +3,9 @@ import { useStytchUser } from "@stytch/react";
 import ViewEvent from "views/viewEvent";
 import CreateEvent from "views/createEvent";
 import Login from "views/login";
-import Profile from "views/profile";
 import Authenticate from "views/authenticate";
+import MyEvents from "views/myEvents";
+import Calendar from "views/calendar";
 import { routes } from "const/routes";
 
 const Router = () => {
@@ -14,30 +15,23 @@ const Router = () => {
   let element = useRoutes([
     {
       path: routes.NEW_EVENT,
-      element: user ? (
-        <CreateEvent />
-      ) : (
-        <Navigate to="/login?next_route=/new-event" />
-      ),
-    },
-    {
-      path: routes.PROFILE,
-      element: user ? (
-        <Profile />
-      ) : (
-        <Navigate to="/login?next_route=/profile" />
-      ),
+      element: <CreateEvent />,
     },
     { path: routes.LOGIN, element: <Login /> },
     { path: routes.AUTH, element: <Authenticate /> },
-    { path: routes.ABOUT_US, element: <h1>This is about-us page</h1> },
     { path: routes.EVENT_ID, element: <ViewEvent /> },
     {
+      path: routes.MY_EVENTS,
+      element: user ? <MyEvents /> : <Navigate to="/login" />,
+    },
+    {
+      path: routes.CALENDAR,
+      element: user ? <Calendar /> : <Navigate to="/login" />,
+    },
+    {
       path: routes.HOME,
-      element: user ? (
-        <h1>This is my-events, home page, show all events</h1>
-      ) : (
-        <Navigate to="/login" />
+      element: (
+        <h1>This is the home page, shows product demo, and some about-us</h1>
       ),
     },
   ]);

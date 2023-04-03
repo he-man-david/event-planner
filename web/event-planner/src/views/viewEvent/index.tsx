@@ -77,7 +77,7 @@ const ViewEvent = () => {
           <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-3 lg:gap-8">
             {/* Left column */}
             <div className="grid grid-cols-1 gap-4 lg:col-span-2">
-              <div className="overflow-hidden rounded-lg bg-white shadow">
+              <div className="overflow-hidden rounded-lg bg-white shadow flex flex-col items-center">
                 <div className="p-6">
                   <UpdateEventBody
                     voteOptions={eventOptions}
@@ -88,7 +88,7 @@ const ViewEvent = () => {
                 </div>
                 <button
                   type="button"
-                  className="relative my-9 inline-flex items-center gap-x-1.5 rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                  className="w-32 my-9 inline-flex items-center gap-x-1.5 rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                   onClick={() => setShowAddOptionForm(true)}
                 >
                   <PlusIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />

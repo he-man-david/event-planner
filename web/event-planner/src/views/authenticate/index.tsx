@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from "react";
 import { useStytch, useStytchUser } from "@stytch/react";
 import { useNavigate } from "react-router-dom";
-import { routesArray } from "const/routes";
+import { routes, routesArray } from "const/routes";
 import LoadingIcon from "components/loadingIcon";
 
 /*
@@ -19,10 +19,11 @@ const Authenticate = () => {
 
   const successRedirect = useCallback(
     (nextRoute: string | null) => {
+      // TODO: call backend /authenticate API nodejs Stych sdk, then redir to next_route
       console.log("redirecting to next_route: ", nextRoute);
       if (nextRoute && routesArray.includes(nextRoute)) {
         navigate(nextRoute);
-      } else if (nextRoute === null) navigate(0);
+      } else if (nextRoute === null) navigate(routes.HOME);
       console.error("Route is illegal! Unable to redirect!");
     },
     [navigate]
