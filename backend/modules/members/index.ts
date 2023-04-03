@@ -19,7 +19,7 @@ const router = Router();
 router.get(
   "/",
   asyncHandler(async (req, res: Response<GetMultipleEventMembersResponse>) => {
-    if (req.query.eventId) {
+    if (req.query) {
       const eventId = UUID.parse(req.query.eventId);
       const result = await db.getEventMembers(eventId);
       res.send({

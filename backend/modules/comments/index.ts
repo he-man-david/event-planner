@@ -1,16 +1,16 @@
 import { Router } from "express";
 import asyncHandler from "express-async-handler";
 import repo from "../../db";
-import { PostEventCommentRequestBody, UUID } from "../../types";
+import { GetMultipleEventCommentsRequestQuery, PostEventCommentRequestBody, UUID } from "../../types";
 
 const router = Router();
 
 router.get(
   "/",
   asyncHandler(async (req, res) => {
-    if (req.query.eventId) {
-      const eventId = UUID.parse(req.query.eventId);
-      res.send(await repo.getEventComments(eventId));
+    if (req.query) {
+      const query = GetMultipleEventCommentsRequestQuery.parse(req.query);
+      res.send(await repo.getEventComments(query.eventId));
     } else {
       res.send([]);
     }
