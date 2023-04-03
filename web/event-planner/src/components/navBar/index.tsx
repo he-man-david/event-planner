@@ -18,7 +18,7 @@ const NavBar = () => {
   const { user } = useStytchUser();
 
   const navigation = [
-    { name: "My Events", href: routes.HOME, current: false },
+    { name: "My Events", href: routes.MY_EVENTS, current: false },
     { name: "Calendar", href: routes.CALENDAR, current: false },
   ];
 
@@ -37,6 +37,18 @@ const NavBar = () => {
       >
         <PlusIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
         New Event
+      </button>
+    ) : null;
+  };
+
+  const loginButton = () => {
+    return location.pathname !== routes.LOGIN ? (
+      <button
+        type="button"
+        className="text-white hover:bg-indigo-500 hover:bg-opacity-75 block rounded-md py-2 px-3 text-base font-medium"
+        onClick={() => navigate(routes.LOGIN)}
+      >
+        Login
       </button>
     ) : null;
   };
@@ -72,7 +84,7 @@ const NavBar = () => {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute right-0 z-10 mt-2 min-w-[200px] origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="absolute right-0 z-10 mt-2 min-w-[230px] origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hover:cursor-pointer">
             <Menu.Item>
               {({ active }) => (
                 <div
@@ -103,7 +115,7 @@ const NavBar = () => {
                   onClick={handleLogout}
                   className={classNames([
                     active ? "bg-gray-100" : "",
-                    "block py-2 px-4 text-sm text-gray-700",
+                    "block py-2 px-4 text-sm text-gray-700 hover:text-red-700",
                   ])}
                 >
                   Log out
@@ -160,7 +172,7 @@ const NavBar = () => {
   return (
     <Disclosure
       as="nav"
-      className="border-b border-indigo-300 border-opacity-25 bg-indigo-600 lg:border-none"
+      className="border-b border-indigo-300 border-opacity-25 bg-indigo-800 lg:border-none"
     >
       {({ open }) => (
         <>
@@ -168,7 +180,7 @@ const NavBar = () => {
             <div className="relative flex h-16 items-center justify-between lg:border-b lg:border-indigo-400 lg:border-opacity-25">
               {/* Logo icon */}
               <div className="flex items-center px-2 lg:px-0">
-                <div className="flex-shrink-0 mr-12 lg:mr-3 md:mr-3">
+                <div className="flex-shrink-0 mr-12 lg:mr-3 md:mr-3 hover:cursor-pointer">
                   <img
                     className="block h-8 w-8"
                     src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=300"
@@ -178,9 +190,9 @@ const NavBar = () => {
                 </div>
                 {newEventButton()}
               </div>
-              {/* Mobile & Ipad menu button ||| or X */}
               {user ? (
                 <>
+                  {/* Mobile & Ipad menu button ||| or X */}
                   <div className="flex lg:hidden">
                     <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-indigo-600 p-2 text-indigo-200 hover:bg-indigo-500 hover:bg-opacity-75 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-600">
                       <span className="sr-only">Open main menu</span>
@@ -206,13 +218,7 @@ const NavBar = () => {
                   </div>
                 </>
               ) : (
-                <button
-                  type="button"
-                  className="text-white hover:bg-indigo-500 hover:bg-opacity-75 block rounded-md py-2 px-3 text-base font-medium"
-                  onClick={() => navigate(routes.LOGIN)}
-                >
-                  Login
-                </button>
+                loginButton()
               )}
             </div>
           </div>
@@ -225,7 +231,6 @@ const NavBar = () => {
               <div className="flex items-center px-5">
                 <div className="flex-shrink-0">{profileImg()}</div>
                 <div className="min-w-0 flex-1 text-left ml-4">
-                  <span className="absolute inset-0" aria-hidden="true" />
                   <p className="text-sm font-medium">
                     {user?.emails.length ? user.emails[0].email : "-"}
                   </p>
@@ -240,7 +245,7 @@ const NavBar = () => {
                 <Disclosure.Button
                   as="span"
                   onClick={handleLogout}
-                  className="block rounded-md py-2 px-3 text-base font-medium text-white hover:bg-indigo-500 hover:bg-opacity-75"
+                  className="block rounded-md py-2 px-3 text-base font-medium text-white hover:bg-indigo-500 hover:bg-opacity-75 hover:cursor-pointer"
                 >
                   Log out
                 </Disclosure.Button>
