@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 import express from "express";
 import { errorHandler, StytchTokenAuth } from "./middleware";
 import eventRoutes from "../events";
