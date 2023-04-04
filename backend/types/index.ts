@@ -58,7 +58,8 @@ export type GetEventResponse = EventWithAttendeesAndOptionData;
 
 export const PostEventRequestBody = z.object({
   title: z.string(),
-  eventStart: z.date().optional(),
+  eventStart: z.date(),
+  eventEnd: z.date(),
   createdBy: z.string().uuid(),
   options: z.array(CommonCreateEventOption).optional(),
 });
