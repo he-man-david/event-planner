@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "db-migrate:dry-run": "npx prisma migrate dev --create-only --schema ./db/schema.prisma",
     "db-migrate:execute": "npx prisma migrate dev --schema ./db/schema.prisma",
-    "dev:start-proxy": "ts-node ./modules/proxy/index.ts"
+    "dev:start": "ts-node ./modules/proxy/index.ts"
   },
   "keywords": [],
   "author": "",

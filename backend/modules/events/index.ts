@@ -2,10 +2,10 @@ import { Response, Router } from "express";
 import eventPlannerRepo from "../../db";
 import {
   GetEventResponse,
-  GetMultipleEventRequestQueryParser,
+  GetMultipleEventsRequestBody,
   GetMultipleEventsResponse,
   PostEventRequestBodyParser,
-  PostEventResponse,
+  EventResponse,
   UUID,
 } from "../../types";
 import asyncHandler from "express-async-handler";
@@ -24,7 +24,7 @@ router.get(
 router.get(
   "/",
   asyncHandler(async (req, res: Response<GetMultipleEventsResponse>) => {
-    const query = GetMultipleEventRequestQueryParser.parse(req.query);
+    const query = GetMultipleEventsRequestBody.parse(req.query);
     const result = await eventPlannerRepo.getMultipleEvent(query);
     res.send(result);
   })
@@ -32,7 +32,7 @@ router.get(
 
 router.post(
   "/",
-  asyncHandler(async (req, res: Response<PostEventResponse>) => {
+  asyncHandler(async (req, res: Response<EventResponse | null>) => {
     const createdEventRequest = PostEventRequestBodyParser.parse(req.body);
     const result = await eventPlannerRepo.createEvent(createdEventRequest);
     res.send(result);

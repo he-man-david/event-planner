@@ -50,33 +50,23 @@ export const PostEventRequestBodyParser = z.object({
   title: z.string(),
   eventStart: z.string(),
   eventEnd: z.string(),
-  createdBy: z.string().uuid(),
+  createdBy: z.string(), // Stytch user-id here is not uuid - user-test-1975b99d-63fd-48ac-93ce-4ebe9bea5a81
   options: z.array(CommonCreateEventOption).optional(),
 });
-// TODO
-// .refine((obj) => {
-//   const eventStart
-//   return (
-//     obj.eventStart.isBefore(obj.eventEnd) && obj.eventStart.isAfter(dayjs())
-//   );
-// });
-export type PostEventRequestBody = typeof PostEventRequestBodyParser._type;
-export type PostEventResponse =
-  | (Event & {
-      attendees: EventMember[];
-      options: EventOption[];
-    })
-  | null;
+export type EventResponse = Event & {
+  attendees: EventMember[];
+  options: EventOption[];
+};
 
-export const GetMultipleEventRequestQueryParser = z.object({
-  eventStartBefore: z.string().optional(), // TODO - validate this
-  eventStartAfter: z.string().optional(), // TODO - validate this
+export const GetMultipleEventsRequestBody = z.object({
+  eventStartBefore: z.string().default(dayjs().toISOString()).optional(),
+  eventStartAfter: z.string().default(dayjs().toISOString()).optional(),
   includeCounts: z.boolean().default(false).optional(),
   offset: z.number().default(0).optional(),
   size: z.number().default(5).optional(),
 });
 export type GetMultipleEventsRequest =
-  typeof GetMultipleEventRequestQueryParser._type;
+  typeof GetMultipleEventMembersRequestQuery._type;
 export type GetMultipleEventsResponse = Page<EventWithAttendeesAndOptionCounts>;
 
 // ***** EventOptions API types *****

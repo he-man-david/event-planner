@@ -8,13 +8,27 @@ import optionsRoutes from "../options";
 import votesRoutes from "../votes";
 import attendeesRoutes from "../members";
 import asyncHandler from "express-async-handler";
-import { PORT } from "./env";
 import cors from "cors";
+import { PORT } from "./env";
+
+const allowedOrigins = ["http://localhost:3000"];
+
+const corsOptions = {
+  origin: function (origin: any, callback: any) {
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+};
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.use(cors(corsOptions));
 
 // Stytch middleware for sessiontoken auth
 app.use(StytchTokenAuth);

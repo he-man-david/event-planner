@@ -9,23 +9,18 @@ import {
   PostEventCommentRequestBody,
   PostEventOptionVoteRequestBody,
   Page,
-  GetMultipleEventRequestQueryParser,
   EventWithAttendeesAndOptionCounts,
   GetEventOptionsRequest,
   EventOptionWithVoteCounts,
   GetMultipleEventCommentsRequestQuery,
   GetMultipleEventMembersRequestQuery,
-  CommonGetByEventIdQueryParser,
   EventWithAttendeesAndOptionData,
+  GetMultipleEventsRequestBody,
+  EventResponse,
 } from "../types";
 import dayjs from "dayjs";
 
 const prisma = new PrismaClient();
-
-export type EventWithAttendeesAndOption = Event & {
-  attendees: EventMember[];
-  options: EventOption[];
-};
 
 function createPage<T>(
   totalCount: number,
@@ -208,7 +203,7 @@ const getEvent = async (
 };
 
 const getMultipleEvent = async (
-  req: typeof GetMultipleEventRequestQueryParser._type
+  req: typeof GetMultipleEventsRequestBody._type
 ): Promise<Page<EventWithAttendeesAndOptionCounts>> => {
   const offset = req.offset ?? 0;
   const where = {
@@ -238,7 +233,7 @@ const getMultipleEvent = async (
 
 const createEvent = async (
   req: typeof PostEventRequestBodyParser._type
-): Promise<EventWithAttendeesAndOption | null> => {
+): Promise<EventResponse | null> => {
   const event = await prisma.event.create({
     data: {
       title: req.title,

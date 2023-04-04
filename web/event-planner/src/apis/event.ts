@@ -1,12 +1,10 @@
 import {
-  PostEventRequestBody,
-  PostEventResponse,
-  GetEventResponse,
+  PostEventRequestBodyParser,
+  EventResponse,
 } from "../../../../backend/types";
 import axios from "axios";
 
-const host = process.env.HOST || "http://localhost:8080";
-const url = host + "/events";
+const url = (process.env.REACT_HOST || "http://localhost:8080") + "/events";
 
 const headers = {
   "Access-Control-Allow-Origin": "*",
@@ -14,12 +12,10 @@ const headers = {
 };
 
 export const CreateEvent = async (
-  req: PostEventRequestBody
-): Promise<PostEventResponse | undefined> => {
+  req: typeof PostEventRequestBodyParser._type
+): Promise<EventResponse | undefined> => {
   try {
-    const res = await axios.post(url, req, {
-      headers,
-    });
+    const res = await axios.post(url, req);
     return res.data;
   } catch (error) {
     console.error(error);
@@ -28,7 +24,7 @@ export const CreateEvent = async (
 
 export const GetEvent = async (
   eventId: string
-): Promise<GetEventResponse | undefined> => {
+): Promise<EventResponse | undefined> => {
   try {
     const res = await axios.get(url + `/${eventId}`, {
       headers,
