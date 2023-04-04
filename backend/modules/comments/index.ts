@@ -1,7 +1,10 @@
 import { Router } from "express";
 import asyncHandler from "express-async-handler";
 import repo from "../../db";
-import { GetMultipleEventCommentsRequestQuery, PostEventCommentRequestBody, UUID } from "../../types";
+import {
+  GetMultipleEventCommentsRequestQuery,
+  PostEventCommentRequestBody,
+} from "../../types";
 
 const router = Router();
 
