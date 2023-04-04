@@ -1,5 +1,7 @@
+require("dotenv").config();
+
 import express from "express";
-import { errorHandler } from "./middleware";
+import { errorHandler, StytchTokenAuth } from "./middleware";
 import eventRoutes from "../events";
 import commentRoutes from "../comments";
 import optionsRoutes from "../options";
@@ -11,6 +13,9 @@ import { PORT } from "./env";
 const app = express();
 
 app.use(express.json());
+
+// Stytch middleware for sessiontoken auth
+app.use(StytchTokenAuth);
 
 // TODO: add stytch middleware here
 // the middleware will contain token validation and provide the userId
