@@ -1,23 +1,39 @@
-import { Router } from "express";
+import { Response, Router } from "express";
 import eventPlannerRepo from "../../db";
-import { PostEventRequestBody, UUID } from "../../types";
+import {
+  GetEventResponse,
+  GetMultipleEventRequestQueryParser,
+  GetMultipleEventsResponse,
+  PostEventRequestBodyParser,
+  PostEventResponse,
+  UUID,
+} from "../../types";
 import asyncHandler from "express-async-handler";
 
 const router = Router();
 
 router.get(
   "/:eventId",
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res: Response<GetEventResponse>) => {
     const eventId = UUID.parse(req.params.eventId);
     const result = await eventPlannerRepo.getEvent(eventId);
     res.send(result);
   })
 );
 
+router.get(
+  "/",
+  asyncHandler(async (req, res: Response<GetMultipleEventsResponse>) => {
+    const query = GetMultipleEventRequestQueryParser.parse(req.query);
+    const result = await eventPlannerRepo.getMultipleEvent(query);
+    res.send(result);
+  })
+);
+
 router.post(
   "/",
-  asyncHandler(async (req, res) => {
-    const createdEventRequest = PostEventRequestBody.parse(req.body);
+  asyncHandler(async (req, res: Response<PostEventResponse>) => {
+    const createdEventRequest = PostEventRequestBodyParser.parse(req.body);
     const result = await eventPlannerRepo.createEvent(createdEventRequest);
     res.send(result);
   })

@@ -3,8 +3,14 @@ import { PlusIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 import EditEventOptionModal from "components/editEventOptionModal";
 import CreateEventBody from "components/createEventBody";
 import { EventOption } from "types";
+import { CreateEvent as CreateEventApi } from "api/event"
+import dayjs from "dayjs";
+import { useStytchUser } from "@stytch/react";
+import { useNavigate } from "react-router-dom";
 
 const CreateEvent = () => {
+  const navigate = useNavigate();
+  const { user } = useStytchUser();
   const [eventTitle, setEventTitle] = useState<string>("");
   const [eventOptions, setEventOptions] = useState<EventOption[]>([]);
   const [showAddOptionForm, setShowAddOptionForm] = useState<boolean>(false);
@@ -18,6 +24,24 @@ const CreateEvent = () => {
     // If not, save to local storage create-event Request body, open Stytch auth
     // on redirect back, send create-event API.
     // then route to /event/:id page
+
+    if (!user) {return; }
+    console.log(user);
+    const today = dayjs();
+    const options = eventOptions.map(opt => {
+      const {desc, linkPreview, ...rest} = opt;
+      return {...rest, link: linkPreview.link, description: desc};
+    })
+    CreateEventApi({ 
+      title: eventTitle, 
+      eventStart: today.add(10, 'day').toISOString(), 
+      eventEnd: today.add(20, 'day').toISOString(),
+      createdBy: user.user_id.replace("user-test-", ""),
+      options
+     }).then(event => {
+        if (!event) { return; }
+        navigate(`../event/${event.id}`);
+     });
   };
 
   const createOption = (option: EventOption) => {

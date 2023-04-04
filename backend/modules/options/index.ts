@@ -1,9 +1,11 @@
-import { Router } from "express";
+import { Response, Router } from "express";
 import asyncHandler from "express-async-handler";
 import {
   PostEventOptionRequestBody,
   DeleteEventOptionRequestBody,
   UUID,
+  GetEventOptionsResponse,
+  GetEventOptionsQueryParser,
 } from "../../types";
 import eventPlannerRepo from "../../db";
 
@@ -11,13 +13,10 @@ const router = Router();
 
 router.get(
   "/",
-  asyncHandler(async (req, res) => {
-    if (req.query.eventId) {
-      const eventId = UUID.parse(req.query.eventId);
-      res.send(await eventPlannerRepo.getEventOptions(eventId));
-    } else {
-      res.send([]);
-    }
+  asyncHandler(async (req, res: Response<GetEventOptionsResponse>) => {
+    const query = GetEventOptionsQueryParser.parse(req.query);
+    const result = await eventPlannerRepo.getEventOptions(query);
+    res.send(result);
   })
 );
 

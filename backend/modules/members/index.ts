@@ -9,31 +9,19 @@ import {
   PostEventMemberResponse,
   DeleteEventOptionResponse,
   DeleteManyEventMembersResponse,
+  GetMultipleEventMembersRequestQuery,
 } from "../../types";
 import db from "../../db";
 import { Response } from "express";
-import { EventMember } from "@prisma/client";
 
 const router = Router();
 
 router.get(
   "/",
   asyncHandler(async (req, res: Response<GetMultipleEventMembersResponse>) => {
-    if (req.query) {
-      const eventId = UUID.parse(req.query.eventId);
-      const result = await db.getEventMembers(eventId);
-      res.send({
-        content: result,
-        pageInfo: {
-          size: result.length,
-          offset: 0,
-          hasNext: false,
-          totalCount: result.length,
-        },
-      });
-    } else {
-      res.send();
-    }
+    const query = GetMultipleEventMembersRequestQuery.parse(req.query);
+    const result = await db.getEventMembers(query);
+    res.send(result);
   })
 );
 
@@ -51,9 +39,7 @@ router.delete(
     const removeUsersFromEventRequest = DeleteManyEventMembersRequestBody.parse(
       req.body
     );
-    res.send(
-      await db.removeUsersFromEvent(removeUsersFromEventRequest.eventMemberIds)
-    );
+    res.send(await db.removeUsersFromEvent(removeUsersFromEventRequest));
   })
 );
 

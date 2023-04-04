@@ -9,6 +9,8 @@ import { EventOptionData } from "mockData";
 import Title from "components/title";
 import EditEventOptionModal from "components/editEventOptionModal";
 import { PlusIcon } from "@heroicons/react/24/outline";
+import { GetEvent } from "api/event";
+import _ from "lodash";
 
 const ViewEvent = () => {
   const [eventOptions, setEventOptions] =
@@ -24,7 +26,25 @@ const ViewEvent = () => {
   const [editOptionPos, setEditOptionPos] = useState<number>(-1);
 
   useEffect(() => {
+    if (!params.id) { return; }
+
     console.log("event_id from param: ", params.id);
+    GetEvent(params.id)
+      .then(event => {
+        if (!event) {
+          return;
+        }
+        
+        setTitle(event.title);
+
+        const options = event.options.map(opt => {
+          // the type don't match so destructure and assign
+          const { description, linkPreview, ...rest} = opt;
+          const link = _.get(linkPreview, 'link') ?? "";
+          return {...opt, desc: description ?? "", linkPreview: { link } }
+        });
+        setEventOptions(options);
+      })
   });
 
   const createOption = (option: EventOption) => {

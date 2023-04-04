@@ -9,9 +9,11 @@ import votesRoutes from "../votes";
 import attendeesRoutes from "../members";
 import asyncHandler from "express-async-handler";
 import { PORT } from "./env";
+import cors from "cors";
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 // Stytch middleware for sessiontoken auth
