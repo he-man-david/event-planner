@@ -2,8 +2,8 @@
 CREATE TABLE "Event" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "title" TEXT NOT NULL,
-    "eventStart" TIMESTAMP(3),
-    "eventEnd" TIMESTAMP(3),
+    "eventStart" TIMESTAMP(3) NOT NULL,
+    "eventEnd" TIMESTAMP(3) NOT NULL,
     "createdBy" UUID NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -58,7 +58,7 @@ CREATE TABLE "EventMember" (
 );
 
 -- CreateIndex
-CREATE INDEX "Event_updatedAt_idx" ON "Event"("updatedAt" DESC);
+CREATE INDEX "Event_updatedAt_eventStart_idx" ON "Event"("updatedAt" DESC, "eventStart" DESC);
 
 -- CreateIndex
 CREATE INDEX "EventOption_eventId_updatedAt_idx" ON "EventOption"("eventId", "updatedAt" DESC);

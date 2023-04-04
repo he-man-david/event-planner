@@ -127,6 +127,8 @@ const createEvent = async (
     data: {
       title: req.title,
       createdBy: req.createdBy,
+      eventStart: req.eventStart,
+      eventEnd: req.eventEnd,
     },
   });
   const optionsData =
