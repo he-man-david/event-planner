@@ -1,3 +1,10 @@
-# event-planner monorepo
+# EventPlanner
 
-A simple event planner app
+# Backend
+
+nx run backend:dbs
+nx run backend:serve
+
+# Webapp
+
+nx run webapp:serve

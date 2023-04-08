@@ -1,0 +1,34 @@
+{
+  "name": "db",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/db/src",
+  "projectType": "library",
+  "targets": {
+    "generate:schema": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx prisma generate --schema libs/db/src/schema.prisma"
+      }
+    },
+    "migrate:dry": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx prisma migrate dev --create-only --schema libs/db/src/schema.prisma"
+      }
+    },
+    "migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx prisma generate --schema libs/db/src/schema.prisma"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/db/**/*.ts"]
+      }
+    }
+  },
+  "tags": []
+}
