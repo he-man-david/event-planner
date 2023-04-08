@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
-import * as db from 'libs/db/src';
-import { PostEventOptionVoteRequestBody, UUID } from 'libs/types/src';
+import * as db from '@event-planner/db';
+import { PostEventOptionVoteRequestBody, UUID } from '@event-planner/types';
 
 const router = Router();
 

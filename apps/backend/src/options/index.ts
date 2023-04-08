@@ -5,8 +5,8 @@ import {
   DeleteEventOptionRequestBody,
   GetEventOptionsResponse,
   GetEventOptionsQueryParser,
-} from 'libs/types/src';
-import * as db from 'libs/db/src';
+} from '@event-planner/types';
+import * as db from '@event-planner/db';
 
 const router = Router();
 

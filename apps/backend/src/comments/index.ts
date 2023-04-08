@@ -1,12 +1,12 @@
 import { Response, Router } from 'express';
 import asyncHandler from 'express-async-handler';
-import * as db from 'libs/db/src';
+import * as db from '@event-planner/db';
 import {
   GetMultipleEventCommentsRequestQuery,
   GetMultipleEventCommentsResponse,
   PostEventCommentRequestBody,
   PostEventCommentResponse,
-} from 'libs/types/src';
+} from '@event-planner/types';
 
 const router = Router();
 

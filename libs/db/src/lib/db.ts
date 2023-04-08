@@ -17,7 +17,7 @@ import {
   EventWithAttendeesAndOptionData,
   GetMultipleEventsRequestBody,
   EventResponse,
-} from 'libs/types/src';
+} from '@event-planner/types';
 import dayjs = require('dayjs');
 
 const prisma = new PrismaClient();

@@ -2,7 +2,9 @@
   "name": "event-planner",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "start:stack": "nx run-many --target serve --projects backend,webapp --parallel 2"
+  },
   "private": true,
   "dependencies": {
     "@headlessui/react": "^1.7.13",

@@ -7,8 +7,8 @@ import {
   PostEventMemberResponse,
   DeleteManyEventMembersResponse,
   GetMultipleEventMembersRequestQuery,
-} from 'libs/types/src';
-import * as db from 'libs/db/src';
+} from '@event-planner/types';
+import * as db from '@event-planner/db';
 import { Response } from 'express';
 
 const router = Router();

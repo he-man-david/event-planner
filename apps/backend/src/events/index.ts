@@ -1,5 +1,5 @@
 import { Response, Router } from 'express';
-import * as db from 'libs/db/src';
+import * as db from '@event-planner/db';
 import {
   GetEventResponse,
   GetMultipleEventsRequestBody,
@@ -7,7 +7,7 @@ import {
   PostEventRequestBodyParser,
   EventResponse,
   UUID,
-} from 'libs/types/src';
+} from '@event-planner/types';
 import asyncHandler from 'express-async-handler';
 
 const router = Router();

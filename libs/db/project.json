@@ -19,7 +19,7 @@
     "migrate": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx prisma generate --schema libs/db/src/schema.prisma"
+        "command": "npx prisma generate --schema libs/db/schema.prisma"
       }
     },
     "lint": {
