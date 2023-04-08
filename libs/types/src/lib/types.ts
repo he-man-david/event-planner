@@ -1,6 +1,6 @@
 import { Event, EventComment, EventMember, EventOption } from '@prisma/client';
 import { z } from 'zod';
-import * as dayjs from 'dayjs';
+import dayjs = require('dayjs');
 
 export const UUID = z.string().uuid();
 

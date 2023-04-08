@@ -7,8 +7,8 @@ const stytchEnv =
     : stytch.envs.live;
 
 const config = {
-  project_id: process.env.STYTCH_PROJECT_ID!,
-  secret: process.env.STYTCH_SECRET!,
+  project_id: process.env.NX_STYTCH_PROJECT_ID,
+  secret: process.env.NX_STYTCH_SECRET,
   env: stytchEnv,
 };
 

@@ -18,7 +18,7 @@ import {
   GetMultipleEventsRequestBody,
   EventResponse,
 } from 'libs/types/src';
-import * as dayjs from 'dayjs';
+import dayjs = require('dayjs');
 
 const prisma = new PrismaClient();
 
