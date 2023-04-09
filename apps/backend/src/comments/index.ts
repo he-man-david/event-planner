@@ -2,26 +2,26 @@ import { Response, Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import * as db from '@event-planner/db';
 import {
-  GetMultipleEventCommentsRequestQuery,
-  GetMultipleEventCommentsResponse,
-  PostEventCommentRequestBody,
-  PostEventCommentResponse,
+  GetEventCommentsRequestParser,
+  GetEventCommentsResponse,
+  CreateEventCommentRequestParser,
+  CreateEventCommentResponse,
 } from '@event-planner/types';
 
 const router = Router();
 
 router.get(
   '/',
-  asyncHandler(async (req, res: Response<GetMultipleEventCommentsResponse>) => {
-    const query = GetMultipleEventCommentsRequestQuery.parse(req.query);
+  asyncHandler(async (req, res: Response<GetEventCommentsResponse>) => {
+    const query = GetEventCommentsRequestParser.parse(req.query);
     res.send(await db.getEventComments(query));
   })
 );
 
 router.post(
   '/',
-  asyncHandler(async (req, res: Response<PostEventCommentResponse>) => {
-    const addEventCommentReq = PostEventCommentRequestBody.parse(req.body);
+  asyncHandler(async (req, res: Response<CreateEventCommentResponse>) => {
+    const addEventCommentReq = CreateEventCommentRequestParser.parse(req.body);
     res.send(await db.addEventComment(addEventCommentReq));
   })
 );

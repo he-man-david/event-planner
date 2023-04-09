@@ -2,9 +2,9 @@ import { Response, Router } from 'express';
 import * as db from '@event-planner/db';
 import {
   GetEventResponse,
-  GetMultipleEventsRequestBody,
-  GetMultipleEventsResponse,
-  PostEventRequestBodyParser,
+  GetEventsRequestParser,
+  GetEventsResponse,
+  CreateEventRequestParser,
   EventResponse,
   UUID,
 } from '@event-planner/types';
@@ -23,8 +23,8 @@ router.get(
 
 router.get(
   '/',
-  asyncHandler(async (req, res: Response<GetMultipleEventsResponse>) => {
-    const query = GetMultipleEventsRequestBody.parse(req.query);
+  asyncHandler(async (req, res: Response<GetEventsResponse>) => {
+    const query = GetEventsRequestParser.parse(req.query);
     const result = await db.getMultipleEvent(query);
     res.send(result);
   })
@@ -33,7 +33,7 @@ router.get(
 router.post(
   '/',
   asyncHandler(async (req, res: Response<EventResponse | null>) => {
-    const createdEventRequest = PostEventRequestBodyParser.parse(req.body);
+    const createdEventRequest = CreateEventRequestParser.parse(req.body);
     const result = await db.createEvent(createdEventRequest);
     res.send(result);
   })

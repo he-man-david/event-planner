@@ -18,16 +18,18 @@ const CreateEvent = () => {
   const { user } = useStytchUser();
 
   const createEvent = () => {
-    // TODO: If user is logged in, create event API.
     // If not, save to local storage create-event Request body, open Stytch auth
     // on redirect back, send create-event API.
     // then route to /event/:id page
-    CreateEventApi({
-      title: eventTitle,
-      eventStart: dayjs().toISOString(),
-      eventEnd: dayjs().add(1, 'day').toISOString(),
-      createdBy: user?.user_id,
-    });
+    if (user) {
+      CreateEventApi({
+        title: eventTitle,
+        eventStart: dayjs().toISOString(),
+        eventEnd: dayjs().add(1, 'day').toISOString(),
+        createdBy: user.user_id,
+        options: eventOptions,
+      });
+    }
   };
 
   const createOption = (option: EventOption) => {

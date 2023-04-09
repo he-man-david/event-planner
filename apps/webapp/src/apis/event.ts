@@ -1,7 +1,4 @@
-import {
-  PostEventRequestBodyParser,
-  EventResponse,
-} from '@event-planner/types/src';
+import { CreateEventRequest, EventResponse } from '@event-planner/types/src';
 import axios from 'axios';
 
 const url = 'http://localhost:8080/events';
@@ -12,7 +9,7 @@ const headers = {
 };
 
 export const CreateEvent = async (
-  req: typeof PostEventRequestBodyParser
+  req: CreateEventRequest
 ): Promise<EventResponse | undefined> => {
   try {
     const res = await axios.post(url, req);

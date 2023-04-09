@@ -1,8 +1,8 @@
 import { Response, Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import {
-  PostEventOptionRequestBody,
-  DeleteEventOptionRequestBody,
+  CreateEventOptionsRequestParser,
+  DeleteEventOptionRequestParser,
   GetEventOptionsResponse,
   GetEventOptionsQueryParser,
 } from '@event-planner/types';
@@ -22,7 +22,9 @@ router.get(
 router.post(
   '/',
   asyncHandler(async (req, res) => {
-    const createEventOptionReq = PostEventOptionRequestBody.parse(req.body);
+    const createEventOptionReq = CreateEventOptionsRequestParser.parse(
+      req.body
+    );
     const result = await db.createEventOptions(createEventOptionReq);
     res.send(result);
   })
@@ -39,7 +41,7 @@ router.put(
 router.delete(
   '/',
   asyncHandler(async (req, res) => {
-    const deleteEventOptionReq = DeleteEventOptionRequestBody.parse(req.body);
+    const deleteEventOptionReq = DeleteEventOptionRequestParser.parse(req.body);
     const result = await db.deleteEventOption(deleteEventOptionReq);
     res.send(result);
   })
