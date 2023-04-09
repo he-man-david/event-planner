@@ -30,9 +30,7 @@ const Router = () => {
     },
     {
       path: routes.HOME,
-      element: (
-        <h1>This is the home page, shows product demo, and some about-us</h1>
-      ),
+      element: <Navigate to={routes.MY_EVENTS} />,
     },
   ]);
 
