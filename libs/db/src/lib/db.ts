@@ -1,22 +1,23 @@
 import { EventMember, PrismaClient } from '@prisma/client';
 import {
-  PostEventRequestBodyParser,
-  PostEventMemberRequestBody,
+  CreateEventRequestParser,
+  CreateEventMemberRequestParser,
   UUID,
-  DeleteManyEventMembersRequestBody,
-  PostEventOptionRequestBody,
-  DeleteEventOptionRequestBody,
-  PostEventCommentRequestBody,
-  PostEventOptionVoteRequestBody,
+  DeleteEventMembersRequestParser,
+  CreateEventOptionsRequestParser,
+  DeleteEventOptionRequestParser,
+  CreateEventCommentRequestParser,
+  CreateEventOptionVoteRequestParser,
   Page,
   EventWithAttendeesAndOptionCounts,
   GetEventOptionsRequest,
   EventOptionWithVoteCounts,
-  GetMultipleEventCommentsRequestQuery,
-  GetMultipleEventMembersRequestQuery,
+  GetEventCommentsRequestParser,
+  GetEventMembersRequestParser,
   EventWithAttendeesAndOptionData,
-  GetMultipleEventsRequestBody,
+  GetEventsRequestParser,
   EventResponse,
+  EventOptionBody,
 } from '@event-planner/types';
 import dayjs = require('dayjs');
 
@@ -47,7 +48,7 @@ export const getEventOptionVotes = async (eventOptionId: typeof UUID._type) => {
 };
 
 export const toggleEventOptionVote = async (
-  data: typeof PostEventOptionVoteRequestBody._type
+  data: typeof CreateEventOptionVoteRequestParser._type
 ) => {
   try {
     return await prisma.eventOptionVote.delete({
@@ -61,13 +62,13 @@ export const toggleEventOptionVote = async (
 };
 
 export const addEventComment = async (
-  data: typeof PostEventCommentRequestBody._type
+  data: typeof CreateEventCommentRequestParser._type
 ) => {
   return await prisma.eventComment.create({ data });
 };
 
 export const getEventComments = async (
-  req: typeof GetMultipleEventCommentsRequestQuery._type
+  req: typeof GetEventCommentsRequestParser._type
 ) => {
   const offset = req.offset;
   const where = {
@@ -83,7 +84,7 @@ export const getEventComments = async (
 };
 
 export const getEventMembers = async (
-  req: typeof GetMultipleEventMembersRequestQuery._type
+  req: typeof GetEventMembersRequestParser._type
 ) => {
   const offset = req.offset;
   const where = {
@@ -99,13 +100,13 @@ export const getEventMembers = async (
 };
 
 export const addUserToEvent = async (
-  data: typeof PostEventMemberRequestBody._type
+  data: typeof CreateEventMemberRequestParser._type
 ): Promise<EventMember | null> => {
   return await prisma.eventMember.create({ data });
 };
 
 export const removeUsersFromEvent = async (
-  req: typeof DeleteManyEventMembersRequestBody._type
+  req: typeof DeleteEventMembersRequestParser._type
 ) => {
   const result = await prisma.eventMember.deleteMany({
     where: {
@@ -144,22 +145,22 @@ export const getEventOptions = async (
 };
 
 export const createEventOptions = async (
-  req: typeof PostEventOptionRequestBody._type
+  req: typeof CreateEventOptionsRequestParser._type
 ) => {
   const optionsData =
-    req.options.map((opt) => {
+    req.options.map((opt: EventOptionBody) => {
       return {
         eventId: req.eventId,
         title: opt.title,
         description: opt.description,
-        linkPreview: { link: opt.link },
+        linkPreview: opt.linkPreview,
       };
     }) || [];
   return await prisma.eventOption.createMany({ data: optionsData });
 };
 
 export const deleteEventOption = async (
-  req: typeof DeleteEventOptionRequestBody._type
+  req: typeof DeleteEventOptionRequestParser._type
 ) => {
   return await prisma.eventOption.delete({ where: { id: req.eventOptionId } });
 };
@@ -203,7 +204,7 @@ export const getEvent = async (
 };
 
 export const getMultipleEvent = async (
-  req: typeof GetMultipleEventsRequestBody._type
+  req: typeof GetEventsRequestParser._type
 ): Promise<Page<EventWithAttendeesAndOptionCounts>> => {
   const offset = req.offset ?? 0;
   const where = {
@@ -232,7 +233,7 @@ export const getMultipleEvent = async (
 };
 
 export const createEvent = async (
-  req: typeof PostEventRequestBodyParser._type
+  req: typeof CreateEventRequestParser._type
 ): Promise<EventResponse | null> => {
   const event = await prisma.event.create({
     data: {
@@ -243,12 +244,12 @@ export const createEvent = async (
     },
   });
   const optionsData =
-    req.options?.map((opt) => {
+    req.options?.map((opt: EventOptionBody) => {
       return {
         eventId: event.id,
         title: opt.title,
         description: opt.description,
-        linkPreview: { link: opt.link },
+        linkPreview: opt.linkPreview,
       };
     }) || [];
   await prisma.eventOption.createMany({ data: optionsData });
