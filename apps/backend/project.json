@@ -37,12 +37,6 @@
         }
       }
     },
-    "dbs": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "docker compose -f apps/backend/docker-compose.yml up -d"
-      }
-    },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
