@@ -5,7 +5,7 @@
   "scripts": {
     "db:migrate:dry": "npx prisma migrate dev --create-only --schema ./libs/db/src/schema.prisma",
     "db:migrate": "npx prisma migrate dev --schema ./libs/db/src/schema.prisma",
-    "start": "nx run db:stack && nx run-many --target serve --projects backend,webapp --parallel 2"
+    "start": "nx run db:docker && npm run db:migrate && nx run-many --target serve --projects backend,webapp --parallel 2"
   },
   "private": true,
   "dependencies": {
