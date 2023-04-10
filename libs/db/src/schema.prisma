@@ -19,6 +19,8 @@ model Event {
   createdBy     String          
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
+  eventOptionId String?         @db.Uuid
+  planned       Boolean         @default(false)
 
   attendees EventMember[]
   options  EventOption[]
