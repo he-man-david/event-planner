@@ -14,6 +14,7 @@ datasource db {
 model Event {
   id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title         String
+  description   String          @default("")
   eventStart    DateTime
   eventEnd      DateTime
   createdBy     String          
@@ -22,7 +23,7 @@ model Event {
   eventOptionId String?         @db.Uuid
   planned       Boolean         @default(false)
 
-  attendees EventMember[]
+  members EventMember[]
   options  EventOption[]
 
   @@index([updatedAt(sort: Desc), eventStart(sort: Desc)])

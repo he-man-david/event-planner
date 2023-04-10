@@ -14,7 +14,7 @@ import {
   EventOptionWithVoteCounts,
   GetEventCommentsRequestParser,
   GetEventMembersRequestParser,
-  EventWithAttendeesAndOptionData,
+  EventWithMembersAndOptionData,
   GetEventsRequestParser,
   EventResponse,
   EventOptionBody,
@@ -167,13 +167,13 @@ export const deleteEventOption = async (
 
 export const getEvent = async (
   eventId: typeof UUID._type
-): Promise<EventWithAttendeesAndOptionData | null> => {
+): Promise<EventWithMembersAndOptionData | null> => {
   const event = await prisma.event.findFirst({
     where: {
       id: eventId,
     },
     include: {
-      attendees: {
+      members: {
         skip: 0,
         take: 10,
       },
@@ -203,7 +203,7 @@ export const getEvent = async (
   return { ...rest, options: mappedOptions };
 };
 
-export const getMultipleEvent = async (
+export const getEvents = async (
   req: typeof GetEventsRequestParser._type
 ): Promise<Page<EventWithAttendeesAndOptionCounts>> => {
   const offset = req.offset ?? 0;
@@ -222,12 +222,12 @@ export const getMultipleEvent = async (
     where,
     skip: offset,
     take: req.size,
-    include: { _count: { select: { attendees: true, options: true } } },
+    include: { _count: { select: { members: true, options: true } } },
   });
 
   const mappedContent = content.map((row) => {
     const { _count, ...event } = row;
-    return { ...event, attendees: _count.attendees, options: _count.options };
+    return { ...event, members: _count.members, options: _count.options };
   });
   return createPage(totalCount, offset, mappedContent);
 };
