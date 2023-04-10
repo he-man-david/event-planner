@@ -5,6 +5,8 @@ import {
   DeleteEventOptionRequestParser,
   GetEventOptionsResponse,
   GetEventOptionsQueryParser,
+  UUID,
+  UpdateEventOptionRequestParser,
 } from '@event-planner/types';
 import * as db from '@event-planner/db';
 
@@ -31,10 +33,12 @@ router.post(
 );
 
 router.put(
-  '/',
+  '/:eventOptionId',
   asyncHandler(async (req, res) => {
-    res.status(500);
-    res.send('Not implemented yet!');
+    const id = UUID.parse(req.params.eventOptionId);
+    const data = UpdateEventOptionRequestParser.parse(req.body);
+    const result = db.updateEventOption(id, data);
+    res.send(result);
   })
 );
 

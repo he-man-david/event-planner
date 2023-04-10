@@ -31,3 +31,11 @@ export const DeleteEventOptionRequestParser = z.object({
 export type DeleteEventOptionRequest =
   typeof DeleteEventOptionRequestParser._type;
 export type DeleteEventOptionResponse = boolean;
+
+export const UpdateEventOptionRequestParser = z.object({
+  title: z.string().optional(),
+  description: z.string().optional(),
+  LinkPreviewParam: LinkPreviewParam.optional()
+})
+export type UpdateEventOptionRequest = typeof UpdateEventOptionRequestParser._type;
+export type UpdateEventOptionResponse = EventOptionWithVoteCounts;
