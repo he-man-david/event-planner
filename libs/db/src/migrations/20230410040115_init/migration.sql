@@ -2,6 +2,7 @@
 CREATE TABLE "Event" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL DEFAULT '',
     "eventStart" TIMESTAMP(3) NOT NULL,
     "eventEnd" TIMESTAMP(3) NOT NULL,
     "createdBy" TEXT NOT NULL,

@@ -4,7 +4,7 @@ import eventRoutes from './events';
 import commentRoutes from './comments';
 import optionsRoutes from './options';
 import votesRoutes from './votes';
-import attendeesRoutes from './members';
+import membersRoutes from './members';
 import asyncHandler from 'express-async-handler';
 import cors from 'cors';
 import { PORT } from './env';
@@ -25,7 +25,6 @@ const corsOptions = {
 
 const app = express();
 
-app.use(cors());
 app.use(express.json());
 
 app.use(cors(corsOptions));
@@ -33,16 +32,13 @@ app.use(cors(corsOptions));
 // Stytch middleware for sessiontoken auth
 app.use(StytchTokenAuth);
 
-// TODO: add stytch middleware here
-// the middleware will contain token validation and provide the userId
-
 // health check endpoint
 app.get('/', (_, res) => {
   res.send(true);
 });
 
 // TODO change to memebers
-app.use('/attendees', asyncHandler(attendeesRoutes));
+app.use('/members', asyncHandler(membersRoutes));
 app.use('/comments', asyncHandler(commentRoutes));
 app.use('/events', asyncHandler(eventRoutes));
 app.use('/options', asyncHandler(optionsRoutes));

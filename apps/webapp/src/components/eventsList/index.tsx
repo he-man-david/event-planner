@@ -1,7 +1,7 @@
 import { CalendarIcon, UsersIcon } from "@heroicons/react/24/outline";
-import { EventsListParam } from "./types";
+import { EventWithAttendeesAndOptionCounts } from "@event-planner/types/src";
 
-const EventsList = ({ data }: EventsListParam) => {
+const EventsList = ({ data }: { data: EventWithAttendeesAndOptionCounts[]}) => {
   return (
     <div className="overflow-hidden bg-white shadow sm:rounded-md">
       <ul className="divide-y divide-gray-200">
@@ -9,11 +9,11 @@ const EventsList = ({ data }: EventsListParam) => {
           ({
             id,
             title,
-            desc,
-            startTime,
-            endTime,
-            memberCount,
-            isInProgress,
+            description,
+            eventStart,
+            eventEnd,
+            members: memberCount,
+            planned: isPlanned,
           }) => (
             <li key={id}>
               <a className="block hover:bg-gray-50" href={`/event/${id}`}>
@@ -22,7 +22,7 @@ const EventsList = ({ data }: EventsListParam) => {
                     <p className="truncate text-sm font-medium text-indigo-600">
                       {title}
                     </p>
-                    {isInProgress && (
+                    {isPlanned && (
                       <div className="ml-2 flex flex-shrink-0">
                         <p className="inline-flex rounded-full bg-yellow-100 px-2 text-xs font-semibold leading-5 text-yellow-800">
                           Planning
@@ -31,7 +31,7 @@ const EventsList = ({ data }: EventsListParam) => {
                     )}
                   </div>
                   <p className="truncate text-left text-gray-500 lg:w-full lg:mt-4 w-64 mt-2">
-                    {desc}
+                    {description}
                   </p>
                   <div className="mt-3 sm:flex sm:justify-between">
                     <div className="flex items-center text-sm text-gray-500">
@@ -46,7 +46,7 @@ const EventsList = ({ data }: EventsListParam) => {
                         className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                         aria-hidden="true"
                       />
-                      <p>{startTime + " - " + endTime}</p>
+                      <p>{eventStart + " - " + eventEnd}</p>
                     </div>
                   </div>
                 </div>

@@ -5,9 +5,10 @@ import CreateEventBody from 'components/createEventBody';
 import { useStytchUser } from '@stytch/react';
 import { EventOption } from 'types';
 import { CreateEvent as CreateEventApi } from 'apis/event';
-import dayjs from 'utils/day';
+import { useNavigate } from "react-router-dom";
 
 const CreateEvent = () => {
+  const navigate = useNavigate();
   const [eventTitle, setEventTitle] = useState<string>('');
   const [eventOptions, setEventOptions] = useState<EventOption[]>([]);
   const [showAddOptionForm, setShowAddOptionForm] = useState<boolean>(false);
@@ -24,11 +25,12 @@ const CreateEvent = () => {
     if (user) {
       CreateEventApi({
         title: eventTitle,
-        eventStart: dayjs().toISOString(),
-        eventEnd: dayjs().add(1, 'day').toISOString(),
         createdBy: user.user_id,
         options: eventOptions,
-      });
+      }).then(event => {
+        if (!event) { return; }
+        navigate(`../event/${event.id}`);
+     });
     }
   };
 
