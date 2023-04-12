@@ -10,18 +10,17 @@ const headers = {
 
 export const CreateEvent = async (
   req: CreateEventRequest
-): Promise<EventResponse | undefined> => {
+): Promise<EventResponse> => {
   try {
     const res = await axios.post(url, req);
     return res.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
-export const GetEvent = async (
-  eventId: string
-): Promise<EventResponse | undefined> => {
+export const GetEvent = async (eventId: string): Promise<EventResponse> => {
   try {
     const res = await axios.get(url + `/${eventId}`, {
       headers,
@@ -29,5 +28,6 @@ export const GetEvent = async (
     return res.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };

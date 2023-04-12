@@ -1,4 +1,4 @@
-import { EventOption } from 'types';
+import { EventOption } from '@event-planner/types/src';
 
 export interface UpdateEventBodyParam {
   voteOptions: EventOption[];
