@@ -1,5 +1,5 @@
-import { EventOption } from '@prisma/client';
-import { LinkPreviewParam, UUID, Page } from './common';
+import { EventOption as _EventOption } from '@prisma/client';
+import { LinkPreviewParam, LinkPreviewParamType, UUID, Page } from './common';
 import { z } from 'zod';
 
 type EventOptionWithVoteCounts = EventOption & { votes: number };
@@ -18,6 +18,11 @@ export const EventOptionBodyParser = z.object({
   linkPreview: LinkPreviewParam,
 });
 export type EventOptionBody = typeof EventOptionBodyParser._type;
+export type EventOption = _EventOption & {
+  linkPreview: LinkPreviewParamType;
+  votes?: number;
+  voted?: boolean;
+};
 
 export const CreateEventOptionsRequestParser = z.object({
   eventId: UUID,

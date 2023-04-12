@@ -5,7 +5,7 @@ import {
 import { classNames } from 'utils/common';
 import LinkPreview from 'components/linkPreview';
 import { UpdateEventBodyParam } from './types';
-import { EventOption } from 'types';
+import { EventOption } from '@event-planner/types/src';
 import { Menu, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 
@@ -35,7 +35,7 @@ const UpdateEventBody = ({
   return (
     <ul className="grid grid-cols-1 gap-6 sm:grid-cols-1 md:grid-cols-2">
       {voteOptions.map(
-        ({ id, title, linkPreview, desc, votes, voted }, idx) => (
+        ({ id, title, linkPreview, description, votes, voted }, idx) => (
           <li
             key={title + id}
             className={classNames([
@@ -96,10 +96,26 @@ const UpdateEventBody = ({
               </div>
               <h3 className="text-md font-medium text-gray-900">{title}</h3>
               <div className="mt-1 flex flex-grow flex-col">
-                <p className="text-md text-gray-500 pb-3">{desc}</p>
+                <p className="text-md text-gray-500 pb-3">{description}</p>
                 {linkPreview.imageUrl ? (
-                  <LinkPreview {...linkPreview} />
+                  <LinkPreview
+                    title={linkPreview.title}
+                    desc={linkPreview.desc}
+                    link={linkPreview.link}
+                    imageUrl={linkPreview.imageUrl}
+                  />
                 ) : (
+                  /**
+                   Prisma & ZOD type conflicts
+                   
+                   Spread types may only be created from object types.ts(2698)
+                      (parameter) linkPreview: Prisma.JsonValue & {
+                          link: string;
+                          title?: string | undefined;
+                          desc?: string | undefined;
+                          imageUrl?: string | undefined;
+                      }
+                   */
                   <a
                     href={linkPreview.link}
                     target="_blank"

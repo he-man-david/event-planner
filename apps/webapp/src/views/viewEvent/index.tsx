@@ -1,52 +1,53 @@
 import { useState, useEffect } from 'react';
 import UpdateEventBody from 'components/updateEventBody';
-import { EventOption } from 'types';
 import Comments from 'components/comments';
 import NewComment from 'components/newComment';
 import { useParams } from 'react-router-dom';
 import MembersModal from 'components/membersModal';
-import { EventOptionData } from 'mockData';
 import Title from 'components/title';
 import EditEventOptionModal from 'components/editEventOptionModal';
 import { PlusIcon } from '@heroicons/react/24/outline';
+import { EventResponse, EventOption } from '@event-planner/types/src';
 import { GetEvent } from 'apis/event';
-import _ from 'lodash';
 
 const ViewEvent = () => {
-  const [eventOptions, setEventOptions] =
-    useState<EventOption[]>(EventOptionData);
+  const [title, setTitle] = useState<string>('');
+  const [eventOptions, setEventOptions] = useState<EventOption[]>([]);
   const params = useParams();
-  const [title, setTitle] = useState<string>(
-    'Where do we want to stay in Vegas?'
-  );
   const [showAddOptionForm, setShowAddOptionForm] = useState<boolean>(false);
   const [editOptionInfo, setEditOptionInfo] = useState<EventOption | null>(
     null
   );
   const [editOptionPos, setEditOptionPos] = useState<number>(-1);
+  const queryParams = new URLSearchParams(window.location.search);
+  const cached = queryParams.get('cached');
 
   useEffect(() => {
-    if (!params.id) {
-      return;
-    }
-
-    console.log('event_id from param: ', params.id);
-    GetEvent(params.id).then((event) => {
-      if (!event) {
-        return;
+    if (params.id) {
+      console.log('event_id from param: ', params.id);
+      if (cached) {
+        const cachedEvent = localStorage.getItem(`event-${params.id}`);
+        if (cachedEvent) {
+          const event: EventResponse = JSON.parse(cachedEvent);
+          setTitle(event.title);
+          // TODO: Smart solution needed... Our request/response is mix of Prisma and Zod, and they have conflicts.
+          setEventOptions(event.options as any as EventOption[]);
+          return;
+        }
       }
 
-      setTitle(event.title);
+      GetEvent(params.id)
+        .then((event: EventResponse) => {
+          setTitle(event.title);
+          setEventOptions(event.options as any as EventOption[]);
+        })
+        .catch((err) => console.error(err));
+    }
+  }, [params.id, cached]);
 
-      const options = event.options.map((opt: any) => {
-        // the type don't match so destructure and assign
-        const { description, linkPreview, ...rest } = opt;
-        const link = _.get(linkPreview, 'link') ?? '';
-        return { ...opt, desc: description ?? '', linkPreview: { link } };
-      });
-      setEventOptions(options);
-    });
-  });
+  if (!params.id) {
+    return <h1 className="text-slate-200 mx-auto">404 Event Not Found</h1>;
+  }
 
   const createOption = (option: EventOption) => {
     // TODO:

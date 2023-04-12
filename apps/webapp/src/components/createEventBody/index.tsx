@@ -36,7 +36,7 @@ const CreateEventBody = ({
             key={title + id}
             className={classNames([
               voted ? 'border-indigo-600 border-2' : 'border',
-              'col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow  max-w-sm',
+              ' w-80 col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow',
             ])}
           >
             <div className="flex flex-1 flex-col p-8">
