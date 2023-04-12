@@ -3,13 +3,13 @@ import { z } from 'zod';
 
 export const UUID = z.string().uuid();
 
-export type EventWithAttendeesAndOptionData = Event & {
-  attendees: EventMember[];
+export type EventWithMembersAndOptionData = Event & {
+  members: EventMember[];
   options: EventOptionWithVoteCounts[];
 };
 
 export type EventWithAttendeesAndOptionCounts = Event & {
-  attendees: number;
+  members: number;
   options: number;
 };
 

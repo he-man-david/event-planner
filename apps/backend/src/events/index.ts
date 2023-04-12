@@ -25,7 +25,7 @@ router.get(
   '/',
   asyncHandler(async (req, res: Response<GetEventsResponse>) => {
     const query = GetEventsRequestParser.parse(req.query);
-    const result = await db.getMultipleEvent(query);
+    const result = await db.getEvents(query);
     res.send(result);
   })
 );

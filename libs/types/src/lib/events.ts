@@ -1,11 +1,11 @@
 import { Event, EventMember, EventOption } from '@prisma/client';
 import { EventOptionBodyParser } from './eventOptions';
-import { Page, UUID, EventOptionWithVoteCounts } from './common';
+import { Page, UUID, EventOptionWithVoteCounts, EventWithAttendeesAndOptionCounts, EventWithMembersAndOptionData } from './common';
 import { z } from 'zod';
 import dayjs = require('dayjs');
 
 export type EventResponse = Event & {
-  attendees: EventMember[];
+  members: EventMember[];
   options: EventOption[];
 };
 
@@ -13,34 +13,35 @@ export type EventResponse = Event & {
 export const GetEventRequestParser = UUID;
 export type GetEventRequest = typeof GetEventRequestParser._type;
 export type GetEventResponse =
-  | (Event & {
-      attendees: EventMember[];
-      options: EventOptionWithVoteCounts[];
-    })
+  | EventWithMembersAndOptionData
   | null;
 
 // CREATE event
-export const CreateEventRequestParser = z.object({
-  title: z.string(),
-  eventStart: z.string(),
-  eventEnd: z.string(),
-  createdBy: z.string(), // Stytch user-id here is not uuid - user-test-1975b99d-63fd-48ac-93ce-4ebe9bea5a81
-  options: z.array(EventOptionBodyParser).optional(),
-});
-export type CreateEventRequest = typeof CreateEventRequestParser._type;
+const IsoDateTimeParser = z.preprocess(
+    (arg) => dayjs(String(arg)).toISOString(),
+    z.string().datetime()
+  );
+
+export const CreateEventRequestParser = z
+  .object({
+    title: z.string(),
+    eventStart: IsoDateTimeParser.default(dayjs().day(7).toISOString()),
+    eventEnd: IsoDateTimeParser.default(dayjs().day(14).toISOString()),
+    createdBy: z.string(), // Stytch user-id here is not uuid - user-test-1975b99d-63fd-48ac-93ce-4ebe9bea5a81
+    options: z.array(EventOptionBodyParser).optional(),
+  })
+  .refine(({ eventStart, eventEnd }) => eventStart && eventEnd && eventStart < eventEnd, {
+    message: "Event Start and Event End dates are invalid! They can't be empty and start must be less than end."
+  });
+export type CreateEventRequest = typeof CreateEventRequestParser._input;
 
 // GET events
 export const GetEventsRequestParser = z.object({
-  eventStartBefore: z.string().default(dayjs().toISOString()).optional(),
-  eventStartAfter: z.string().default(dayjs().toISOString()).optional(),
-  includeCounts: z.boolean().default(false).optional(),
-  offset: z.number().default(0).optional(),
-  size: z.number().default(5).optional(),
+  eventStartBefore: z.string().optional(),
+  eventStartAfter: z.string().optional(),
+  includeCounts: z.preprocess(Boolean, z.boolean()).default(false).optional(),
+  offset: z.preprocess(Number, z.number()).default(0).optional(),
+  size: z.preprocess(Number, z.number()).default(5).optional(),
 });
 export type GetEventsRequest = typeof GetEventsRequestParser._type;
-export type GetEventsResponse = Page<
-  Event & {
-    attendees: number;
-    options: number;
-  }
->;
+export type GetEventsResponse = Page<EventWithAttendeesAndOptionCounts>;

@@ -4,13 +4,6 @@
   "sourceRoot": "libs/db/src",
   "projectType": "library",
   "targets": {
-    "stack": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["nx run db:docker", "nx run db:generate:schema", "nx run db:migrate"],
-        "parallel": false
-      }
-    },
     "docker": {
       "executor": "nx:run-commands",
       "options": {
@@ -18,18 +11,6 @@
       }
     },
     "generate:schema": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "npx prisma generate --schema libs/db/src/schema.prisma"
-      }
-    },
-    "migrate:dry": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "npx prisma migrate dev --create-only --schema libs/db/src/schema.prisma"
-      }
-    },
-    "migrate": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx prisma generate --schema libs/db/src/schema.prisma"
