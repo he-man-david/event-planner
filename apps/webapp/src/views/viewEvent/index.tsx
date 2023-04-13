@@ -27,8 +27,8 @@ const ViewEvent = () => {
       console.log('event_id from param: ', params.id);
       if (cached) {
         const cachedEvent = localStorage.getItem(`event-${params.id}`);
-        if (cachedEvent) {
-          const event: EventResponse = JSON.parse(cachedEvent);
+        const event: EventResponse = JSON.parse(cachedEvent || '{}');
+        if (event) {
           setTitle(event.title);
           // TODO: Smart solution needed... Our request/response is mix of Prisma and Zod, and they have conflicts.
           setEventOptions(event.options as any as EventOption[]);
@@ -38,6 +38,10 @@ const ViewEvent = () => {
 
       GetEvent(params.id)
         .then((event: EventResponse) => {
+          if (!event) {
+            // Maybe 404 if event not found?
+            throw new Error(`Event not found - ${params.id}!`);
+          }
           setTitle(event.title);
           setEventOptions(event.options as any as EventOption[]);
         })

@@ -1,14 +1,14 @@
-import * as stytch from "stytch";
-import { z } from "zod";
+import * as stytch from 'stytch';
+import { z } from 'zod';
 
 const stytchEnv =
-  process.env.ENVIRONMENT === "development"
+  process.env.ENVIRONMENT === 'development'
     ? stytch.envs.test
     : stytch.envs.live;
 
 const config = {
-  project_id: process.env.NX_STYTCH_PROJECT_ID || "",
-  secret: process.env.NX_STYTCH_SECRET || "",
+  project_id: process.env.NX_STYTCH_PROJECT_ID || '',
+  secret: process.env.NX_STYTCH_SECRET || '',
   env: stytchEnv,
 };
 
@@ -23,7 +23,7 @@ export const errorHandler = (err: any, req: any, res: any, next: any) => {
     return;
   }
 
-  res.status(500).send("Internal Server!");
+  res.status(500).send('Internal Server!');
 };
 
 export const StytchTokenAuth = async (

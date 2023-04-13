@@ -1,13 +1,19 @@
-import { ArrowUpRightIcon } from "@heroicons/react/24/outline";
-import { LinkPreviewParam } from "./types";
+import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 
-const LinkPreview = ({ title, desc, link, imageUrl }: LinkPreviewParam) => {
+import { EventOption } from '@prisma/client';
+
+const LinkPreview = ({
+  linkPreviewTitle: title,
+  linkPreviewDesc: desc,
+  linkUrl: link,
+  linkPreviewImgUrl: imageUrl,
+}: EventOption) => {
   return (
     <div className="w-full group relative">
       <div className="aspect-w-4 aspect-h-3 overflow-hidden rounded-lg bg-gray-100">
         <img
-          src={imageUrl}
-          alt={title}
+          src={imageUrl || ''}
+          alt={title || 'No image url'}
           className="object-cover object-center"
         />
         <div

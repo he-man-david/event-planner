@@ -6,39 +6,42 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("NX_DATABASE_URL")
+  provider     = "postgresql"
+  url          = env("NX_DATABASE_URL")
   relationMode = "foreignKeys"
 }
 
 model Event {
-  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title         String
-  description   String          @default("")
+  description   String   @default("")
   eventStart    DateTime
   eventEnd      DateTime
-  createdBy     String          
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  eventOptionId String?         @db.Uuid
-  planned       Boolean         @default(false)
+  createdBy     String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  eventOptionId String?  @db.Uuid
+  planned       Boolean  @default(false)
 
   members EventMember[]
-  options  EventOption[]
+  options EventOption[]
 
   @@index([updatedAt(sort: Desc), eventStart(sort: Desc)])
 }
 
 model EventOption {
-  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title       String
-  description String?
-  linkPreview Json
-  eventId String @db.Uuid
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  event   Event @relation(fields: [eventId], references: [id])
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title             String
+  description       String?
+  linkUrl           String
+  linkPreviewTitle  String?
+  linkPreviewImgUrl String?
+  linkPreviewDesc   String?
+  eventId           String   @db.Uuid
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  event           Event             @relation(fields: [eventId], references: [id])
   eventOptionVote EventOptionVote[]
 
   @@index([eventId, updatedAt(sort: Desc)])
@@ -46,10 +49,10 @@ model EventOption {
 }
 
 model EventOptionVote {
-  eventOptionId String @db.Uuid
-  eventMemberId String @db.Uuid
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  eventOptionId String   @db.Uuid
+  eventMemberId String   @db.Uuid
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   eventMember EventMember @relation(fields: [eventMemberId], references: [id])
   eventOption EventOption @relation(fields: [eventOptionId], references: [id])
@@ -71,13 +74,13 @@ model EventComment {
 }
 
 model EventMember {
-  id      String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  eventId String @db.Uuid
-  userId  String 
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventId   String   @db.Uuid
+  userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  event   Event  @relation(fields: [eventId], references: [id])
+  event           Event             @relation(fields: [eventId], references: [id])
   eventOptionVote EventOptionVote[]
 
   @@index([eventId, userId, updatedAt(sort: Desc)])

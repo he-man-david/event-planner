@@ -3,11 +3,11 @@ import EventsList from 'components/eventsList';
 import { classNames } from 'utils/common';
 import { GetEvents } from 'apis/event';
 import dayjs from 'dayjs';
-import { EventWithAttendeesAndOptionCounts } from '@event-planner/types/src';
+import { GetEventsResponse } from '@event-planner/types/src';
 
 const MyEvents = () => {
   const [showUpcoming, setShowUpcoming] = useState<boolean>(true);
-  const [data, setData] = useState<EventWithAttendeesAndOptionCounts[]>([]);
+  const [data, setData] = useState<GetEventsResponse['content']>([]);
 
   useEffect(() => {
     GetEvents({
@@ -15,11 +15,11 @@ const MyEvents = () => {
       eventStartBefore: !showUpcoming ? dayjs().toISOString() : undefined,
       includeCounts: true,
       offset: 0,
-      size: 10
-    }).then(eventsPage => {
+      size: 10,
+    }).then((eventsPage) => {
       if (!eventsPage) return;
-      setData(eventsPage.content)
-    })
+      setData(eventsPage.content);
+    });
   }, [showUpcoming]);
 
   const tabsNavigation = () => {

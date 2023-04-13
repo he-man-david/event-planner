@@ -1,11 +1,10 @@
 import { Response, Router } from 'express';
 import * as db from '@event-planner/db';
 import {
-  GetEventResponse,
+  EventResponse,
   GetEventsRequestParser,
   GetEventsResponse,
   CreateEventRequestParser,
-  EventResponse,
   UUID,
 } from '@event-planner/types';
 import asyncHandler from 'express-async-handler';
@@ -14,7 +13,7 @@ const router = Router();
 
 router.get(
   '/:eventId',
-  asyncHandler(async (req, res: Response<GetEventResponse>) => {
+  asyncHandler(async (req, res: Response<EventResponse>) => {
     const eventId = UUID.parse(req.params.eventId);
     const result = await db.getEvent(eventId);
     res.send(result);

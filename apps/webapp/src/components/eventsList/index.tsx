@@ -1,7 +1,7 @@
-import { CalendarIcon, UsersIcon } from "@heroicons/react/24/outline";
-import { EventWithAttendeesAndOptionCounts } from "@event-planner/types/src";
+import { CalendarIcon, UsersIcon } from '@heroicons/react/24/outline';
+import { GetEventsResponse } from '@event-planner/types/src';
 
-const EventsList = ({ data }: { data: EventWithAttendeesAndOptionCounts[]}) => {
+const EventsList = ({ data }: { data: GetEventsResponse['content'] }) => {
   return (
     <div className="overflow-hidden bg-white shadow sm:rounded-md">
       <ul className="divide-y divide-gray-200">
@@ -39,14 +39,14 @@ const EventsList = ({ data }: { data: EventWithAttendeesAndOptionCounts[]}) => {
                         className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                         aria-hidden="true"
                       />
-                      {memberCount + " members"}
+                      {memberCount + ' members'}
                     </div>
                     <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
                       <CalendarIcon
                         className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                         aria-hidden="true"
                       />
-                      <p>{eventStart + " - " + eventEnd}</p>
+                      <p>{eventStart + ' - ' + eventEnd}</p>
                     </div>
                   </div>
                 </div>
