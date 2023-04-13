@@ -33,7 +33,10 @@ const Login = () => {
       signupExpirationMinutes: 60,
     },
     oauthOptions: {
-      providers: [{ type: OAuthProviders.Google }],
+      providers: [
+        { type: OAuthProviders.Google },
+        { type: OAuthProviders.Microsoft },
+      ],
       loginRedirectURL: redirectURL,
       signupRedirectURL: redirectURL,
     },

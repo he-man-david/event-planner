@@ -1,6 +1,11 @@
 import { Event, EventMember, EventOption } from '@prisma/client';
 import { EventOptionBodyParser } from './eventOptions';
-import { Page, UUID, EventOptionWithVoteCounts, EventWithAttendeesAndOptionCounts, EventWithMembersAndOptionData } from './common';
+import {
+  Page,
+  UUID,
+  EventWithAttendeesAndOptionCounts,
+  EventWithMembersAndOptionData,
+} from './common';
 import { z } from 'zod';
 import dayjs = require('dayjs');
 
@@ -12,15 +17,13 @@ export type EventResponse = Event & {
 // GET event
 export const GetEventRequestParser = UUID;
 export type GetEventRequest = typeof GetEventRequestParser._type;
-export type GetEventResponse =
-  | EventWithMembersAndOptionData
-  | null;
+export type GetEventResponse = EventWithMembersAndOptionData | null;
 
 // CREATE event
 const IsoDateTimeParser = z.preprocess(
-    (arg) => dayjs(String(arg)).toISOString(),
-    z.string().datetime()
-  );
+  (arg) => dayjs(String(arg)).toISOString(),
+  z.string().datetime()
+);
 
 export const CreateEventRequestParser = z
   .object({
@@ -30,9 +33,14 @@ export const CreateEventRequestParser = z
     createdBy: z.string(), // Stytch user-id here is not uuid - user-test-1975b99d-63fd-48ac-93ce-4ebe9bea5a81
     options: z.array(EventOptionBodyParser).optional(),
   })
-  .refine(({ eventStart, eventEnd }) => eventStart && eventEnd && eventStart < eventEnd, {
-    message: "Event Start and Event End dates are invalid! They can't be empty and start must be less than end."
-  });
+  .refine(
+    ({ eventStart, eventEnd }) =>
+      eventStart && eventEnd && eventStart < eventEnd,
+    {
+      message:
+        "Event Start and Event End dates are invalid! They can't be empty and start must be less than end.",
+    }
+  );
 export type CreateEventRequest = typeof CreateEventRequestParser._input;
 
 // GET events
