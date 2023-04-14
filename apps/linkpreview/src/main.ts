@@ -1,13 +1,12 @@
 import express from 'express';
 import handler from './libs';
 import cors from 'cors';
-import bodyParser from 'body-parser';
 
 const app = express();
 
 app.use(cors());
 
-app.use(bodyParser.json());
+app.use(express.json());
 
 const host = process.env.HOST ?? 'localhost';
 const port = process.env.PORT ? Number(process.env.PORT) : 3003;
