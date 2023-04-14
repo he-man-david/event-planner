@@ -138,7 +138,6 @@ const stealthScrapeUrl = async (url: string, options?: ScrapeOptions) => {
           }
           return img.src;
         };
-
         return imageSrc(imageLargest());
       });
 
