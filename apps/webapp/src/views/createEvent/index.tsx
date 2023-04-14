@@ -5,6 +5,10 @@ import CreateEventBody from 'components/createEventBody';
 import DateTimeStartEnd from 'components/dateTimeStartEnd';
 import { useStytchUser } from '@stytch/react';
 import { CreateEvent as CreateEventApi } from 'apis/event';
+import {
+  ApiData,
+  GetLinkPreviewData as GetLinkPreviewDataApi,
+} from 'apis/linkpreview';
 import { CreateEventRequest, EventOptionBody } from '@event-planner/types/src';
 import { useNavigate } from 'react-router-dom';
 import { routes } from 'const/routes';
@@ -82,10 +86,32 @@ const CreateEvent = () => {
     }
   };
 
-  const createOption = (option: EventOptionBody) => {
-    // TODO:
+  const GetLinkPreviewData = async (
+    url: string
+  ): Promise<ApiData | undefined> => {
+    try {
+      const res = await GetLinkPreviewDataApi(url);
+      return res;
+    } catch (error) {
+      console.error('Failed to get link preview info, ERR:: ', error);
+    }
+  };
+
+  const createOption = async (option: EventOptionBody) => {
     // 1) call backend to get link preview infos
     // 2) set preview info in data structure
+
+    //TODO: make link input optional in TS
+    if (option.linkPreview.link) {
+      const res = await GetLinkPreviewData(option.linkPreview.link);
+      if (res && res.success && res.result) {
+        const { title, description, image, largestImage } = res.result;
+        option.linkPreview.title = title;
+        option.linkPreview.desc = description;
+        option.linkPreview.imageUrl = largestImage || image;
+      }
+    }
+
     const newEvtOptions = [...eventOptions];
     if (editOptionPos >= 0) {
       newEvtOptions.splice(editOptionPos, 1, option);
@@ -93,6 +119,7 @@ const CreateEvent = () => {
     } else {
       newEvtOptions.unshift(option);
     }
+
     setEditOptionInfo(null);
     setEventOptions(newEvtOptions);
   };

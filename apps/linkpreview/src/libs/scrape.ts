@@ -2,7 +2,7 @@ import { WaitForOptions } from 'puppeteer';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import AdblockerPlugin from 'puppeteer-extra-plugin-adblocker';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import axios from 'axios';
 import UserAgent from 'user-agents';
 
@@ -138,6 +138,7 @@ const stealthScrapeUrl = async (url: string, options?: ScrapeOptions) => {
           }
           return img.src;
         };
+
         return imageSrc(imageLargest());
       });
 

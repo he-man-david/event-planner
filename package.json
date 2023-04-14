@@ -5,7 +5,7 @@
   "scripts": {
     "db:migrate:dry": "npx prisma migrate dev --create-only --schema ./libs/db/src/schema.prisma",
     "db:migrate": "npx prisma migrate dev --schema ./libs/db/src/schema.prisma",
-    "start": "nx run db:docker && npm run db:migrate && nx run-many --target serve --projects backend,webapp --parallel 2"
+    "start": "nx run db:docker && npm run db:migrate && nx run-many --target serve --projects backend,linkpreview,webapp --parallel 3"
   },
   "private": true,
   "dependencies": {
@@ -56,6 +56,7 @@
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.3",
     "@testing-library/react": "14.0.0",
+    "@types/cheerio": "^0.22.31",
     "@types/cors": "^2.8.13",
     "@types/express": "4.17.13",
     "@types/jest": "^29.4.0",
