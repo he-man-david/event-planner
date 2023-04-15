@@ -109,4 +109,3 @@ const CreateEventBody = ({
 };
 
 export default CreateEventBody;
-p;
