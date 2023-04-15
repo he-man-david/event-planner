@@ -1,4 +1,9 @@
-import { CreateEventRequest, EventResponse, GetEventsRequest, GetEventsResponse } from '@event-planner/types/src';
+import {
+  CreateEventRequest,
+  EventResponse,
+  GetEventsRequest,
+  GetEventsResponse,
+} from '@event-planner/types/src';
 import axios from 'axios';
 
 const url = 'http://localhost:8080/events';
@@ -37,7 +42,9 @@ export const GetEvent = async (eventId: string): Promise<EventResponse> => {
   }
 };
 
-export const GetEvents = async (req: GetEventsRequest): Promise<GetEventsResponse | undefined> => {
+export const GetEvents = async (
+  req: GetEventsRequest
+): Promise<GetEventsResponse | undefined> => {
   return await axios
     .get(url, { ...axiosConfig, params: req })
     .then((res) => res.data)

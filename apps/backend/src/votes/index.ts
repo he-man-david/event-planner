@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import * as db from '@event-planner/db';
-import { CreateEventOptionVoteRequestParser, UUID } from '@event-planner/types';
+import { ToggleEventOptionVoteRequestParser, UUID } from '@event-planner/types';
 
 const router = Router();
 
@@ -20,7 +20,7 @@ router.get(
 router.post(
   '/',
   asyncHandler(async (req, res) => {
-    const toogleEventOptionReq = CreateEventOptionVoteRequestParser.parse(
+    const toogleEventOptionReq = ToggleEventOptionVoteRequestParser.parse(
       req.body
     );
     res.send(await db.toggleEventOptionVote(toogleEventOptionReq));

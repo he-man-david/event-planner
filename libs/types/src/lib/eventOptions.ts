@@ -1,35 +1,44 @@
-import { EventOption as _EventOption } from '@prisma/client';
-import { LinkPreviewParam, LinkPreviewParamType, UUID, Page } from './common';
+import { EventOption } from '@prisma/client';
+import { UUID, Page } from './common';
 import { z } from 'zod';
 
-type EventOptionWithVoteCounts = EventOption & { votes: number };
-
+// GET Event Option
 export const GetEventOptionsQueryParser = z.object({
   eventId: UUID,
   offset: z.number(),
   limit: z.number(),
 });
 export type GetEventOptionsRequest = typeof GetEventOptionsQueryParser._type;
-export type GetEventOptionsResponse = Page<EventOptionWithVoteCounts>;
+export type GetEventOptionsResponse = Page<
+  EventOption & {
+    votes?: number;
+    voted?: boolean;
+  }
+>;
 
-export const EventOptionBodyParser = z.object({
-  title: z.string(),
-  description: z.string().optional(),
-  linkPreview: LinkPreviewParam,
-});
-export type EventOptionBody = typeof EventOptionBodyParser._type;
-export type EventOption = _EventOption & {
-  linkPreview: LinkPreviewParamType;
-  votes?: number;
-  voted?: boolean;
-};
-
+// CREATE Event Option
 export const CreateEventOptionsRequestParser = z.object({
   eventId: UUID,
-  options: z.array(EventOptionBodyParser),
+  options: z.array(
+    z.object({
+      title: z.string(),
+      description: z.string().optional(),
+      linkUrl: z.string(),
+      linkPreviewTitle: z.string().optional(),
+      linkPreviewDesc: z.string().optional(),
+      linkPreviewImgUrl: z.string().optional(),
+    })
+  ),
 });
-export type CreateEventOptionResponse = EventOption[];
+export type CreateEventOptionsRequest =
+  typeof CreateEventOptionsRequestParser._type;
+export type CreateEventOptionResponse = EventOption &
+  {
+    votes?: number;
+    voted?: boolean;
+  }[];
 
+// DELETE Event Option
 export const DeleteEventOptionRequestParser = z.object({
   eventOptionId: UUID,
 });

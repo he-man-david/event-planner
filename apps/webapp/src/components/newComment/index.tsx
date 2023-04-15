@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 const NewComment = () => {
-  const [comment, setComment] = useState<string>("");
+  const [comment, setComment] = useState<string>('');
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    alert("this is comment: " + comment);
-    setComment("");
+    alert('this is comment: ' + comment);
+    setComment('');
   };
 
   return (

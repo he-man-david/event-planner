@@ -1,6 +1,6 @@
-import { PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
-import { TitleParam } from "./types";
+import { PlusIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
+import { TitleParam } from './types';
 
 const Title = ({ title, setTitle }: TitleParam) => {
   const [editMode, setEditMode] = useState<boolean>(false);
