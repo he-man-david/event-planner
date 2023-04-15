@@ -31,7 +31,7 @@ const axiosConfig = {
 
 export const GetLinkPreviewData = async (url: string): Promise<ApiData> => {
   try {
-    const res = await axios.post(requestUrl, axiosConfig, { url });
+    const res = await axios.post(requestUrl, { url }, axiosConfig);
     return res.data;
   } catch (error) {
     console.error(error);

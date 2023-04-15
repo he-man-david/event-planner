@@ -12,7 +12,7 @@ const router = Router();
 
 router.get(
   '/',
-  asyncHandler(async (req, res: Response<GetEventOptionsResponse>) => {
+  asyncHandler(async (req, res: Response<any>) => {
     const query = GetEventOptionsQueryParser.parse(req.query);
     const result = await db.getEventOptions(query);
     res.send(result);

@@ -52,7 +52,7 @@ const CreateEventBody = ({
                     rel="noreferrer"
                     className="text-indigo-600 hover:text-indigo-500 underline"
                   >
-                    {linkPreview.link}
+                    Open link
                   </a>
                 )}
               </div>
@@ -109,3 +109,4 @@ const CreateEventBody = ({
 };
 
 export default CreateEventBody;
+p;
