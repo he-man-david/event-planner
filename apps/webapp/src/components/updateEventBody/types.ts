@@ -1,8 +1,8 @@
-import { EventOption } from '@event-planner/types/src';
+import { EventOptionBodyWithVotes } from '@event-planner/types/src';
 
 export interface UpdateEventBodyParam {
-  voteOptions: EventOption[];
-  setVoteOptions: (e: EventOption[]) => void;
-  editVoteOptions: (p: number) => void;
-  delVoteOptions: (p: number) => void;
+  eventOptions: EventOptionBodyWithVotes[];
+  setEventOptions: (e: EventOptionBodyWithVotes[]) => void;
+  editEventOptions: (p: number) => void;
+  delEventOptions: (p: number) => void;
 }

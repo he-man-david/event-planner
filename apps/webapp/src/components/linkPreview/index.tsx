@@ -1,13 +1,30 @@
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 
-import { EventOption } from '@prisma/client';
+type LinkPreviewParams = {
+  linkUrl: string;
+  linkPreviewTitle: string | null;
+  linkPreviewDesc: string | null;
+  linkPreviewImgUrl: string | null;
+};
 
 const LinkPreview = ({
   linkPreviewTitle: title,
   linkPreviewDesc: desc,
   linkUrl: link,
   linkPreviewImgUrl: imageUrl,
-}: EventOption) => {
+}: LinkPreviewParams) => {
+  if (!imageUrl) {
+    return (
+      <a
+        href={link}
+        target="_blank"
+        rel="noreferrer"
+        className="text-indigo-600 hover:text-indigo-500 underline"
+      >
+        Open link
+      </a>
+    );
+  }
   return (
     <div className="w-full group relative">
       <div className="aspect-w-4 aspect-h-3 overflow-hidden rounded-lg bg-gray-100">

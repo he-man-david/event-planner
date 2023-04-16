@@ -6,7 +6,7 @@ import {
   EventResponse,
   GetEventsResponse,
   GetEventOptionsResponse,
-  CreateEventOptionsRequest,
+  CreateEventOptionRequest as CreateEventOptionRequest,
   DeleteEventMembersRequest,
   CreateEventMemberRequest,
   DeleteEventOptionRequest,
@@ -138,15 +138,12 @@ export const getEventOptions = async (
   return createPage(totalCount, offset, mappedContent);
 };
 
-export const createEventOptions = async (req: CreateEventOptionsRequest) => {
-  const optionsData =
-    req.options.map((opt) => {
-      return {
-        eventId: req.eventId,
-        ...opt,
-      };
-    }) || [];
-  return await prisma.eventOption.createMany({ data: optionsData });
+export const createEventOption = async (req: CreateEventOptionRequest) => {
+  const optionData = {
+    eventId: req.eventId,
+    ...req.option,
+  };
+  return await prisma.eventOption.create({ data: optionData });
 };
 
 export const deleteEventOption = async (req: DeleteEventOptionRequest) => {

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// TODO: organice all these apis and their configs
+// TODO: organize all these apis and their configs
 
 // TODO: This is duplicate from linkpreview app
 export interface ApiData {

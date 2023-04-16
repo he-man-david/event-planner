@@ -11,7 +11,6 @@ import { Fragment, useEffect, useState } from 'react';
 import { classNames } from 'utils/common';
 import dayjs from 'utils/day';
 import { FormattedDateObj } from './types';
-import { MyEventsUpcomingData } from 'mockData';
 
 const Calendar = () => {
   const [currentMonth, setCurrentMonth] = useState(dayjs(new Date()));
@@ -46,7 +45,7 @@ const Calendar = () => {
 
     while (currentDate.weekday(0).toObject().months !== nextMonth) {
       const formatted = formattedDateObject(currentDate);
-      if (formatted.isToday) formatted.events = MyEventsUpcomingData;
+      if (formatted.isToday) formatted.events = [];
       allDates.push(formatted);
       currentDate = currentDate.add(1, 'day');
     }

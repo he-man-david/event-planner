@@ -7,17 +7,25 @@ import MembersModal from 'components/membersModal';
 import Title from 'components/title';
 import EditEventOptionModal from 'components/editEventOptionModal';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { EventResponse, EventOption } from '@event-planner/types/src';
+import {
+  EventResponse,
+  EventOptionBodyWithVotes,
+  EventOptionBody,
+  CreateEventOptionRequest,
+} from '@event-planner/types/src';
 import { GetEvent } from 'apis/event';
+import { CreateOption } from 'apis/eventOptions';
+import { GetLinkPreviewData } from 'utils/common';
 
 const ViewEvent = () => {
   const [title, setTitle] = useState<string>('');
-  const [eventOptions, setEventOptions] = useState<EventOption[]>([]);
+  const [eventOptions, setEventOptions] = useState<EventOptionBodyWithVotes[]>(
+    []
+  );
   const params = useParams();
   const [showAddOptionForm, setShowAddOptionForm] = useState<boolean>(false);
-  const [editOptionInfo, setEditOptionInfo] = useState<EventOption | null>(
-    null
-  );
+  const [editOptionInfo, setEditOptionInfo] =
+    useState<EventOptionBodyWithVotes | null>(null);
   const [editOptionPos, setEditOptionPos] = useState<number>(-1);
   const queryParams = new URLSearchParams(window.location.search);
   const cached = queryParams.get('cached');
@@ -31,7 +39,7 @@ const ViewEvent = () => {
         if (event) {
           setTitle(event.title);
           // TODO: Smart solution needed... Our request/response is mix of Prisma and Zod, and they have conflicts.
-          setEventOptions(event.options as any as EventOption[]);
+          setEventOptions(event.options);
           return;
         }
       }
@@ -43,7 +51,7 @@ const ViewEvent = () => {
             throw new Error(`Event not found - ${params.id}!`);
           }
           setTitle(event.title);
-          setEventOptions(event.options as any as EventOption[]);
+          setEventOptions(event.options);
         })
         .catch((err) => console.error(err));
     }
@@ -53,19 +61,38 @@ const ViewEvent = () => {
     return <h1 className="text-slate-200 mx-auto">404 Event Not Found</h1>;
   }
 
-  const createOption = (option: EventOption) => {
-    // TODO:
-    // 1) call backend to get link preview infos
-    // 2) set preview info in data structure
+  const createOption = async (option: EventOptionBody) => {
+    if (option.linkUrl) {
+      const res = await GetLinkPreviewData(option.linkUrl);
+      if (res && res.success && res.result) {
+        const { title, description, image, largestImage } = res.result;
+        if (title) option.linkPreviewTitle = title;
+        if (description) option.linkPreviewDesc = description;
+        if (largestImage || image)
+          option.linkPreviewImgUrl = largestImage || image || null;
+      }
+    }
+
     const newEvtOptions = [...eventOptions];
+    // editing
     if (editOptionPos >= 0) {
-      newEvtOptions.splice(editOptionPos, 1, option);
+      let newOption = newEvtOptions[editOptionPos];
+      newOption = { ...newOption, ...option };
+      newEvtOptions.splice(editOptionPos, 1, newOption);
       setEditOptionPos(-1);
+      setEventOptions(newEvtOptions);
     } else {
-      newEvtOptions.unshift(option);
+      // creating
+      const createOptionReq: CreateEventOptionRequest = {
+        eventId: params.id || '',
+        option,
+      };
+      CreateOption(createOptionReq).then((opt) => {
+        newEvtOptions.unshift(opt);
+        setEventOptions(newEvtOptions);
+      });
     }
     setEditOptionInfo(null);
-    setEventOptions(newEvtOptions);
   };
 
   const handleEdit = (position: number) => {
@@ -106,10 +133,10 @@ const ViewEvent = () => {
               <div className="overflow-hidden rounded-lg bg-white shadow flex flex-col items-center">
                 <div className="p-6">
                   <UpdateEventBody
-                    voteOptions={eventOptions}
-                    setVoteOptions={setEventOptions}
-                    editVoteOptions={handleEdit}
-                    delVoteOptions={handleDelete}
+                    eventOptions={eventOptions}
+                    setEventOptions={setEventOptions}
+                    editEventOptions={handleEdit}
+                    delEventOptions={handleDelete}
                   />
                 </div>
                 <button
@@ -147,7 +174,7 @@ const ViewEvent = () => {
         open={showAddOptionForm}
         setOpen={handleOptionModalDisplay}
         createOption={createOption}
-        editOptionInfo={editOptionInfo}
+        {...(editOptionInfo ? { editOptionInfo } : {})}
       />
     </div>
   );

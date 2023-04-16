@@ -5,15 +5,12 @@ import CreateEventBody from 'components/createEventBody';
 import DateTimeStartEnd from 'components/dateTimeStartEnd';
 import { useStytchUser } from '@stytch/react';
 import { CreateEvent as CreateEventApi } from 'apis/event';
-import {
-  ApiData,
-  GetLinkPreviewData as GetLinkPreviewDataApi,
-} from 'apis/linkpreview';
 import { CreateEventRequest, EventOptionBody } from '@event-planner/types/src';
 import { useNavigate } from 'react-router-dom';
 import { routes } from 'const/routes';
 import LoadingIcon from 'components/loadingIcon';
 import dayjs from 'utils/day';
+import { GetLinkPreviewData } from 'utils/common';
 
 const CreateEvent = () => {
   const [eventTitle, setEventTitle] = useState<string>('');
@@ -40,10 +37,11 @@ const CreateEvent = () => {
         try {
           const req = JSON.parse(reqStr);
           req.createdBy = user.user_id;
+          // creating event API
           const event = await CreateEventApi(req);
           // cache localstorage so dont have to call GetEvent Api again
-          localStorage.setItem(`event-${event.id}`, JSON.stringify(event));
-          navigate(`/event/${event.id}?cached=true`);
+          localStorage.setItem(`event-${event?.id}`, JSON.stringify(event));
+          navigate(`/event/${event?.id}?cached=true`);
         } catch (error) {
           console.error(error);
         }
@@ -75,8 +73,8 @@ const CreateEvent = () => {
         req.createdBy = user.user_id;
         const event = await CreateEventApi(req);
         // cache localstorage so dont have to call GetEvent Api again
-        localStorage.setItem(`event-${event.id}`, JSON.stringify(event));
-        navigate(`/event/${event.id}?cached=true`);
+        localStorage.setItem(`event-${event?.id}`, JSON.stringify(event));
+        navigate(`/event/${event?.id}?cached=true`);
       } else {
         localStorage.setItem('CreateEventRequest', JSON.stringify(req));
         navigate(routes.LOGIN + `?next_route=${routes.NEW_EVENT}?cached=true`);
@@ -86,29 +84,20 @@ const CreateEvent = () => {
     }
   };
 
-  const GetLinkPreviewData = async (
-    url: string
-  ): Promise<ApiData | undefined> => {
-    try {
-      const res = await GetLinkPreviewDataApi(url);
-      return res;
-    } catch (error) {
-      console.error('Failed to get link preview info, ERR:: ', error);
-    }
-  };
-
   const createOption = async (option: EventOptionBody) => {
+    console.log('where is option: ', option);
     // 1) call backend to get link preview infos
     // 2) set preview info in data structure
 
     //TODO: make link input optional in TS
-    if (option.linkPreview.link) {
-      const res = await GetLinkPreviewData(option.linkPreview.link);
+    if (option.linkUrl) {
+      const res = await GetLinkPreviewData(option.linkUrl);
       if (res && res.success && res.result) {
         const { title, description, image, largestImage } = res.result;
-        option.linkPreview.title = title;
-        option.linkPreview.desc = description;
-        option.linkPreview.imageUrl = largestImage || image;
+        if (title) option.linkPreviewTitle = title;
+        if (description) option.linkPreviewDesc = description;
+        if (largestImage || image)
+          option.linkPreviewImgUrl = largestImage || image || null;
       }
     }
 
@@ -205,11 +194,9 @@ const CreateEvent = () => {
             Add option
           </button>
           <CreateEventBody
-            voteOptions={eventOptions}
-            setVoteOptions={setEventOptions}
-            editVoteOptions={handleEdit}
-            delVoteOptions={handleDelete}
-            editMode
+            eventOptions={eventOptions}
+            editEventOptions={handleEdit}
+            delEventOptions={handleDelete}
           />
         </div>
       </main>

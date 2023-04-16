@@ -1,9 +1,7 @@
-import { EventOption } from 'types';
+import { EventOptionBody } from '@event-planner/types/src';
 
 export interface CreateEventBodyParam {
-  voteOptions: EventOption[];
-  setVoteOptions: (e: EventOption[]) => void;
-  editMode: boolean;
-  editVoteOptions: (p: number) => void;
-  delVoteOptions: (p: number) => void;
+  eventOptions: EventOptionBody[];
+  editEventOptions: (p: number) => void;
+  delEventOptions: (p: number) => void;
 }

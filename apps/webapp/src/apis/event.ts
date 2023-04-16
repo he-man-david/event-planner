@@ -44,7 +44,7 @@ export const GetEvent = async (eventId: string): Promise<EventResponse> => {
 
 export const GetEvents = async (
   req: GetEventsRequest
-): Promise<GetEventsResponse | undefined> => {
+): Promise<GetEventsResponse> => {
   return await axios
     .get(url, { ...axiosConfig, params: req })
     .then((res) => res.data)

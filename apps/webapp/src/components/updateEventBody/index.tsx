@@ -5,37 +5,39 @@ import {
 import { classNames } from 'utils/common';
 import LinkPreview from 'components/linkPreview';
 import { UpdateEventBodyParam } from './types';
-import { EventOption } from '@event-planner/types/src';
+import { EventOptionBodyWithVotes } from '@event-planner/types/src';
 import { Menu, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 
 const UpdateEventBody = ({
-  voteOptions,
-  setVoteOptions,
-  editVoteOptions,
-  delVoteOptions,
+  eventOptions,
+  setEventOptions,
+  editEventOptions,
+  delEventOptions,
 }: UpdateEventBodyParam) => {
   const handleVote = (position: number) => {
-    const newVoteOptions: EventOption[] = voteOptions.map((voteOption, idx) => {
-      if (position === idx) {
-        if (voteOption.voted) {
-          voteOption.voted = false;
-          voteOption.votes && voteOption.votes--;
-        } else {
-          voteOption.voted = true;
-          voteOption.votes && voteOption.votes++;
+    const newEventOptions: EventOptionBodyWithVotes[] = eventOptions.map(
+      (eventOption, idx) => {
+        if (position === idx) {
+          if (eventOption.voted) {
+            eventOption.voted = false;
+            eventOption.votes && eventOption.votes--;
+          } else {
+            eventOption.voted = true;
+            eventOption.votes && eventOption.votes++;
+          }
         }
+        return eventOption;
       }
-      return voteOption;
-    });
+    );
 
-    setVoteOptions(newVoteOptions);
+    setEventOptions(newEventOptions);
   };
 
   return (
     <ul className="grid grid-cols-1 gap-6 sm:grid-cols-1 md:grid-cols-2">
-      {voteOptions.map(
-        ({ id, title, linkPreview, description, votes, voted }, idx) => (
+      {eventOptions.map(
+        ({ id, title, description, votes, voted, ...linkPreview }, idx) => (
           <li
             key={title + id}
             className={classNames([
@@ -67,7 +69,7 @@ const UpdateEventBody = ({
                       <Menu.Item>
                         {({ active }) => (
                           <span
-                            onClick={() => editVoteOptions(idx)}
+                            onClick={() => editEventOptions(idx)}
                             className={classNames([
                               active ? 'bg-gray-100' : '',
                               'block py-2 px-4 text-sm text-gray-700',
@@ -80,7 +82,7 @@ const UpdateEventBody = ({
                       <Menu.Item>
                         {({ active }) => (
                           <span
-                            onClick={() => delVoteOptions(idx)}
+                            onClick={() => delEventOptions(idx)}
                             className={classNames([
                               active ? 'bg-gray-100' : '',
                               'block py-2 px-4 text-sm text-red-700',
@@ -97,34 +99,7 @@ const UpdateEventBody = ({
               <h3 className="text-md font-medium text-gray-900">{title}</h3>
               <div className="mt-1 flex flex-grow flex-col">
                 <p className="text-md text-gray-500 pb-3">{description}</p>
-                {linkPreview.imageUrl ? (
-                  <LinkPreview
-                    title={linkPreview.title}
-                    desc={linkPreview.desc}
-                    link={linkPreview.link}
-                    imageUrl={linkPreview.imageUrl}
-                  />
-                ) : (
-                  /**
-                   Prisma & ZOD type conflicts
-                   
-                   Spread types may only be created from object types.ts(2698)
-                      (parameter) linkPreview: Prisma.JsonValue & {
-                          link: string;
-                          title?: string | undefined;
-                          desc?: string | undefined;
-                          imageUrl?: string | undefined;
-                      }
-                   */
-                  <a
-                    href={linkPreview.link}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-indigo-600 hover:text-indigo-500 underline"
-                  >
-                    {linkPreview.link}
-                  </a>
-                )}
+                <LinkPreview {...linkPreview} />
               </div>
             </div>
             <div className="-mt-px flex divide-x divide-gray-200">

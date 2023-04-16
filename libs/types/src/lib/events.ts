@@ -1,5 +1,9 @@
-import { Event, EventMember, EventOption } from '@prisma/client';
+import { Event, EventMember } from '@prisma/client';
 import { Page, UUID } from './common';
+import {
+  EventOptionBodyParser,
+  EventOptionBodyWithVotes,
+} from './eventOptions';
 import { z } from 'zod';
 import dayjs = require('dayjs');
 
@@ -9,7 +13,7 @@ export type GetEventRequest = typeof GetEventRequestParser._type;
 export type EventResponse =
   | (Event & {
       members: EventMember[];
-      options: (EventOption & { votes: number })[];
+      options: EventOptionBodyWithVotes[];
     })
   | null;
 
@@ -25,18 +29,7 @@ export const CreateEventRequestParser = z
     eventStart: IsoDateTimeParser.default(dayjs().day(7).toISOString()),
     eventEnd: IsoDateTimeParser.default(dayjs().day(14).toISOString()),
     createdBy: z.string(), // Stytch user-id here is not uuid - user-test-1975b99d-63fd-48ac-93ce-4ebe9bea5a81
-    options: z
-      .array(
-        z.object({
-          title: z.string(),
-          description: z.string().optional(),
-          linkUrl: z.string(),
-          linkPreviewTitle: z.string().optional(),
-          linkPreviewDesc: z.string().optional(),
-          linkPreviewImgUrl: z.string().optional(),
-        })
-      )
-      .optional(),
+    options: z.array(EventOptionBodyParser).optional(),
   })
   .refine(
     ({ eventStart, eventEnd }) =>

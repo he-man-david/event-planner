@@ -1,8 +1,8 @@
-import { EventOption } from 'types';
+import { EventOptionBody } from '@event-planner/types/src';
 
 export interface EditEventOptionModalParam {
   open: boolean;
-  editOptionInfo?: EventOption | null;
   setOpen: (t: boolean) => void;
-  createOption: (e: EventOption) => void;
+  editOptionInfo?: EventOptionBody;
+  createOption: (e: EventOptionBody) => void;
 }

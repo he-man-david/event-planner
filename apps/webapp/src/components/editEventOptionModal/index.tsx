@@ -2,7 +2,7 @@ import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { EditEventOptionModalParam } from './types';
-import { EventOption } from 'types';
+import { EventOptionBody } from '@event-planner/types/src';
 
 const EditEventOptionModal = ({
   open,
@@ -17,23 +17,21 @@ const EditEventOptionModal = ({
   useEffect(() => {
     if (editOptionInfo !== null) {
       setTitle(editOptionInfo?.title || '');
-      setDesc(editOptionInfo?.desc || '');
-      setLink(editOptionInfo?.linkPreview?.link || '');
+      setDesc(editOptionInfo?.description || '');
+      setLink(editOptionInfo?.linkUrl || '');
     }
   }, [editOptionInfo]);
 
   const handleCreateOption = () => {
-    const newOption: EventOption = {
-      id: 0,
-      votes: 0,
-      ...editOptionInfo,
+    const newOption: EventOptionBody = {
       title,
-      desc,
-      linkPreview: { link },
+      description: desc,
+      linkUrl: link,
+      linkPreviewDesc: editOptionInfo?.linkPreviewDesc || null,
+      linkPreviewTitle: editOptionInfo?.linkPreviewTitle || null,
+      linkPreviewImgUrl: editOptionInfo?.linkPreviewImgUrl || null,
     };
-    if (editOptionInfo?.linkPreview?.link === link) {
-      newOption.linkPreview = editOptionInfo?.linkPreview;
-    }
+
     createOption(newOption);
     handleClose();
   };

@@ -1,7 +1,7 @@
 import { Response, Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import {
-  CreateEventOptionsRequestParser,
+  CreateEventOptionRequestParser,
   DeleteEventOptionRequestParser,
   GetEventOptionsResponse,
   GetEventOptionsQueryParser,
@@ -12,7 +12,7 @@ const router = Router();
 
 router.get(
   '/',
-  asyncHandler(async (req, res: Response<any>) => {
+  asyncHandler(async (req, res: Response<GetEventOptionsResponse>) => {
     const query = GetEventOptionsQueryParser.parse(req.query);
     const result = await db.getEventOptions(query);
     res.send(result);
@@ -22,10 +22,8 @@ router.get(
 router.post(
   '/',
   asyncHandler(async (req, res) => {
-    const createEventOptionReq = CreateEventOptionsRequestParser.parse(
-      req.body
-    );
-    const result = await db.createEventOptions(createEventOptionReq);
+    const createEventOptionReq = CreateEventOptionRequestParser.parse(req.body);
+    const result = await db.createEventOption(createEventOptionReq);
     res.send(result);
   })
 );
