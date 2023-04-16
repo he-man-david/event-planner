@@ -3,7 +3,7 @@ import { Page, UUID } from './common';
 import {
   EventOptionBodyParser,
   EventOptionBodyWithVotes,
-} from './eventOptions';
+} from './options';
 import { z } from 'zod';
 import dayjs = require('dayjs');
 
@@ -53,8 +53,17 @@ export const GetEventsRequestParser = z.object({
 });
 export type GetEventsRequest = typeof GetEventsRequestParser._type;
 export type GetEventsResponse = Page<
-  Event & {
-    members: number;
-    options: number;
-  }
+Event & {
+  members: number;
+  options: number;
+}
 >;
+
+// UPDATE event
+export const UpdateEventRequestParser = z.object({
+  title: z.string().optional(),
+  description: z.string().optional(),
+  eventStart: IsoDateTimeParser.optional(),
+  eventEnd: IsoDateTimeParser.optional(),  
+});
+export type UpdateEventRequest = typeof UpdateEventRequestParser._type;

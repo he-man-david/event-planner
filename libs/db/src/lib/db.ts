@@ -6,7 +6,7 @@ import {
   EventResponse,
   GetEventsResponse,
   GetEventOptionsResponse,
-  CreateEventOptionRequest as CreateEventOptionRequest,
+  CreateEventOptionRequest,
   DeleteEventMembersRequest,
   CreateEventMemberRequest,
   DeleteEventOptionRequest,
@@ -17,6 +17,8 @@ import {
   GetEventCommentsResponse,
   GetEventMembersRequest,
   GetEventsRequest,
+  UpdateEventRequest,
+  UpdateEventOptionRequest,
 } from '@event-planner/types';
 import dayjs = require('dayjs');
 
@@ -145,6 +147,32 @@ export const createEventOption = async (req: CreateEventOptionRequest) => {
   };
   return await prisma.eventOption.create({ data: optionData });
 };
+export const getEventOption = async (id: string) => {
+  const content = await prisma.eventOption.findFirst({
+    where: { id },
+    include: {
+      _count: {
+        select: {
+          eventOptionVote: true,
+        },
+      },
+    },
+  });
+  if (!content) {
+    return null;
+  }
+  const { _count, ...eventOption } = content;
+  return { ...eventOption, votes: _count.eventOptionVote };
+}
+
+export const updateEventOption = async(id: string, data: UpdateEventOptionRequest) => {
+  const result = await prisma.eventOption.update({
+    where: { id },
+    select: { id : true },
+    data
+  });
+  return getEventOption(result.id);
+}
 
 export const deleteEventOption = async (req: DeleteEventOptionRequest) => {
   return await prisma.eventOption.delete({ where: { id: req.eventOptionId } });
@@ -221,6 +249,9 @@ export const createEvent = async (
   req: CreateEventRequest
 ): Promise<EventResponse> => {
   const event = await prisma.event.create({
+    select: {
+      id: true,
+    },
     data: {
       title: req.title,
       createdBy: req.createdBy,
@@ -240,4 +271,17 @@ export const createEvent = async (
   await addUserToEvent({ userId: req.createdBy, eventId: event.id });
 
   return getEvent(event.id);
+};
+
+export const updateEvent = async (id: string, data: UpdateEventRequest) => {
+  const result = await prisma.event.update({
+    where: {
+      id,
+    },
+    select: {
+      id: true
+    },
+    data,
+  });
+  return getEvent(result.id);
 };

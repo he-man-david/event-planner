@@ -6,6 +6,7 @@ import {
   GetEventsResponse,
   CreateEventRequestParser,
   UUID,
+  UpdateEventRequestParser,
 } from '@event-planner/types';
 import asyncHandler from 'express-async-handler';
 
@@ -40,9 +41,11 @@ router.post(
 
 router.put(
   '/:eventId',
-  asyncHandler((req, res) => {
-    res.status(500);
-    res.send('Not implemented yet!');
+  asyncHandler(async (req, res: Response<EventResponse | null>) => {
+    const id = UUID.parse(req.params.eventId);
+    const data = UpdateEventRequestParser.parse(req.body);
+    const updatedEvent = await db.updateEvent(id, data);
+    res.send(updatedEvent);
   })
 );
 
