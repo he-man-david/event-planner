@@ -1,9 +1,6 @@
 import { Event, EventMember } from '@prisma/client';
 import { Page, UUID } from './common';
-import {
-  EventOptionBodyParser,
-  EventOptionBodyWithVotes,
-} from './options';
+import { EventOptionBodyParser, EventOptionBodyWithVotes } from './options';
 import { z } from 'zod';
 import dayjs = require('dayjs');
 
@@ -26,6 +23,7 @@ const IsoDateTimeParser = z.preprocess(
 export const CreateEventRequestParser = z
   .object({
     title: z.string(),
+    description: z.string().optional(),
     eventStart: IsoDateTimeParser.default(dayjs().day(7).toISOString()),
     eventEnd: IsoDateTimeParser.default(dayjs().day(14).toISOString()),
     createdBy: z.string(), // Stytch user-id here is not uuid - user-test-1975b99d-63fd-48ac-93ce-4ebe9bea5a81
@@ -53,10 +51,10 @@ export const GetEventsRequestParser = z.object({
 });
 export type GetEventsRequest = typeof GetEventsRequestParser._type;
 export type GetEventsResponse = Page<
-Event & {
-  members: number;
-  options: number;
-}
+  Event & {
+    members: number;
+    options: number;
+  }
 >;
 
 // UPDATE event
@@ -64,6 +62,6 @@ export const UpdateEventRequestParser = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
   eventStart: IsoDateTimeParser.optional(),
-  eventEnd: IsoDateTimeParser.optional(),  
+  eventEnd: IsoDateTimeParser.optional(),
 });
 export type UpdateEventRequest = typeof UpdateEventRequestParser._type;

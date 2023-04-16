@@ -1,5 +1,6 @@
 import {
   CreateEventRequest,
+  UpdateEventRequest,
   EventResponse,
   GetEventsRequest,
   GetEventsResponse,
@@ -25,6 +26,19 @@ export const CreateEvent = async (
 ): Promise<EventResponse> => {
   try {
     const res = await axios.post(url, req);
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const UpdateEvent = async (
+  eventId: string,
+  req: UpdateEventRequest
+): Promise<EventResponse> => {
+  try {
+    const res = await axios.put(url + `/${eventId}`, req);
     return res.data;
   } catch (error) {
     console.error(error);

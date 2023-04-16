@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import dayjs from 'utils/day';
@@ -10,6 +11,12 @@ const DateTimeStartEnd = ({
   endDate,
   setEndDate,
 }: DateTimeStartEndParam) => {
+  useEffect(() => {
+    if (dayjs(startDate).isAfter(endDate)) {
+      setEndDate(dayjs(startDate).add(1, 'hour').toDate());
+    }
+  }, [startDate, endDate, setEndDate]);
+
   const filterPassedTime = (time: Date) => {
     const currentDate = dayjs();
     const selectedDate = dayjs(time);

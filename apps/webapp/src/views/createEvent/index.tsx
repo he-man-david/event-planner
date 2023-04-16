@@ -8,12 +8,14 @@ import { CreateEvent as CreateEventApi } from 'apis/event';
 import { CreateEventRequest, EventOptionBody } from '@event-planner/types/src';
 import { useNavigate } from 'react-router-dom';
 import { routes } from 'const/routes';
-import LoadingIcon from 'components/loadingIcon';
+import LoadingPage from 'components/loadingPage';
 import dayjs from 'utils/day';
 import { GetLinkPreviewData } from 'utils/common';
 
 const CreateEvent = () => {
   const [eventTitle, setEventTitle] = useState<string>('');
+  const [eventDesc, setEventDesc] = useState<string>('');
+  const [loadingNewOption, setLoadingNewOption] = useState<boolean>(false);
   const [eventOptions, setEventOptions] = useState<EventOptionBody[]>([]);
   const [showAddOptionForm, setShowAddOptionForm] = useState<boolean>(false);
   const [editOptionInfo, setEditOptionInfo] = useState<EventOptionBody | null>(
@@ -54,7 +56,7 @@ const CreateEvent = () => {
   }, [cached, navigate, user]);
 
   if (cached) {
-    return <LoadingIcon />;
+    return <LoadingPage />;
   }
 
   const createEvent = async () => {
@@ -63,6 +65,7 @@ const CreateEvent = () => {
     // then route to /event/:id page
     const req: CreateEventRequest = {
       title: eventTitle,
+      description: eventDesc,
       eventStart: startDate.toISOString(),
       eventEnd: endDate.toISOString(),
       options: eventOptions,
@@ -85,7 +88,7 @@ const CreateEvent = () => {
   };
 
   const createOption = async (option: EventOptionBody) => {
-    console.log('where is option: ', option);
+    setLoadingNewOption(true);
     // 1) call backend to get link preview infos
     // 2) set preview info in data structure
 
@@ -109,6 +112,7 @@ const CreateEvent = () => {
       newEvtOptions.unshift(option);
     }
 
+    setLoadingNewOption(false);
     setEditOptionInfo(null);
     setEventOptions(newEvtOptions);
   };
@@ -167,9 +171,27 @@ const CreateEvent = () => {
                 id="event-title"
                 className="block w-full h-10 md:h-12 lg:h-14 rounded-md border-0 px-2 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:italic placeholder:text-gray-400 lg:placeholder:text-3xl md:placeholder:text-2xl sm:placeholder:text-1xl lg:text-3xl md:text-2xl sm:text-1xl focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:leading-6"
                 placeholder="The perfect Airbnb for Vegas!!"
-                onChange={(e) => setEventTitle(e.target.value)}
                 value={eventTitle}
+                onChange={(e) => setEventTitle(e.target.value)}
               />
+            </div>
+            <div className="mt-4">
+              <label
+                htmlFor="description"
+                className="block lg:float-left md:float-left text-2xl font-medium leading-6 text-white mb-5"
+              >
+                Description
+              </label>
+              <div className="mt-2">
+                <textarea
+                  rows={2}
+                  name="description"
+                  id="description"
+                  className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  value={eventDesc}
+                  onChange={(e) => setEventDesc(e.target.value)}
+                />
+              </div>
             </div>
             <DateTimeStartEnd
               startDate={startDate}
@@ -206,6 +228,7 @@ const CreateEvent = () => {
         setOpen={handleOptionModalDisplay}
         createOption={createOption}
         editOptionInfo={editOptionInfo}
+        loading={loadingNewOption}
       />
     </div>
   );

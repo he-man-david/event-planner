@@ -2,7 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { useStytch, useStytchUser } from '@stytch/react';
 import { useNavigate } from 'react-router-dom';
 import { routes } from 'const/routes';
-import LoadingIcon from 'components/loadingIcon';
+import LoadingPage from 'components/loadingPage';
 
 /*
 During both the Magic link and OAuth flow, Stytch will redirect the user back to your application to a specified redirect URL (see Login.js). 
@@ -63,7 +63,7 @@ const Authenticate = () => {
     }
   }, [stytch, user, successRedirect]);
 
-  return <LoadingIcon />;
+  return <LoadingPage />;
 };
 
 export default Authenticate;

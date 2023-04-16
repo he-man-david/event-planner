@@ -20,7 +20,7 @@ const CreateEventBody = ({
             <h3 className="text-md font-medium text-gray-900">{title}</h3>
             <div className="mt-1 flex flex-grow flex-col justify-between">
               <p className="text-md text-gray-500 pb-3">{description}</p>
-              {<LinkPreview {...linkPreview} />}
+              {linkPreview.linkUrl && <LinkPreview {...linkPreview} />}
             </div>
           </div>
           <div className="-mt-px flex divide-x divide-gray-200">
