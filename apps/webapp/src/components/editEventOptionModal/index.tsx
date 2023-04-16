@@ -35,13 +35,19 @@ const EditEventOptionModal = ({
     };
 
     createOption(newOption);
-    handleClose();
+    setTimeout(() => {
+      if (open) handleClose();
+    }, 1000);
   };
 
-  const handleClose = () => {
+  const clearFields = () => {
     setTitle('');
     setDesc('');
     setLink('');
+  };
+
+  const handleClose = () => {
+    clearFields();
     setOpen(false);
   };
 
@@ -126,24 +132,21 @@ const EditEventOptionModal = ({
                   </div>
                 </div>
                 <div className="mt-5 sm:mt-6 text-center">
-                  <button
-                    type="button"
-                    className="inline-flex w-44 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    onClick={handleCreateOption}
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <LoadingIcon width={20} height={20} />
-                    ) : (
-                      <>
-                        <PlusIcon
-                          className="-ml-0.5 h-5 w-5"
-                          aria-hidden="true"
-                        />
-                        Save option
-                      </>
-                    )}
-                  </button>
+                  {loading ? (
+                    <LoadingIcon width={80} height={80} />
+                  ) : (
+                    <button
+                      type="button"
+                      className="inline-flex w-44 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      onClick={handleCreateOption}
+                    >
+                      <PlusIcon
+                        className="-ml-0.5 h-5 w-5"
+                        aria-hidden="true"
+                      />
+                      Save option
+                    </button>
+                  )}
                 </div>
               </Dialog.Panel>
             </Transition.Child>

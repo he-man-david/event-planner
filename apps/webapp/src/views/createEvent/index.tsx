@@ -34,10 +34,10 @@ const CreateEvent = () => {
 
   useEffect(() => {
     const createEventFromCacheAndRedir = async () => {
-      const reqStr = localStorage.getItem('CreateEventRequest');
-      if (reqStr && user) {
+      const cached = localStorage.getItem('CreateEventRequest');
+      if (cached && user) {
         try {
-          const req = JSON.parse(reqStr);
+          const req = JSON.parse(cached);
           req.createdBy = user.user_id;
           // creating event API
           const event = await CreateEventApi(req);
@@ -88,12 +88,12 @@ const CreateEvent = () => {
   };
 
   const createOption = async (option: EventOptionBody) => {
-    setLoadingNewOption(true);
     // 1) call backend to get link preview infos
     // 2) set preview info in data structure
 
     //TODO: make link input optional in TS
     if (option.linkUrl) {
+      setLoadingNewOption(true);
       const res = await GetLinkPreviewData(option.linkUrl);
       if (res && res.success && res.result) {
         const { title, description, image, largestImage } = res.result;
@@ -102,6 +102,8 @@ const CreateEvent = () => {
         if (largestImage || image)
           option.linkPreviewImgUrl = largestImage || image || null;
       }
+      setLoadingNewOption(false);
+      handleOptionModalDisplay(false);
     }
 
     const newEvtOptions = [...eventOptions];
@@ -111,10 +113,17 @@ const CreateEvent = () => {
     } else {
       newEvtOptions.unshift(option);
     }
-
-    setLoadingNewOption(false);
     setEditOptionInfo(null);
     setEventOptions(newEvtOptions);
+  };
+
+  const handleUpdateSchedule = (start: Date, end: Date) => {
+    const _start = dayjs(start);
+    let _end = dayjs(end);
+    if (_start.isAfter(_end)) _end = _start.add(1, 'hour');
+
+    setStartDate(_start.toDate());
+    setEndDate(_end.toDate());
   };
 
   const handleEdit = (position: number) => {
@@ -131,12 +140,12 @@ const CreateEvent = () => {
     setEventOptions(newEvtOptions);
   };
 
-  const handleOptionModalDisplay = (open: boolean) => {
-    if (!open) {
+  const handleOptionModalDisplay = (isOpen: boolean) => {
+    if (!isOpen) {
       setEditOptionPos(-1);
       setEditOptionInfo(null);
     }
-    setShowAddOptionForm(open);
+    setShowAddOptionForm(isOpen);
   };
 
   const submitButton = () => {
@@ -196,8 +205,7 @@ const CreateEvent = () => {
             <DateTimeStartEnd
               startDate={startDate}
               endDate={endDate}
-              setStartDate={setStartDate}
-              setEndDate={setEndDate}
+              handleUpdateSchedule={handleUpdateSchedule}
             />
           </div>
         </header>

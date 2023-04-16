@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import dayjs from 'utils/day';
@@ -7,16 +6,9 @@ import './style.scss';
 
 const DateTimeStartEnd = ({
   startDate,
-  setStartDate,
   endDate,
-  setEndDate,
+  handleUpdateSchedule,
 }: DateTimeStartEndParam) => {
-  useEffect(() => {
-    if (dayjs(startDate).isAfter(endDate)) {
-      setEndDate(dayjs(startDate).add(1, 'hour').toDate());
-    }
-  }, [startDate, endDate, setEndDate]);
-
   const filterPassedTime = (time: Date) => {
     const currentDate = dayjs();
     const selectedDate = dayjs(time);
@@ -30,7 +22,9 @@ const DateTimeStartEnd = ({
         <p className="text-indigo-600 font-bold mr-2">From:</p>
         <DatePicker
           selected={startDate}
-          onChange={(date) => setStartDate(dayjs(date).toDate())}
+          onChange={(date) =>
+            handleUpdateSchedule(dayjs(date).toDate(), endDate)
+          }
           selectsStart
           showTimeSelect
           startDate={startDate}
@@ -42,7 +36,9 @@ const DateTimeStartEnd = ({
         <p className="text-indigo-600 font-bold mr-2">To:</p>
         <DatePicker
           selected={endDate}
-          onChange={(date) => setEndDate(dayjs(date).toDate())}
+          onChange={(date) =>
+            handleUpdateSchedule(startDate, dayjs(date).toDate())
+          }
           selectsEnd
           showTimeSelect
           startDate={startDate}

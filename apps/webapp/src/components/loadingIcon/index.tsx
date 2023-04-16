@@ -9,8 +9,8 @@ const LoadingIcon = ({
     <svg
       xmlns="http://www.w3.org/2000/svg"
       style={{ margin: 'auto' }}
-      width={`${width}x`}
-      height={`${height}x`}
+      width={`${width}px`}
+      height={`${height}px`}
       viewBox="0 0 100 100"
       preserveAspectRatio="xMidYMid"
     >

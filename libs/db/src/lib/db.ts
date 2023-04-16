@@ -163,16 +163,19 @@ export const getEventOption = async (id: string) => {
   }
   const { _count, ...eventOption } = content;
   return { ...eventOption, votes: _count.eventOptionVote };
-}
+};
 
-export const updateEventOption = async(id: string, data: UpdateEventOptionRequest) => {
+export const updateEventOption = async (
+  id: string,
+  data: UpdateEventOptionRequest
+) => {
   const result = await prisma.eventOption.update({
     where: { id },
-    select: { id : true },
-    data
+    select: { id: true },
+    data,
   });
   return getEventOption(result.id);
-}
+};
 
 export const deleteEventOption = async (req: DeleteEventOptionRequest) => {
   return await prisma.eventOption.delete({ where: { id: req.eventOptionId } });
@@ -214,7 +217,6 @@ export const getEvent = async (
     return { votes: _count.eventOptionVote, ...rest };
   });
   const eventRes = { ...rest, options: mappedOptions };
-  console.log(eventRes);
   return eventRes;
 };
 
@@ -256,6 +258,7 @@ export const createEvent = async (
     },
     data: {
       title: req.title,
+      description: req.description,
       createdBy: req.createdBy,
       eventStart: dayjs(req.eventStart).toISOString(),
       eventEnd: dayjs(req.eventEnd).toISOString(),
@@ -281,7 +284,7 @@ export const updateEvent = async (id: string, data: UpdateEventRequest) => {
       id,
     },
     select: {
-      id: true
+      id: true,
     },
     data,
   });

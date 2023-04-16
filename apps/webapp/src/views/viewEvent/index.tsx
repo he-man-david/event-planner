@@ -43,14 +43,18 @@ const ViewEvent = () => {
 
   useEffect(() => {
     if (params.id) {
-      console.log('event_id from param: ', params.id);
       if (cached) {
         const cachedEvent = localStorage.getItem(`event-${params.id}`);
         if (cachedEvent) {
           const event: EventResponse = JSON.parse(cachedEvent);
-          setTitle(event?.title || '');
-          setEventOptions(event?.options || []);
-
+          if (event) {
+            const { title, description, options, eventStart, eventEnd } = event;
+            setTitle(title || '');
+            setDescription(description || '');
+            setEventOptions(options || []);
+            setStartDate(new Date(eventStart));
+            setEndDate(new Date(eventEnd));
+          }
           localStorage.removeItem(`event-${params.id}`);
           return;
         }
@@ -59,27 +63,20 @@ const ViewEvent = () => {
       GetEvent(params.id)
         .then((event: EventResponse) => {
           if (!event) {
-            // Maybe 404 if event not found?
+            // TODO: Maybe 404 if event not found? -- Yes, redir to 404 page, we dont have now
             throw new Error(`Event not found - ${params.id}!`);
+          } else {
+            const { title, description, options, eventStart, eventEnd } = event;
+            setTitle(title || '');
+            setDescription(description || '');
+            setEventOptions(options || []);
+            setStartDate(new Date(eventStart));
+            setEndDate(new Date(eventEnd));
           }
-          setTitle(event.title);
-          setEventOptions(event.options);
         })
         .catch((err) => console.error(err));
     }
   }, [params.id, cached]);
-
-  useEffect(() => {
-    if (startDate && endDate && params.id) {
-      const req: UpdateEventRequest = {
-        title,
-        description,
-        eventStart: startDate.toISOString(),
-        eventEnd: endDate.toISOString(),
-      };
-      UpdateEvent(params.id, req);
-    }
-  }, [startDate, endDate, params.id]);
 
   if (!params.id) {
     return <h1 className="text-slate-200 mx-auto">404 Event Not Found</h1>;
@@ -105,7 +102,6 @@ const ViewEvent = () => {
       UpdateOption(newOption.id, option).then((opt) => {
         newEvtOptions.splice(editOptionPos, 1, opt);
         setEditOptionPos(-1);
-        console.log(newEvtOptions);
         setEventOptions(newEvtOptions);
         setLoadingNewOption(false);
       });
@@ -124,7 +120,52 @@ const ViewEvent = () => {
     setEditOptionInfo(null);
   };
 
-  const handleEdit = (position: number) => {
+  const handleUpdateTitle = (title: string) => {
+    if (params.id) {
+      const req: UpdateEventRequest = {
+        title,
+      };
+      UpdateEvent(params.id, req).then((event) => {
+        if (event) {
+          setTitle(event.title);
+        }
+      });
+    }
+  };
+
+  const handleUpdateDescription = (description: string) => {
+    if (params.id) {
+      const req: UpdateEventRequest = {
+        description,
+      };
+      UpdateEvent(params.id, req).then((event) => {
+        if (event) {
+          setDescription(event.description);
+        }
+      });
+    }
+  };
+
+  const handleUpdateSchedule = (start: Date, end: Date) => {
+    if (params.id) {
+      const _start = dayjs(start);
+      let _end = dayjs(end);
+      if (_start.isAfter(_end)) _end = _start.add(1, 'hour');
+
+      const req: UpdateEventRequest = {
+        eventStart: _start.toISOString(),
+        eventEnd: _end.toISOString(),
+      };
+      UpdateEvent(params.id, req).then((event) => {
+        if (event && event.eventStart && event.eventEnd) {
+          setStartDate(new Date(event.eventStart));
+          setEndDate(new Date(event.eventEnd));
+        }
+      });
+    }
+  };
+
+  const handleEditOption = (position: number) => {
     setEditOptionPos(position);
     setEditOptionInfo(() => {
       setShowAddOptionForm(true);
@@ -132,7 +173,7 @@ const ViewEvent = () => {
     });
   };
 
-  const handleDelete = (position: number) => {
+  const handleDeleteOption = (position: number) => {
     const newEvtOptions = [...eventOptions];
     newEvtOptions.splice(position, 1);
     setEventOptions(newEvtOptions);
@@ -150,18 +191,17 @@ const ViewEvent = () => {
     <div className="view-event-container min-h-full">
       <div className="header-container bg-indigo-600 pb-20">
         <header className="py-10">
-          <Title title={title} setTitle={setTitle} />
+          <Title title={title} setTitle={handleUpdateTitle} />
           {description && (
             <Description
               description={description}
-              setDescription={setDescription}
+              setDescription={handleUpdateDescription}
             />
           )}
           <DateTimeStartEnd
             startDate={startDate}
             endDate={endDate}
-            setStartDate={setStartDate}
-            setEndDate={setEndDate}
+            handleUpdateSchedule={handleUpdateSchedule}
           />
         </header>
       </div>
@@ -176,8 +216,8 @@ const ViewEvent = () => {
                   <UpdateEventBody
                     eventOptions={eventOptions}
                     setEventOptions={setEventOptions}
-                    editEventOptions={handleEdit}
-                    delEventOptions={handleDelete}
+                    editEventOptions={handleEditOption}
+                    delEventOptions={handleDeleteOption}
                   />
                 </div>
                 <button
