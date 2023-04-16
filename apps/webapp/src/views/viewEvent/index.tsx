@@ -16,6 +16,7 @@ import {
   CreateEventOptionRequest,
   GetEventCommentsResponse,
   CreateEventCommentResponse,
+  GetEventMembersResponse,
 } from '@event-planner/types/src';
 import { GetEvent, UpdateEvent } from 'apis/event';
 import { CreateOption, UpdateOption } from 'apis/eventOptions';
@@ -44,6 +45,7 @@ const ViewEvent = () => {
   const [commentsPage, setCommentsPage] = useState<
     GetEventCommentsResponse | undefined
   >();
+  const [eventMembersPage, setEventMembersPage] = useState<GetEventMembersResponse | undefined>();
 
   const queryParams = new URLSearchParams(window.location.search);
   const cached = queryParams.get('cached');
@@ -79,6 +81,18 @@ const ViewEvent = () => {
             setEventOptions(options || []);
             setStartDate(new Date(eventStart));
             setEndDate(new Date(eventEnd));
+            if (event.members) {
+              const content = event.members;
+              setEventMembersPage({
+                content,
+                pageInfo: {
+                  size: content.length,
+                  totalCount: content.length,
+                  hasNext: true,
+                  offset: 0 
+                }
+              })
+            }
           }
         })
         .catch((err) => console.error(err));
@@ -260,7 +274,7 @@ const ViewEvent = () => {
             <div className="grid grid-cols-1 gap-4">
               <div className="overflow-hidden rounded-lg bg-white shadow">
                 <div className="p-6">
-                  <MembersModal />
+                  { eventMembersPage && <MembersModal data={eventMembersPage.content} totalCount={eventMembersPage.pageInfo.totalCount} />}
                 </div>
               </div>
               <div className="overflow-hidden rounded-lg bg-white shadow">
