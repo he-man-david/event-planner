@@ -51,5 +51,6 @@ export type DeleteEventOptionResponse = boolean;
 // UPDATE Event Option
 // TODO clean up duplicate typing
 export const UpdateEventOptionRequestParser = EventOptionBodyParser;
-export type UpdateEventOptionRequest = typeof UpdateEventOptionRequestParser._type;
+export type UpdateEventOptionRequest =
+  typeof UpdateEventOptionRequestParser._type;
 export type UpdateEventOptionResponse = EventOptionBodyWithVotes;

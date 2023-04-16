@@ -63,7 +63,7 @@ model EventOptionVote {
 
 model EventComment {
   eventId   String   @db.Uuid
-  createdBy String   @db.Uuid
+  createdBy String
   content   String
   id        String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   createdAt DateTime @default(now())

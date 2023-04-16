@@ -14,12 +14,16 @@ import {
   EventOptionBody,
   UpdateEventRequest,
   CreateEventOptionRequest,
+  GetEventCommentsResponse,
+  CreateEventCommentResponse,
 } from '@event-planner/types/src';
 import { GetEvent, UpdateEvent } from 'apis/event';
 import { CreateOption, UpdateOption } from 'apis/eventOptions';
 import { GetLinkPreviewData } from 'utils/common';
 import dayjs from 'dayjs';
 import DateTimeStartEnd from 'components/dateTimeStartEnd';
+import { getEventComments } from '@event-planner/db/src';
+import { GetComments } from 'apis/comments';
 
 const ViewEvent = () => {
   const [title, setTitle] = useState<string>('');
@@ -37,6 +41,9 @@ const ViewEvent = () => {
     dayjs().add(1, 'hour').toDate()
   );
   const [endDate, setEndDate] = useState<Date>(dayjs().add(2, 'hour').toDate());
+  const [commentsPage, setCommentsPage] = useState<
+    GetEventCommentsResponse | undefined
+  >();
 
   const queryParams = new URLSearchParams(window.location.search);
   const cached = queryParams.get('cached');
@@ -75,6 +82,13 @@ const ViewEvent = () => {
           }
         })
         .catch((err) => console.error(err));
+
+      // this will need to be a poll
+      GetComments({
+        eventId: params.id,
+        limit: 10,
+        offset: 0,
+      }).then(setCommentsPage);
     }
   }, [params.id, cached]);
 
@@ -187,6 +201,18 @@ const ViewEvent = () => {
     setShowAddOptionForm(open);
   };
 
+  // won't need to do this after we have comment polling, I think.
+  const updateCommentsPage = (comment: CreateEventCommentResponse) => {
+    if (!commentsPage) {
+      return;
+    }
+    const newCommentsPage = { ...commentsPage };
+    newCommentsPage.content.push(comment);
+    newCommentsPage.pageInfo.size += 1;
+    newCommentsPage.pageInfo.totalCount += 1;
+    setCommentsPage(newCommentsPage);
+  };
+
   return (
     <div className="view-event-container min-h-full">
       <div className="header-container bg-indigo-600 pb-20">
@@ -239,12 +265,12 @@ const ViewEvent = () => {
               </div>
               <div className="overflow-hidden rounded-lg bg-white shadow">
                 <div className="p-6">
-                  <NewComment />
+                  <NewComment onSuccessfullCreate={updateCommentsPage} />
                 </div>
               </div>
               <div className="overflow-hidden rounded-lg bg-white shadow">
                 <div className="p-6 overflow-auto mx-h-[30rem]">
-                  <Comments />
+                  {commentsPage && <Comments comments={commentsPage.content} />}
                 </div>
               </div>
             </div>

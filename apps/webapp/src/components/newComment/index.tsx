@@ -1,12 +1,32 @@
+import { CreateComment } from 'apis/comments';
 import { useState } from 'react';
+import { useStytchUser } from '@stytch/react';
+import { useParams } from 'react-router-dom';
+import { CreateEventCommentResponse } from '@event-planner/types/src';
 
-const NewComment = () => {
+type NewCommentProps = {
+  onSuccessfullCreate?: (comment: CreateEventCommentResponse) => void;
+};
+
+const NewComment = ({ onSuccessfullCreate = () => {} }: NewCommentProps) => {
+  const params = useParams();
+  const { user } = useStytchUser();
   const [comment, setComment] = useState<string>('');
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    alert('this is comment: ' + comment);
-    setComment('');
+    if (!user?.user_id || !params.id) {
+      return;
+    }
+
+    CreateComment({
+      createdBy: user?.user_id,
+      content: comment,
+      eventId: params.id,
+    }).then((res) => {
+      setComment('');
+      onSuccessfullCreate(res);
+    });
   };
 
   return (
