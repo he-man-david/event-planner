@@ -1,6 +1,8 @@
 import {
   CreateEventOptionResponse,
   CreateEventOptionRequest,
+  UpdateEventOptionRequest,
+  UpdateEventOptionResponse,
 } from '@event-planner/types/src';
 import axios from 'axios';
 
@@ -18,6 +20,19 @@ export const CreateOption = async (
 ): Promise<CreateEventOptionResponse> => {
   try {
     const res = await axios.post(url, req, axiosConfig);
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const UpdateOption = async (
+  id: string,
+  req: UpdateEventOptionRequest
+): Promise<UpdateEventOptionResponse> => {
+  try {
+    const res = await axios.put(`${url}/${id}`, req, axiosConfig);
     return res.data;
   } catch (error) {
     console.error(error);

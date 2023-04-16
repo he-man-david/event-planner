@@ -48,10 +48,8 @@ export type DeleteEventOptionRequest =
   typeof DeleteEventOptionRequestParser._type;
 export type DeleteEventOptionResponse = boolean;
 
-export const UpdateEventOptionRequestParser = z.object({
-  title: z.string().optional(),
-  description: z.string().optional(),
-  LinkPreviewParam: LinkPreviewParam.optional()
-})
+// UPDATE Event Option
+// TODO clean up duplicate typing
+export const UpdateEventOptionRequestParser = EventOptionBodyParser;
 export type UpdateEventOptionRequest = typeof UpdateEventOptionRequestParser._type;
-export type UpdateEventOptionResponse = EventOptionWithVoteCounts;
+export type UpdateEventOptionResponse = EventOptionBodyWithVotes;

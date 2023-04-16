@@ -14,7 +14,7 @@ import {
   CreateEventOptionRequest,
 } from '@event-planner/types/src';
 import { GetEvent } from 'apis/event';
-import { CreateOption } from 'apis/eventOptions';
+import { CreateOption, UpdateOption } from 'apis/eventOptions';
 import { GetLinkPreviewData } from 'utils/common';
 
 const ViewEvent = () => {
@@ -77,10 +77,13 @@ const ViewEvent = () => {
     // editing
     if (editOptionPos >= 0) {
       let newOption = newEvtOptions[editOptionPos];
-      newOption = { ...newOption, ...option };
-      newEvtOptions.splice(editOptionPos, 1, newOption);
-      setEditOptionPos(-1);
-      setEventOptions(newEvtOptions);
+      UpdateOption(newOption.id, option)
+        .then(opt => {
+          newEvtOptions.splice(editOptionPos, 1, opt);
+          setEditOptionPos(-1);
+          console.log(newEvtOptions);
+          setEventOptions(newEvtOptions);
+        });
     } else {
       // creating
       const createOptionReq: CreateEventOptionRequest = {

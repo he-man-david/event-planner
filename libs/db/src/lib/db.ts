@@ -213,7 +213,9 @@ export const getEvent = async (
     const { _count, ...rest } = opt;
     return { votes: _count.eventOptionVote, ...rest };
   });
-  return { ...rest, options: mappedOptions };
+  const eventRes = { ...rest, options: mappedOptions };
+  console.log(eventRes);
+  return eventRes;
 };
 
 export const getEvents = async (

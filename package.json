@@ -6,7 +6,7 @@
     "db:migrate:dry": "npx prisma migrate dev --create-only --schema ./libs/db/src/schema.prisma",
     "db:migrate": "npx prisma migrate dev --schema ./libs/db/src/schema.prisma",
     "db:generate:schema": "nx run db:generate:schema",
-    "start": "nx run db:docker && npm run db:migrate && nx run-many --target serve --projects backend,webapp --parallel 2",
+    "start": "nx run db:docker && npm run db:migrate && nx run-many --target serve --projects webapp,linkpreview --parallel 2",
     "prettier": "npx prettier --write ./",
     "backend:prettier": "npx prettier --write ./apps/backend/src"
   },

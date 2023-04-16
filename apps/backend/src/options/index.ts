@@ -35,7 +35,7 @@ router.put(
   asyncHandler(async (req, res) => {
     const id = UUID.parse(req.params.eventOptionId);
     const data = UpdateEventOptionRequestParser.parse(req.body);
-    const result = db.updateEventOption(id, data);
+    const result = await db.updateEventOption(id, data);
     res.send(result);
   })
 );
