@@ -14,12 +14,17 @@ import {
   EventOptionBody,
   UpdateEventRequest,
   CreateEventOptionRequest,
+  GetEventCommentsResponse,
+  CreateEventCommentResponse,
+  GetEventMembersResponse,
 } from '@event-planner/types/src';
 import { GetEvent, UpdateEvent } from 'apis/event';
 import { CreateOption, UpdateOption } from 'apis/eventOptions';
 import { GetLinkPreviewData, dateToLocalTimeZoneDate } from 'utils/common';
 import dayjs from 'dayjs';
 import DateTimeStartEnd from 'components/dateTimeStartEnd';
+import { GetComments } from 'apis/comments';
+import { GetMembers } from 'apis/members';
 
 const ViewEvent = () => {
   const [title, setTitle] = useState<string>('');
@@ -37,9 +42,33 @@ const ViewEvent = () => {
     dayjs().add(1, 'hour').toDate()
   );
   const [endDate, setEndDate] = useState<Date>(dayjs().add(2, 'hour').toDate());
+  const [commentsPage, setCommentsPage] = useState<
+    GetEventCommentsResponse | undefined
+  >();
+  const [membersPage, setMembersPage] = useState<GetEventMembersResponse | undefined>();
 
   const queryParams = new URLSearchParams(window.location.search);
   const cached = queryParams.get('cached');
+
+  const fetchComments = () => {
+    if (!params.id) return;
+    // TODO make use of pagination
+    GetComments({
+      eventId: params.id,
+      limit: 100,
+      offset: 0,
+    }).then(setCommentsPage);
+  }
+
+  const fetchMembers = () => {
+    if (!params.id) return;
+    // TODO make use of pagination
+    GetMembers({
+      eventId: params.id,
+      limit: 100,
+      offset: 0,
+    }).then(setMembersPage);
+  }
 
   useEffect(() => {
     if (params.id) {
@@ -76,9 +105,14 @@ const ViewEvent = () => {
               dateToLocalTimeZoneDate(new Date(eventStart)).toDate()
             );
             setEndDate(dateToLocalTimeZoneDate(new Date(eventEnd)).toDate());
+            fetchComments();
+            fetchMembers();
           }
         })
         .catch((err) => console.error(err));
+
+      // this will need to be a poll
+      fetchComments();
     }
   }, [params.id, cached]);
 
@@ -242,17 +276,23 @@ const ViewEvent = () => {
             <div className="grid grid-cols-1 gap-4">
               <div className="overflow-hidden rounded-lg bg-white shadow">
                 <div className="p-6">
-                  <MembersModal />
+                  { membersPage && <MembersModal data={membersPage.content} totalCount={membersPage.pageInfo.totalCount} />}
                 </div>
               </div>
               <div className="overflow-hidden rounded-lg bg-white shadow">
                 <div className="p-6">
-                  <NewComment />
+                  <NewComment onSuccessfullCreate={fetchComments} />
                 </div>
               </div>
               <div className="overflow-hidden rounded-lg bg-white shadow">
                 <div className="p-6 overflow-auto mx-h-[30rem]">
-                  <Comments />
+                <Comments comments={commentsPage?.content.map(c => {
+                    return {
+                      createdAt: c.createdAt,
+                      createdBy: c.commenterInfo.name.trim() === "" ? c.commenterInfo.email : c.commenterInfo.name,
+                      content: c.content
+                    }
+                  }) || []} />
                 </div>
               </div>
             </div>

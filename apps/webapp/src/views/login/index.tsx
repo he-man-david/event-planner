@@ -45,7 +45,7 @@ const Login = () => {
   return (
     <div className="sm:mt-8 lg:mt-28 sm:mx-auto sm:w-full sm:max-w-md">
       <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-        <StytchLogin config={config} styles={styles} />
+        <StytchLogin config={config} styles={styles}/>
       </div>
     </div>
   );

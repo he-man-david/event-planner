@@ -1,15 +1,19 @@
-import { EventMember } from '@prisma/client';
+import { EventMember, User } from '@prisma/client';
 import { z } from 'zod';
 import { Page, UUID } from './common';
+
+export type EventMemberWithMemberInfo = EventMember & {
+  memberInfo: User
+};
 
 // GET Event Members
 export const GetEventMembersRequestParser = z.object({
   eventId: UUID,
-  offset: z.number(),
-  limit: z.number(),
+  offset:  z.preprocess(Number, z.number()),
+  limit:  z.preprocess(Number, z.number()),
 });
 export type GetEventMembersRequest = typeof GetEventMembersRequestParser._type;
-export type GetEventMembersResponse = Page<EventMember>;
+export type GetEventMembersResponse = Page<EventMemberWithMemberInfo>;
 
 // CREATE Event Members
 export const CreateEventMemberRequestParser = z.object({
@@ -18,7 +22,7 @@ export const CreateEventMemberRequestParser = z.object({
 });
 export type CreateEventMemberRequest =
   typeof CreateEventMemberRequestParser._type;
-export type CreateEventMemberResponse = EventMember | null;
+export type CreateEventMemberResponse = EventMemberWithMemberInfo | null;
 
 // DELETE Event Members
 export const DeleteEventMembersRequestParser = z.object({

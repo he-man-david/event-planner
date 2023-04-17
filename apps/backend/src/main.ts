@@ -5,6 +5,7 @@ import commentRoutes from './comments';
 import optionsRoutes from './options';
 import votesRoutes from './votes';
 import membersRoutes from './members';
+import usersRoutes from './users';
 import asyncHandler from 'express-async-handler';
 import cors from 'cors';
 import { PORT } from './env';
@@ -43,6 +44,7 @@ app.use('/comments', asyncHandler(commentRoutes));
 app.use('/events', asyncHandler(eventRoutes));
 app.use('/options', asyncHandler(optionsRoutes));
 app.use('/votes', asyncHandler(votesRoutes));
+app.use('/users', asyncHandler(usersRoutes));
 
 // Error handler has to be last middleware!
 app.use(errorHandler);

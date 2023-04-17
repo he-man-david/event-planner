@@ -3,6 +3,8 @@ import { useStytch, useStytchUser } from '@stytch/react';
 import { useNavigate } from 'react-router-dom';
 import { routes } from 'const/routes';
 import LoadingPage from 'components/loadingPage';
+import { UpdateUser } from 'apis/users';
+import { User } from '@stytch/vanilla-js';
 
 /*
 During both the Magic link and OAuth flow, Stytch will redirect the user back to your application to a specified redirect URL (see Login.js). 
@@ -17,8 +19,20 @@ const Authenticate = () => {
   const { user } = useStytchUser();
   const navigate = useNavigate();
 
+  const updateUser = useCallback(
+    async (authenticatedUser: User) => {
+      console.log("Update user in db");
+      return await UpdateUser({
+        id: authenticatedUser.user_id,
+        email: authenticatedUser.emails[0].email, // Styctch user can have multipel emails??
+        name: `${authenticatedUser.name.first_name} ${authenticatedUser.name.middle_name} ${authenticatedUser.name.last_name}`,
+        imageUrl: null
+      });
+    }, []
+  )
+
   const successRedirect = useCallback(
-    (nextRoute: string | null) => {
+    async (nextRoute: string | null) => {
       // TODO: call backend /authenticate API nodejs Stych sdk, then redir to next_route
       console.log('redirecting to next_route: ', nextRoute);
       if (nextRoute) {
@@ -45,18 +59,20 @@ const Authenticate = () => {
             .authenticate(token, {
               session_duration_minutes: 60,
             })
-            .then(() => {
+            .then((authInfo) => {
               console.log('Successfully authenticated via magic link');
               successRedirect(nextRoute);
+              updateUser(authInfo.user);
             });
         } else if (tokenType === 'oauth') {
           stytch.oauth
             .authenticate(token, {
               session_duration_minutes: 60,
             })
-            .then(() => {
+            .then((authInfo) => {
               console.log('Successfully authenticated via OAuth');
               successRedirect(nextRoute);
+              updateUser(authInfo.user);
             });
         }
       }

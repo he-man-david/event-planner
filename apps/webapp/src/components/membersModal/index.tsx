@@ -2,66 +2,34 @@ import { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
-const MembersData = [
-  {
-    name: 'Jaser',
-    imageUrl:
-      'https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Jaser',
-    imageUrl:
-      'https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Jaser',
-    imageUrl:
-      'https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Jaser',
-    imageUrl:
-      'https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Jaser',
-    imageUrl:
-      'https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Jaser',
-    imageUrl:
-      'https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Jaser',
-    imageUrl:
-      'https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Jaser',
-    imageUrl:
-      'https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-];
+const imageUrl = 'https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80';
 
-const MembersModal = () => {
+type MembersModalProps = {
+  data: Array<
+    {
+      userId: string
+    }
+  >,
+  totalCount: number
+}
+
+const MembersModal = ({data, totalCount}: MembersModalProps) => {
   const [open, setOpen] = useState(false);
 
   const generateAvatars = () => {
-    let data = MembersData;
-    if (MembersData.length > 7) {
-      data = MembersData.slice(0, 6);
-    }
+    // let data = MembersData;
+    // if (MembersData.length > 7) {
+    //   data = MembersData.slice(0, 6);
+    // }
     return (
       <div className="isolate flex -space-x-2 overflow-hidden">
-        {data.map(({ name, imageUrl }, idx) => {
+        {data.map(({ userId }, idx) => {
           return (
             <img
-              key={name + '-avatar-row-' + idx}
+              key={userId + '-avatar-row-' + idx}
               className="relative z-30 inline-block h-10 w-10 rounded-full ring-2 ring-white"
               src={imageUrl}
-              alt={name}
+              alt={userId}
             />
           );
         })}
@@ -72,11 +40,11 @@ const MembersModal = () => {
   return (
     <div className="flex flex-col text-left">
       <p className="text-gray-500 sm:text-sm sm:leading-6 pb-2">
-        {MembersData.length} Members
+        {totalCount} Members
       </p>
       <div className="avatar-row flex justify-between aligh">
         {generateAvatars()}
-        {MembersData.length > 5 ? (
+        {totalCount > 5 ? (
           <p
             className="text-indigo-600 sm:text-sm sm:leading-6 hover:underline hover:text-indigo-500 hover:cursor-pointer font-bold"
             onClick={() => setOpen(true)}
@@ -106,7 +74,7 @@ const MembersModal = () => {
                       <div className="px-4 sm:px-6">
                         <div className="flex items-start justify-between">
                           <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
-                            {MembersData.length} Members
+                            {totalCount} Members
                           </Dialog.Title>
                           <div className="ml-3 flex h-7 items-center">
                             <button
@@ -124,17 +92,17 @@ const MembersModal = () => {
                         </div>
                       </div>
                       <div className="relative mt-6 flex-1 px-4 sm:px-6 overflow-auto">
-                        {MembersData.map(({ name, imageUrl }, idx) => {
+                        {data.map(({ userId }, idx) => {
                           return (
                             <div
-                              key={name + '-avatar-row-' + idx}
+                              key={userId + '-avatar-row-' + idx}
                               className="flex items-center my-5"
                             >
                               <div>
                                 <img
                                   className="relative z-30 inline-block h-10 w-10 rounded-full ring-2 ring-white"
                                   src={imageUrl}
-                                  alt={name}
+                                  alt={userId}
                                 />
                               </div>
                               <div className="ml-3">
