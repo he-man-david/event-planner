@@ -17,7 +17,7 @@ import {
 } from '@event-planner/types/src';
 import { GetEvent, UpdateEvent } from 'apis/event';
 import { CreateOption, UpdateOption } from 'apis/eventOptions';
-import { GetLinkPreviewData } from 'utils/common';
+import { GetLinkPreviewData, dateToLocalTimeZoneDate } from 'utils/common';
 import dayjs from 'dayjs';
 import DateTimeStartEnd from 'components/dateTimeStartEnd';
 
@@ -52,8 +52,10 @@ const ViewEvent = () => {
             setTitle(title || '');
             setDescription(description || '');
             setEventOptions(options || []);
-            setStartDate(new Date(eventStart));
-            setEndDate(new Date(eventEnd));
+            setStartDate(
+              dateToLocalTimeZoneDate(new Date(eventStart)).toDate()
+            );
+            setEndDate(dateToLocalTimeZoneDate(new Date(eventEnd)).toDate());
           }
           localStorage.removeItem(`event-${params.id}`);
           return;
@@ -70,8 +72,10 @@ const ViewEvent = () => {
             setTitle(title || '');
             setDescription(description || '');
             setEventOptions(options || []);
-            setStartDate(new Date(eventStart));
-            setEndDate(new Date(eventEnd));
+            setStartDate(
+              dateToLocalTimeZoneDate(new Date(eventStart)).toDate()
+            );
+            setEndDate(dateToLocalTimeZoneDate(new Date(eventEnd)).toDate());
           }
         })
         .catch((err) => console.error(err));
@@ -158,8 +162,12 @@ const ViewEvent = () => {
       };
       UpdateEvent(params.id, req).then((event) => {
         if (event && event.eventStart && event.eventEnd) {
-          setStartDate(new Date(event.eventStart));
-          setEndDate(new Date(event.eventEnd));
+          setStartDate(
+            dateToLocalTimeZoneDate(new Date(event.eventStart)).toDate()
+          );
+          setEndDate(
+            dateToLocalTimeZoneDate(new Date(event.eventEnd)).toDate()
+          );
         }
       });
     }

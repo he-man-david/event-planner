@@ -53,8 +53,10 @@ const MyEvents = () => {
 
   return (
     <div className="overflow-hidde shadow sm:rounded-md mx-auto my-6 max-w-6xl px-4 p-8 sm:px-6 lg:mt-12 lg:px-8 bg-white border rounded-lg">
-      {tabsNavigation()}
-      <EventsList data={data} />
+      <div className="mx-auto w-full sm:w-[700px]">
+        {tabsNavigation()}
+        <EventsList data={data} />
+      </div>
     </div>
   );
 };
