@@ -34,7 +34,7 @@ export const StytchTokenAuth = async (
 ) => {
   const session_token = req.headers.sessionToken;
   try {
-    await client.sessions.authenticate({ session_token });
+    await client.sessions.authenticate({ session_token });    
     next();
   } catch (error) {
     res.status(401).json(error);

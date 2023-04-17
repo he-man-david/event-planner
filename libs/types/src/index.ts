@@ -4,3 +4,4 @@ export * from './lib/options';
 export * from './lib/events';
 export * from './lib/members';
 export * from './lib/votes';
+export * from './lib/users';

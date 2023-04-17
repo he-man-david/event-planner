@@ -1,6 +1,10 @@
-import { EventComment } from '@prisma/client';
+import { EventComment, User } from '@prisma/client';
 import { UUID, Page } from './common';
 import { z } from 'zod';
+
+export type EventCommentWithCommenterInfo = EventComment & {
+  commenterInfo: User
+};
 
 //GET Event Comments
 export const GetEventCommentsRequestParser = z.object({
@@ -10,7 +14,7 @@ export const GetEventCommentsRequestParser = z.object({
 });
 export type GetEventCommentsRequest =
   typeof GetEventCommentsRequestParser._type;
-export type GetEventCommentsResponse = Page<EventComment>;
+export type GetEventCommentsResponse = Page<EventCommentWithCommenterInfo>;
 
 //CREATE Event Comments
 export const CreateEventCommentRequestParser = z.object({
@@ -20,4 +24,4 @@ export const CreateEventCommentRequestParser = z.object({
 });
 export type CreateEventCommentRequest =
   typeof CreateEventCommentRequestParser._type;
-export type CreateEventCommentResponse = EventComment;
+export type CreateEventCommentResponse = EventCommentWithCommenterInfo;

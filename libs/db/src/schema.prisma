@@ -23,8 +23,9 @@ model Event {
   eventOptionId String?  @db.Uuid
   planned       Boolean  @default(false)
 
-  members EventMember[]
-  options EventOption[]
+  members     EventMember[]
+  options     EventOption[]
+  creatorInfo User          @relation(fields: [createdBy], references: [id])
 
   @@index([updatedAt(sort: Desc), eventStart(sort: Desc)])
 }
@@ -69,6 +70,8 @@ model EventComment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  commenterInfo User @relation(fields: [createdBy], references: [id])
+
   @@id([createdAt, eventId])
   @@index([updatedAt(sort: Desc)])
 }
@@ -81,7 +84,22 @@ model EventMember {
   updatedAt DateTime @updatedAt
 
   event           Event             @relation(fields: [eventId], references: [id])
+  memberInfo      User              @relation(fields: [userId], references: [id])
   eventOptionVote EventOptionVote[]
 
   @@index([eventId, userId, updatedAt(sort: Desc)])
+}
+
+model User {
+  id            String         @id
+  name          String
+  email         String
+  imageUrl      String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  CreatedEvents Event[]
+  EventMembers  EventMember[]
+  EventComments EventComment[]
+
+  @@index([email, name, updatedAt(sort: Desc)])
 }

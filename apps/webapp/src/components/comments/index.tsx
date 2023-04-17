@@ -39,7 +39,7 @@ const Comments = (props?: CommentsProps) => {
                       </p>
                     </div>
                     <p className="mt-0.5 text-sm text-gray-500">
-                      Commented {dayjs(commentItem.createdAt).toISOString()}
+                      Commented {dayjs(commentItem.createdAt).format("YYYY-MM-DD")}
                     </p>
                   </div>
                   <div className="mt-2 text-sm text-gray-700">

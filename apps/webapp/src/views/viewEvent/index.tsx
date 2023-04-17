@@ -23,8 +23,8 @@ import { CreateOption, UpdateOption } from 'apis/eventOptions';
 import { GetLinkPreviewData } from 'utils/common';
 import dayjs from 'dayjs';
 import DateTimeStartEnd from 'components/dateTimeStartEnd';
-import { getEventComments } from '@event-planner/db/src';
 import { GetComments } from 'apis/comments';
+import { GetMembers } from 'apis/members';
 
 const ViewEvent = () => {
   const [title, setTitle] = useState<string>('');
@@ -45,10 +45,30 @@ const ViewEvent = () => {
   const [commentsPage, setCommentsPage] = useState<
     GetEventCommentsResponse | undefined
   >();
-  const [eventMembersPage, setEventMembersPage] = useState<GetEventMembersResponse | undefined>();
+  const [membersPage, setMembersPage] = useState<GetEventMembersResponse | undefined>();
 
   const queryParams = new URLSearchParams(window.location.search);
   const cached = queryParams.get('cached');
+
+  const fetchComments = () => {
+    if (!params.id) return;
+    // TODO make use of pagination
+    GetComments({
+      eventId: params.id,
+      limit: 100,
+      offset: 0,
+    }).then(setCommentsPage);
+  }
+
+  const fetchMembers = () => {
+    if (!params.id) return;
+    // TODO make use of pagination
+    GetMembers({
+      eventId: params.id,
+      limit: 100,
+      offset: 0,
+    }).then(setMembersPage);
+  }
 
   useEffect(() => {
     if (params.id) {
@@ -81,28 +101,14 @@ const ViewEvent = () => {
             setEventOptions(options || []);
             setStartDate(new Date(eventStart));
             setEndDate(new Date(eventEnd));
-            if (event.members) {
-              const content = event.members;
-              setEventMembersPage({
-                content,
-                pageInfo: {
-                  size: content.length,
-                  totalCount: content.length,
-                  hasNext: true,
-                  offset: 0 
-                }
-              })
-            }
+            fetchComments();
+            fetchMembers();
           }
         })
         .catch((err) => console.error(err));
 
       // this will need to be a poll
-      GetComments({
-        eventId: params.id,
-        limit: 10,
-        offset: 0,
-      }).then(setCommentsPage);
+      fetchComments();
     }
   }, [params.id, cached]);
 
@@ -215,18 +221,6 @@ const ViewEvent = () => {
     setShowAddOptionForm(open);
   };
 
-  // won't need to do this after we have comment polling, I think.
-  const updateCommentsPage = (comment: CreateEventCommentResponse) => {
-    if (!commentsPage) {
-      return;
-    }
-    const newCommentsPage = { ...commentsPage };
-    newCommentsPage.content.push(comment);
-    newCommentsPage.pageInfo.size += 1;
-    newCommentsPage.pageInfo.totalCount += 1;
-    setCommentsPage(newCommentsPage);
-  };
-
   return (
     <div className="view-event-container min-h-full">
       <div className="header-container bg-indigo-600 pb-20">
@@ -274,17 +268,23 @@ const ViewEvent = () => {
             <div className="grid grid-cols-1 gap-4">
               <div className="overflow-hidden rounded-lg bg-white shadow">
                 <div className="p-6">
-                  { eventMembersPage && <MembersModal data={eventMembersPage.content} totalCount={eventMembersPage.pageInfo.totalCount} />}
+                  { membersPage && <MembersModal data={membersPage.content} totalCount={membersPage.pageInfo.totalCount} />}
                 </div>
               </div>
               <div className="overflow-hidden rounded-lg bg-white shadow">
                 <div className="p-6">
-                  <NewComment onSuccessfullCreate={updateCommentsPage} />
+                  <NewComment onSuccessfullCreate={fetchComments} />
                 </div>
               </div>
               <div className="overflow-hidden rounded-lg bg-white shadow">
                 <div className="p-6 overflow-auto mx-h-[30rem]">
-                  {commentsPage && <Comments comments={commentsPage.content} />}
+                <Comments comments={commentsPage?.content.map(c => {
+                    return {
+                      createdAt: c.createdAt,
+                      createdBy: c.commenterInfo.name.trim() === "" ? c.commenterInfo.email : c.commenterInfo.name,
+                      content: c.content
+                    }
+                  }) || []} />
                 </div>
               </div>
             </div>

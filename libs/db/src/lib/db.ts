@@ -1,4 +1,6 @@
-import { EventMember, PrismaClient } from '@prisma/client';
+// TODO - Split into individual files!
+
+import { EventMember, PrismaClient, User } from '@prisma/client';
 import {
   UUID,
   Page,
@@ -19,6 +21,10 @@ import {
   GetEventsRequest,
   UpdateEventRequest,
   UpdateEventOptionRequest,
+  UpdateUserRequest,
+  GetEventMembersResponse,
+  CreateEventCommentResponse,
+  CreateEventMemberResponse,
 } from '@event-planner/types';
 import dayjs = require('dayjs');
 
@@ -62,8 +68,10 @@ export const toggleEventOptionVote = async (
   }
 };
 
-export const addEventComment = async (data: CreateEventCommentRequest) => {
-  return await prisma.eventComment.create({ data });
+export const addEventComment = async (
+  data: CreateEventCommentRequest
+): Promise<CreateEventCommentResponse> => {
+  return await prisma.eventComment.create({ data, include: { commenterInfo: true } });
 };
 
 export const getEventComments = async (
@@ -78,11 +86,16 @@ export const getEventComments = async (
     where,
     skip: offset,
     take: req.limit,
+    include: {
+      commenterInfo: true,
+    },
   });
   return createPage(totalCount, offset, content);
 };
 
-export const getEventMembers = async (req: GetEventMembersRequest) => {
+export const getEventMembers = async (
+  req: GetEventMembersRequest
+): Promise<GetEventMembersResponse> => {
   const offset = req.offset;
   const where = {
     eventId: req.eventId,
@@ -92,14 +105,17 @@ export const getEventMembers = async (req: GetEventMembersRequest) => {
     where,
     take: req.limit,
     skip: offset,
+    include: {
+      memberInfo: true
+    },
   });
   return createPage(totalCount, offset, content);
 };
 
 export const addUserToEvent = async (
   data: CreateEventMemberRequest
-): Promise<EventMember | null> => {
-  return await prisma.eventMember.create({ data });
+): Promise<CreateEventMemberResponse> => {
+  return await prisma.eventMember.create({ data, include: {memberInfo: true} });
 };
 
 export const removeUsersFromEvent = async (req: DeleteEventMembersRequest) => {
@@ -278,7 +294,10 @@ export const createEvent = async (
   return getEvent(event.id);
 };
 
-export const updateEvent = async (id: string, data: UpdateEventRequest) => {
+export const updateEvent = async (
+  id: string,
+  data: UpdateEventRequest
+): Promise<EventResponse> => {
   const result = await prisma.event.update({
     where: {
       id,
@@ -289,4 +308,15 @@ export const updateEvent = async (id: string, data: UpdateEventRequest) => {
     data,
   });
   return getEvent(result.id);
+};
+
+export const updateUser = async (data: UpdateUserRequest): Promise<User> => {
+  // upsert is same as update or create
+  return await prisma.user.upsert({
+    where: {
+      id: data.id
+    },
+    update: data,
+    create: data,
+  });
 };

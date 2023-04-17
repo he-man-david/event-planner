@@ -43,7 +43,7 @@ CREATE TABLE "EventOptionVote" (
 -- CreateTable
 CREATE TABLE "EventComment" (
     "eventId" UUID NOT NULL,
-    "createdBy" UUID NOT NULL,
+    "createdBy" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -61,6 +61,18 @@ CREATE TABLE "EventMember" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "EventMember_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "imageUrl" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -81,6 +93,12 @@ CREATE INDEX "EventComment_updatedAt_idx" ON "EventComment"("updatedAt" DESC);
 -- CreateIndex
 CREATE INDEX "EventMember_eventId_userId_updatedAt_idx" ON "EventMember"("eventId", "userId", "updatedAt" DESC);
 
+-- CreateIndex
+CREATE INDEX "User_email_name_updatedAt_idx" ON "User"("email", "name", "updatedAt" DESC);
+
+-- AddForeignKey
+ALTER TABLE "Event" ADD CONSTRAINT "Event_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
 -- AddForeignKey
 ALTER TABLE "EventOption" ADD CONSTRAINT "EventOption_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "Event"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -91,4 +109,10 @@ ALTER TABLE "EventOptionVote" ADD CONSTRAINT "EventOptionVote_eventMemberId_fkey
 ALTER TABLE "EventOptionVote" ADD CONSTRAINT "EventOptionVote_eventOptionId_fkey" FOREIGN KEY ("eventOptionId") REFERENCES "EventOption"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "EventComment" ADD CONSTRAINT "EventComment_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "EventMember" ADD CONSTRAINT "EventMember_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "Event"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "EventMember" ADD CONSTRAINT "EventMember_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
