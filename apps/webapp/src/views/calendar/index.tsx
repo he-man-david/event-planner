@@ -11,6 +11,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { classNames } from 'utils/common';
 import dayjs from 'utils/day';
 import { FormattedDateObj } from './types';
+import { GetEvents } from 'apis/event';
 
 const Calendar = () => {
   const [currentMonth, setCurrentMonth] = useState(dayjs(new Date()));
@@ -37,20 +38,53 @@ const Calendar = () => {
     return formattedDObject;
   };
 
-  const getAllDays = () => {
-    let currentDate = currentMonth.startOf('month').weekday(0);
-    const nextMonth = currentMonth.add(1, 'month').month();
+  const getAllDays = async () => {
+    let currentDate = currentMonth.startOf('month');
+    const nextMonth = currentDate.add(1, 'month').month();
+
+    const events = await getEventsData(
+      currentDate,
+      currentDate.add(1, 'month').startOf('month')
+    );
 
     const allDates: FormattedDateObj[] = [];
 
     while (currentDate.weekday(0).toObject().months !== nextMonth) {
       const formatted = formattedDateObject(currentDate);
-      if (formatted.isToday) formatted.events = [];
+
+      for (const event of events) {
+        const eventStart = dayjs(event.eventStart);
+        const eventEnd = dayjs(event.eventEnd);
+        if (
+          eventStart.isSame(currentDate, 'day') ||
+          eventEnd.isSame(currentDate, 'day') ||
+          (eventStart.isBefore(currentDate) && eventEnd.isAfter(currentDate))
+        ) {
+          formatted.events.push(event);
+        }
+      }
+
       allDates.push(formatted);
       currentDate = currentDate.add(1, 'day');
     }
 
     setArrayOfDays(allDates);
+  };
+
+  const getEventsData = async (start: Dayjs, end: Dayjs) => {
+    try {
+      const res = await GetEvents({
+        eventStartAfter: start.toISOString(),
+        eventStartBefore: end.toISOString(),
+        includeCounts: true,
+        offset: 0,
+        size: 10,
+      });
+      return res.content || [];
+    } catch (error) {
+      console.log('Failed to get events data, ERR:: ', error);
+    }
+    return [];
   };
 
   const goToToday = () => {
@@ -69,7 +103,7 @@ const Calendar = () => {
   };
 
   return (
-    <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 lg:mt-6">
+    <div className="mx-auto sm:px-6 lg:px-8 lg:mt-6 w-full md:w-[50rem] lg:w-[80rem]">
       <div className="lg:flex lg:h-full lg:flex-col">
         <header className="flex items-center justify-between border-b border-gray-200 px-6 py-4 lg:flex-none">
           <h1 className="font-semibold leading-6 text-gray-100 text-2xl">
@@ -346,7 +380,7 @@ const Calendar = () => {
           </div>
         </div>
         {arrayOfDays[selectedDay]?.events.length > 0 && (
-          <div className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8 bg-white rounded-md mt-8">
+          <div className="mx-auto max-w-7xl p-3 sm:p-6 lg:p-8 bg-white rounded-md mt-8">
             <EventsList data={arrayOfDays[selectedDay].events} />
           </div>
         )}

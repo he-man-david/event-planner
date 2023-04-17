@@ -21,7 +21,7 @@ export const GetLinkPreviewData = async (
 };
 
 export const dayjsToFormattedString = (date: dayjs.Dayjs): string => {
-  return date.format('MM/DD/YYYY h:m:A');
+  return date.format('MM/DD/YYYY hh:mm A');
 };
 
 export const dateToLocalTimeZoneDate = (
