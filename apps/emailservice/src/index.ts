@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import SESTransport from 'nodemailer/lib/ses-transport';
 import AWS from 'aws-sdk';
 import ical, { ICalCalendar } from 'ical-generator';
-import dayjs = require('dayjs');
+import dayjs from 'dayjs';
 
 // Run Lambda
 
@@ -27,13 +27,14 @@ const sendEmail = (
   to: string,
   subject: string,
   html: any,
-  calendarObj = null
+  calendarObj: ICalCalendar | null
 ) => {
   const mailOptions = {
     to,
     subject,
     html,
   };
+
   if (calendarObj) {
     const alternatives = {
       'Content-Type': 'text/calendar',
@@ -44,6 +45,7 @@ const sendEmail = (
     };
     mailOptions['alternatives'] = alternatives;
   }
+
   transporter.sendMail(mailOptions, function (error, response) {
     if (error) {
       console.log(error);
@@ -68,6 +70,7 @@ const getIcalObjectInstance = (
     url,
     name: 'My test calendar event',
   });
+
   cal.createEvent({
     start: startTime,
     end: endTime,
@@ -80,6 +83,7 @@ const getIcalObjectInstance = (
       email: email,
     },
   });
+
   return cal;
 };
 
