@@ -1,4 +1,6 @@
+import { Request, Response } from 'express';
 import * as stytch from 'stytch';
+import { User } from 'stytch/types/lib/b2c/shared_b2c';
 import { z } from 'zod';
 
 const stytchEnv =
@@ -28,13 +30,14 @@ export const errorHandler = (err: any, req: any, res: any, next: any) => {
 
 export const StytchTokenAuth = async (
   err: any,
-  req: any,
-  res: any,
+  req: Request,
+  res: Response,
   next: any
 ) => {
-  const session_token = req.headers.sessionToken;
+  const session_token = String(req.headers.sessionToken);
   try {
-    await client.sessions.authenticate({ session_token });    
+    const authRes = await client.sessions.authenticate({ session_token });
+    res.locals.user = authRes.user;
     next();
   } catch (error) {
     res.status(401).json(error);

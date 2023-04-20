@@ -236,6 +236,52 @@ export const getEvent = async (
   return eventRes;
 };
 
+export const getEventsForUser = async (req: GetEventsRequest, userId: string): Promise<GetEventsResponse> =>{
+  const offset = req.offset ?? 0;
+  const eventWhereFilter = {
+    eventStart: {
+      gte: req.eventStartAfter
+        ? dayjs(req.eventStartAfter).toISOString()
+        : undefined,
+      lte: req.eventStartBefore
+        ? dayjs(req.eventStartBefore).toISOString()
+        : undefined,
+    },
+  };
+
+  const totalCount = await prisma.event.count({
+    where: {
+      ...eventWhereFilter,
+      members: {
+        some: {
+          userId: userId
+        }
+      }
+    } 
+  })
+
+  const result = await prisma.event.findMany({
+    where: {
+      ...eventWhereFilter,
+      members: {
+        some: {
+          userId: userId
+        }
+      }
+    },
+    include: {
+      _count: { select: { members: true, options: true } }
+    }
+  });
+
+
+  const mappedContent = result.map(row => {
+    const { _count, ...event } = row;
+    return { ...event, members: _count.members, options: _count.options };
+  });
+  return createPage(totalCount, offset, mappedContent);
+}
+
 export const getEvents = async (
   req: GetEventsRequest
 ): Promise<GetEventsResponse> => {
