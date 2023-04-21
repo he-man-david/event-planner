@@ -16,10 +16,13 @@ const axiosConfig = {
 };
 
 export const CreateOption = async (
-  req: CreateEventOptionRequest
+  req: CreateEventOptionRequest,
+  token: string
 ): Promise<CreateEventOptionResponse> => {
   try {
-    const res = await axios.post(url, req, axiosConfig);
+    const config:any = {...axiosConfig};
+    config.headers["session_token"] = token;
+    const res = await axios.post(url, req, config);
     return res.data;
   } catch (error) {
     console.error(error);
@@ -29,10 +32,13 @@ export const CreateOption = async (
 
 export const UpdateOption = async (
   id: string,
-  req: UpdateEventOptionRequest
+  req: UpdateEventOptionRequest,
+  token: string
 ): Promise<UpdateEventOptionResponse> => {
   try {
-    const res = await axios.put(`${url}/${id}`, req, axiosConfig);
+    const config:any = {...axiosConfig};
+    config.headers["session_token"] = token;
+    const res = await axios.put(`${url}/${id}`, req, config);
     return res.data;
   } catch (error) {
     console.error(error);

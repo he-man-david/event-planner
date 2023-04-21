@@ -30,15 +30,14 @@ app.use(express.json());
 
 app.use(cors(corsOptions));
 
-// Stytch middleware for sessiontoken auth
-app.use(StytchTokenAuth);
-
 // health check endpoint
 app.get('/', (_, res) => {
   res.send(true);
 });
 
-// TODO change to memebers
+// Stytch middleware for sessiontoken auth
+app.use(StytchTokenAuth);
+
 app.use('/members', asyncHandler(membersRoutes));
 app.use('/comments', asyncHandler(commentRoutes));
 app.use('/events', asyncHandler(eventRoutes));

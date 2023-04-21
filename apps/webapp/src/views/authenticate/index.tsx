@@ -17,6 +17,7 @@ On successful authentication, a session will be created and the user will be sho
 const Authenticate = () => {
   const stytch = useStytch();
   const { user } = useStytchUser();
+  const session_token = useStytch().session.getTokens()?.session_token || "";
   const navigate = useNavigate();
 
   const updateUser = useCallback(
@@ -27,7 +28,7 @@ const Authenticate = () => {
         email: authenticatedUser.emails[0].email, // Styctch user can have multipel emails??
         name: `${authenticatedUser.name.first_name} ${authenticatedUser.name.middle_name} ${authenticatedUser.name.last_name}`,
         imageUrl: null
-      });
+      },session_token);
     }, []
   )
 

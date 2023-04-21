@@ -25,8 +25,10 @@ import dayjs from 'dayjs';
 import DateTimeStartEnd from 'components/dateTimeStartEnd';
 import { GetComments } from 'apis/comments';
 import { GetMembers } from 'apis/members';
+import { useStytch } from '@stytch/react';
 
 const ViewEvent = () => {
+  const session_token = useStytch().session.getTokens()?.session_token || "";
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [eventOptions, setEventOptions] = useState<EventOptionBodyWithVotes[]>(
@@ -57,7 +59,7 @@ const ViewEvent = () => {
       eventId: params.id,
       limit: 100,
       offset: 0,
-    }).then(setCommentsPage);
+    }, session_token).then(setCommentsPage);
   }
 
   const fetchMembers = () => {
@@ -67,7 +69,7 @@ const ViewEvent = () => {
       eventId: params.id,
       limit: 100,
       offset: 0,
-    }).then(setMembersPage);
+    }, session_token).then(setMembersPage);
   }
 
   useEffect(() => {
@@ -91,7 +93,7 @@ const ViewEvent = () => {
         }
       }
 
-      GetEvent(params.id)
+      GetEvent(params.id, session_token)
         .then((event: EventResponse) => {
           if (!event) {
             // TODO: Maybe 404 if event not found? -- Yes, redir to 404 page, we dont have now
@@ -137,7 +139,7 @@ const ViewEvent = () => {
     // editing
     if (editOptionPos >= 0) {
       const newOption = newEvtOptions[editOptionPos];
-      UpdateOption(newOption.id, option).then((opt) => {
+      UpdateOption(newOption.id, option, session_token).then((opt) => {
         newEvtOptions.splice(editOptionPos, 1, opt);
         setEditOptionPos(-1);
         setEventOptions(newEvtOptions);
@@ -149,7 +151,7 @@ const ViewEvent = () => {
         eventId: params.id || '',
         option,
       };
-      CreateOption(createOptionReq).then((opt) => {
+      CreateOption(createOptionReq, session_token).then((opt) => {
         newEvtOptions.unshift(opt);
         setEventOptions(newEvtOptions);
         setLoadingNewOption(false);
@@ -163,7 +165,7 @@ const ViewEvent = () => {
       const req: UpdateEventRequest = {
         title,
       };
-      UpdateEvent(params.id, req).then((event) => {
+      UpdateEvent(params.id, req, session_token).then((event) => {
         if (event) {
           setTitle(event.title);
         }
@@ -176,7 +178,7 @@ const ViewEvent = () => {
       const req: UpdateEventRequest = {
         description,
       };
-      UpdateEvent(params.id, req).then((event) => {
+      UpdateEvent(params.id, req, session_token).then((event) => {
         if (event) {
           setDescription(event.description);
         }
@@ -194,7 +196,7 @@ const ViewEvent = () => {
         eventStart: _start.toISOString(),
         eventEnd: _end.toISOString(),
       };
-      UpdateEvent(params.id, req).then((event) => {
+      UpdateEvent(params.id, req, session_token).then((event) => {
         if (event && event.eventStart && event.eventEnd) {
           setStartDate(
             dateToLocalTimeZoneDate(new Date(event.eventStart)).toDate()

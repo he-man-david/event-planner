@@ -21,10 +21,13 @@ const axiosConfig = {
 };
 
 export const CreateComment = async (
-  req: CreateEventCommentRequest
+  req: CreateEventCommentRequest,
+  token: string
 ): Promise<CreateEventCommentResponse> => {
   try {
-    const res = await axios.post(url, req);
+    const config:any = {...axiosConfig};
+    config.headers["session_token"] = token;
+    const res = await axios.post(url, req, config);
     return res.data;
   } catch (error) {
     console.error(error);
@@ -33,10 +36,13 @@ export const CreateComment = async (
 };
 
 export const GetComments = async (
-  req: GetEventCommentsRequest
+  req: GetEventCommentsRequest,
+  token: string
 ): Promise<GetEventCommentsResponse> => {
   try {
-    const res = await axios.get(url, { ...axiosConfig, params: req });
+    const config:any = {...axiosConfig};
+    config.headers["session_token"] = token;
+    const res = await axios.get(url, { ...config, params: req });
     return res.data;
   } catch (error) {
     console.error(error);

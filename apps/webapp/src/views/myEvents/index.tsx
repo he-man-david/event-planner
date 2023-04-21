@@ -4,8 +4,11 @@ import { classNames } from 'utils/common';
 import { GetEvents } from 'apis/event';
 import dayjs from 'dayjs';
 import { GetEventsResponse } from '@event-planner/types/src';
+import { useStytch } from '@stytch/react';
 
 const MyEvents = () => {
+  const session_token = useStytch().session.getTokens()?.session_token || "";
+  
   const [showUpcoming, setShowUpcoming] = useState<boolean>(true);
   const [data, setData] = useState<GetEventsResponse['content']>([]);
 
@@ -16,7 +19,7 @@ const MyEvents = () => {
       includeCounts: true,
       offset: 0,
       size: 10,
-    }).then((eventsPage) => {
+    }, session_token).then((eventsPage) => {
       if (!eventsPage) return;
       setData(eventsPage.content);
     });

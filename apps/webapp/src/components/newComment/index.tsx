@@ -1,6 +1,6 @@
 import { CreateComment } from 'apis/comments';
 import { useState } from 'react';
-import { useStytchUser } from '@stytch/react';
+import { useStytch, useStytchUser } from '@stytch/react';
 import { useParams } from 'react-router-dom';
 import { CreateEventCommentResponse } from '@event-planner/types/src';
 
@@ -9,6 +9,7 @@ type NewCommentProps = {
 };
 
 const NewComment = ({ onSuccessfullCreate = () => {} }: NewCommentProps) => {
+  const session_token = useStytch().session.getTokens()?.session_token || "";
   const params = useParams();
   const { user } = useStytchUser();
   const [comment, setComment] = useState<string>('');
@@ -23,7 +24,7 @@ const NewComment = ({ onSuccessfullCreate = () => {} }: NewCommentProps) => {
       createdBy: user?.user_id,
       content: comment,
       eventId: params.id,
-    }).then((res) => {
+    }, session_token).then((res) => {
       setComment('');
       onSuccessfullCreate(res);
     });

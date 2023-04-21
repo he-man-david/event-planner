@@ -14,10 +14,13 @@ const axiosConfig = {
 };
 
 export const UpdateUser = async (
-  req: UpdateUserRequest
+  req: UpdateUserRequest,
+  token: string
 ): Promise<UpdateUserResponse> => {
   try {
-    const res = await axios.post(url, req);
+    const config:any = {...axiosConfig};
+    config.headers["session_token"] = token;
+    const res = await axios.post(url, req, config);
     return res.data;
   } catch (error) {
     console.error(error);
