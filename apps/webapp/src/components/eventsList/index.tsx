@@ -42,18 +42,24 @@ const EventsList = ({ data }: { data: GetEventsResponse['content'] }) => {
                       />
                       {memberCount + ' members'}
                     </div>
-                    <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                      <CalendarIcon
-                        className="mr-1.5 h-5 w-5 flex-shrink-0 text-indigo-500"
-                        aria-hidden="true"
-                      />
-                      {dayjsToFormattedString(
-                        dateToLocalTimeZoneDate(eventStart)
-                      )}
-                      <p className="text-indigo-500 mx-2 font-medium">To</p>
-                      {dayjsToFormattedString(
-                        dateToLocalTimeZoneDate(eventEnd)
-                      )}
+                    <div className="mt-2 flex justify-start text-sm text-gray-500 sm:mt-0 flex-col sm:flex-row">
+                      <div className="flex">
+                        <CalendarIcon
+                          className="mr-1.5 h-5 w-5 flex-shrink-0 text-indigo-500"
+                          aria-hidden="true"
+                        />
+                        {dayjsToFormattedString(
+                          dateToLocalTimeZoneDate(eventStart)
+                        )}
+                      </div>
+                      <div className="flex">
+                        <p className="text-indigo-500 mr-2 sm:mx-2 font-medium">
+                          To
+                        </p>
+                        {dayjsToFormattedString(
+                          dateToLocalTimeZoneDate(eventEnd)
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -1,9 +1,4 @@
 import {
-  CreateEventRequest,
-  UpdateEventRequest,
-  EventResponse,
-  GetEventsRequest,
-  GetEventsResponse,
   CreateEventCommentRequest,
   CreateEventCommentResponse,
   GetEventCommentsRequest,
