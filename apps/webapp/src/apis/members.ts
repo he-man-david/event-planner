@@ -1,13 +1,4 @@
 import {
-    CreateEventRequest,
-    UpdateEventRequest,
-    EventResponse,
-    GetEventsRequest,
-    GetEventsResponse,
-    CreateEventCommentRequest,
-    CreateEventCommentResponse,
-    GetEventCommentsRequest,
-    GetEventCommentsResponse,
     GetEventMembersResponse,
     GetEventMembersRequest,
   } from '@event-planner/types/src';
@@ -23,10 +14,13 @@ import {
   };
    
   export const GetMembers = async (
-    req: GetEventMembersRequest
+    req: GetEventMembersRequest,
+    token: string
   ): Promise<GetEventMembersResponse> => {
     try {
-      const res = await axios.get(url, { ...axiosConfig, params: req });
+      const config:any = {...axiosConfig};
+      config.headers["session_token"] = token;
+      const res = await axios.get(url, { ...config, params: req });
       return res.data;
     } catch (error) {
       console.error(error);

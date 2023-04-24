@@ -1,8 +1,11 @@
+import { Request, Response } from 'express';
 import * as stytch from 'stytch';
 import { z } from 'zod';
 
+console.log("Creating middlewares");
+
 const stytchEnv =
-  process.env.ENVIRONMENT === 'development'
+  process.env.NX_ENVIRONMENT === 'development'
     ? stytch.envs.test
     : stytch.envs.live;
 
@@ -15,7 +18,7 @@ const config = {
 const client = new stytch.Client(config);
 
 export const errorHandler = (err: any, req: any, res: any, next: any) => {
-  // TODO - add more error handlers like 403, 401 etc.
+  // Printing the stack trace so we can see the errors
   console.error(err.stack);
 
   if (err instanceof z.ZodError) {
@@ -27,14 +30,17 @@ export const errorHandler = (err: any, req: any, res: any, next: any) => {
 };
 
 export const StytchTokenAuth = async (
-  err: any,
-  req: any,
-  res: any,
+  req: Request,
+  res: Response,
   next: any
 ) => {
-  const session_token = req.headers.sessionToken;
   try {
-    await client.sessions.authenticate({ session_token });    
+    const session_token = String(req.headers.session_token);
+    const authRes = await client.sessions.authenticate({ session_token });
+    if (!authRes.user) {
+      throw new Error("User is missing!");
+    }
+    res.locals.user = authRes.user;    
     next();
   } catch (error) {
     res.status(401).json(error);

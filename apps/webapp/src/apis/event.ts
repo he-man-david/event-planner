@@ -22,10 +22,13 @@ const commonErrorHandler = (err: any) => {
 };
 
 export const CreateEvent = async (
-  req: CreateEventRequest
+  req: CreateEventRequest,
+  token: string
 ): Promise<EventResponse> => {
   try {
-    const res = await axios.post(url, req);
+    const config:any = {...axiosConfig};
+    config.headers["session_token"] = token;
+    const res = await axios.post(url, req, config);
     return res.data;
   } catch (error) {
     console.error(error);
@@ -35,10 +38,13 @@ export const CreateEvent = async (
 
 export const UpdateEvent = async (
   eventId: string,
-  req: UpdateEventRequest
+  req: UpdateEventRequest,
+  token: string
 ): Promise<EventResponse> => {
   try {
-    const res = await axios.put(url + `/${eventId}`, req);
+    const config:any = {...axiosConfig};
+    config.headers["session_token"] = token;
+    const res = await axios.put(url + `/${eventId}`, req, config);
     return res.data;
   } catch (error) {
     console.error(error);
@@ -46,9 +52,12 @@ export const UpdateEvent = async (
   }
 };
 
-export const GetEvent = async (eventId: string): Promise<EventResponse> => {
+export const GetEvent = async (eventId: string,
+  token: string): Promise<EventResponse> => {
   try {
-    const res = await axios.get(url + `/${eventId}`, axiosConfig);
+    const config:any = {...axiosConfig};
+    config.headers["session_token"] = token;
+    const res = await axios.get(url + `/${eventId}`, config);
     return res.data;
   } catch (error) {
     console.error(error);
@@ -57,10 +66,13 @@ export const GetEvent = async (eventId: string): Promise<EventResponse> => {
 };
 
 export const GetEvents = async (
-  req: GetEventsRequest
+  req: GetEventsRequest,
+  token: string
 ): Promise<GetEventsResponse> => {
+  const config:any = {...axiosConfig};
+  config.headers["session_token"] = token;
   return await axios
-    .get(url, { ...axiosConfig, params: req })
+    .get(url, { ...config, params: req })
     .then((res) => res.data)
     .catch(commonErrorHandler);
 };

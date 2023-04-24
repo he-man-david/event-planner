@@ -9,6 +9,7 @@ import {
   UpdateEventRequestParser,
 } from '@event-planner/types';
 import asyncHandler from 'express-async-handler';
+import { User } from 'stytch/types/lib/b2c/shared_b2c';
 
 const router = Router();
 
@@ -24,8 +25,9 @@ router.get(
 router.get(
   '/',
   asyncHandler(async (req, res: Response<GetEventsResponse>) => {
+    const user = res.locals.user as User;
     const query = GetEventsRequestParser.parse(req.query);
-    const result = await db.getEvents(query);
+    const result = await db.getEventsForUser(query, user.user_id);
     res.send(result);
   })
 );

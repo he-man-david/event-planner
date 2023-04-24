@@ -20,14 +20,14 @@ const Authenticate = () => {
   const navigate = useNavigate();
 
   const updateUser = useCallback(
-    async (authenticatedUser: User) => {
+    async (authenticatedUser: User, sessionToken: string) => {
       console.log("Update user in db");
       return await UpdateUser({
         id: authenticatedUser.user_id,
         email: authenticatedUser.emails[0].email, // Styctch user can have multipel emails??
         name: `${authenticatedUser.name.first_name} ${authenticatedUser.name.middle_name} ${authenticatedUser.name.last_name}`,
         imageUrl: null
-      });
+      }, sessionToken);
     }, []
   )
 
@@ -62,7 +62,7 @@ const Authenticate = () => {
             .then((authInfo) => {
               console.log('Successfully authenticated via magic link');
               successRedirect(nextRoute);
-              updateUser(authInfo.user);
+              updateUser(authInfo.user, authInfo.session_token);
             });
         } else if (tokenType === 'oauth') {
           stytch.oauth
@@ -72,7 +72,7 @@ const Authenticate = () => {
             .then((authInfo) => {
               console.log('Successfully authenticated via OAuth');
               successRedirect(nextRoute);
-              updateUser(authInfo.user);
+              updateUser(authInfo.user, authInfo.session_token);
             });
         }
       }
