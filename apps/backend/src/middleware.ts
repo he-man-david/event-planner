@@ -34,15 +34,15 @@ export const StytchTokenAuth = async (
   res: Response,
   next: any
 ) => {
-  console.log("Stytch Auth Middleware called");
   try {
     const session_token = String(req.headers.session_token);
     const authRes = await client.sessions.authenticate({ session_token });
-    res.locals.user = authRes.user;
+    if (!authRes.user) {
+      throw new Error("User is missing!");
+    }
+    res.locals.user = authRes.user;    
     next();
   } catch (error) {
-    console.error(error); 
     res.status(401).json(error);
   }
 };
-;        

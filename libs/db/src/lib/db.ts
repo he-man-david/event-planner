@@ -340,6 +340,18 @@ export const createEvent = async (
   return getEvent(event.id);
 };
 
+export const getEventMember = async (
+  userId: string,
+  eventId:string
+) => {
+  return await prisma.eventMember.findFirst({
+    where: {
+      eventId,
+      userId
+    }
+  });
+}
+
 export const updateEvent = async (
   id: string,
   data: UpdateEventRequest
