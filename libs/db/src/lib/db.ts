@@ -61,7 +61,7 @@ export const toggleEventOptionVote = async (
   try {
     await prisma.eventOptionVote.delete({
       where: {
-        eventOptionId_eventMemberId: data,
+        eventOptionId_userId: data
       },
     });
     return false;

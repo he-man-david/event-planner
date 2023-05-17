@@ -43,6 +43,7 @@ export const StytchTokenAuth = async (
     res.locals.user = authRes.user;    
     next();
   } catch (error) {
+    console.log("Session token is empty or user is not athorized!");
     res.status(401).json(error);
   }
 };

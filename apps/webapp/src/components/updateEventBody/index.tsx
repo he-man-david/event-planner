@@ -25,7 +25,7 @@ const UpdateEventBody = ({
       const eventOpt = eventOptions[position];
       const req = {
         eventOptionId: eventOpt.id,
-        eventMemberId: user?.user_id || '',
+        userId: user?.user_id || '',
       };
       const res = await votesApi.Vote(req);
 

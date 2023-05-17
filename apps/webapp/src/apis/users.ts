@@ -18,6 +18,8 @@ const useUpdateUserApi = () => {
       });
       return res.data;
     } catch (error) {
+      console.log("Failed to update user in DB.");
+      console.log("The user may not have been created which will fail all event operations.")
       console.error(error);
       throw error;
     }
