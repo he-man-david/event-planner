@@ -5,6 +5,8 @@ import { ToggleEventOptionVoteRequestParser, UUID } from '@event-planner/types';
 
 const router = Router();
 
+// TODO (Jaser): we are returning GetEventOptionsResponse which has votes, what will we
+// use this GET for?
 router.get(
   '/',
   asyncHandler(async (req, res) => {

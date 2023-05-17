@@ -1,22 +1,30 @@
+import { GetEventCommentsResponse } from '@event-planner/types/src';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 
 export type CommentsProps = {
-  comments: Array<{
-    createdBy: string;
-    createdAt: Date;
-    content: string;
-  }>;
+  commentsPage: GetEventCommentsResponse;
 };
 
-const Comments = (props?: CommentsProps) => {
+const Comments = ({ commentsPage }: CommentsProps) => {
+  const comments = commentsPage.content.map((c) => {
+    return {
+      createdAt: c.createdAt,
+      createdBy:
+        c.commenterInfo.name.trim() === ''
+          ? c.commenterInfo.email
+          : c.commenterInfo.name,
+      content: c.content,
+    };
+  });
+
   return (
     <div className="flow-root">
       <ul className="-mb-8">
-        {props?.comments.map((commentItem, index) => (
+        {comments.map((commentItem, index) => (
           <li key={index}>
             <div className="relative pb-8">
-              {index !== props.comments.length - 1 ? (
+              {index !== comments.length - 1 ? (
                 <span
                   className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"
                   aria-hidden="true"
@@ -39,7 +47,8 @@ const Comments = (props?: CommentsProps) => {
                       </p>
                     </div>
                     <p className="mt-0.5 text-sm text-gray-500">
-                      Commented {dayjs(commentItem.createdAt).format("YYYY-MM-DD")}
+                      Commented{' '}
+                      {dayjs(commentItem.createdAt).format('YYYY-MM-DD')}
                     </p>
                   </div>
                   <div className="mt-2 text-sm text-gray-700">

@@ -15,20 +15,21 @@ import {
   UpdateEventRequest,
   CreateEventOptionRequest,
   GetEventCommentsResponse,
-  CreateEventCommentResponse,
   GetEventMembersResponse,
 } from '@event-planner/types/src';
-import { GetEvent, UpdateEvent } from 'apis/event';
-import { CreateOption, UpdateOption } from 'apis/eventOptions';
 import { GetLinkPreviewData, dateToLocalTimeZoneDate } from 'utils/common';
 import dayjs from 'dayjs';
 import DateTimeStartEnd from 'components/dateTimeStartEnd';
-import { GetComments } from 'apis/comments';
-import { GetMembers } from 'apis/members';
-import { useStytch } from '@stytch/react';
+import useEventOptionsApi from 'apis/eventOptions';
+import useEventsApi from 'apis/event';
+import useCommentsApi from 'apis/comments';
+import useMembersApi from 'apis/members';
 
 const ViewEvent = () => {
-  const session_token = useStytch().session.getTokens()?.session_token || "";
+  const commentsApi = useCommentsApi();
+  const eventsApi = useEventsApi();
+  const membersApi = useMembersApi();
+  const eventOptionsApi = useEventOptionsApi();
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [eventOptions, setEventOptions] = useState<EventOptionBodyWithVotes[]>(
@@ -47,7 +48,9 @@ const ViewEvent = () => {
   const [commentsPage, setCommentsPage] = useState<
     GetEventCommentsResponse | undefined
   >();
-  const [membersPage, setMembersPage] = useState<GetEventMembersResponse | undefined>();
+  const [membersPage, setMembersPage] = useState<
+    GetEventMembersResponse | undefined
+  >();
 
   const queryParams = new URLSearchParams(window.location.search);
   const cached = queryParams.get('cached');
@@ -55,22 +58,26 @@ const ViewEvent = () => {
   const fetchComments = () => {
     if (!params.id) return;
     // TODO make use of pagination
-    GetComments({
-      eventId: params.id,
-      limit: 100,
-      offset: 0,
-    }, session_token).then(setCommentsPage);
-  }
+    commentsApi
+      .Get({
+        eventId: params.id,
+        limit: 100,
+        offset: 0,
+      })
+      .then(setCommentsPage);
+  };
 
   const fetchMembers = () => {
     if (!params.id) return;
     // TODO make use of pagination
-    GetMembers({
-      eventId: params.id,
-      limit: 100,
-      offset: 0,
-    }, session_token).then(setMembersPage);
-  }
+    membersApi
+      .Get({
+        eventId: params.id,
+        limit: 100,
+        offset: 0,
+      })
+      .then(setMembersPage);
+  };
 
   useEffect(() => {
     if (params.id) {
@@ -93,7 +100,8 @@ const ViewEvent = () => {
         }
       }
 
-      GetEvent(params.id, session_token)
+      eventsApi
+        .Get(params.id)
         .then((event: EventResponse) => {
           if (!event) {
             // TODO: Maybe 404 if event not found? -- Yes, redir to 404 page, we dont have now
@@ -113,7 +121,7 @@ const ViewEvent = () => {
         })
         .catch((err) => console.error(err));
 
-      // this will need to be a poll
+      // TODO: this will need to be a poll
       fetchComments();
     }
   }, [params.id, cached]);
@@ -139,7 +147,7 @@ const ViewEvent = () => {
     // editing
     if (editOptionPos >= 0) {
       const newOption = newEvtOptions[editOptionPos];
-      UpdateOption(newOption.id, option, session_token).then((opt) => {
+      eventOptionsApi.Update(newOption.id, option).then((opt) => {
         newEvtOptions.splice(editOptionPos, 1, opt);
         setEditOptionPos(-1);
         setEventOptions(newEvtOptions);
@@ -151,7 +159,7 @@ const ViewEvent = () => {
         eventId: params.id || '',
         option,
       };
-      CreateOption(createOptionReq, session_token).then((opt) => {
+      eventOptionsApi.Create(createOptionReq).then((opt) => {
         newEvtOptions.unshift(opt);
         setEventOptions(newEvtOptions);
         setLoadingNewOption(false);
@@ -165,7 +173,7 @@ const ViewEvent = () => {
       const req: UpdateEventRequest = {
         title,
       };
-      UpdateEvent(params.id, req, session_token).then((event) => {
+      eventsApi.Update(params.id, req).then((event) => {
         if (event) {
           setTitle(event.title);
         }
@@ -178,7 +186,7 @@ const ViewEvent = () => {
       const req: UpdateEventRequest = {
         description,
       };
-      UpdateEvent(params.id, req, session_token).then((event) => {
+      eventsApi.Update(params.id, req).then((event) => {
         if (event) {
           setDescription(event.description);
         }
@@ -196,7 +204,7 @@ const ViewEvent = () => {
         eventStart: _start.toISOString(),
         eventEnd: _end.toISOString(),
       };
-      UpdateEvent(params.id, req, session_token).then((event) => {
+      eventsApi.Update(params.id, req).then((event) => {
         if (event && event.eventStart && event.eventEnd) {
           setStartDate(
             dateToLocalTimeZoneDate(new Date(event.eventStart)).toDate()
@@ -278,23 +286,27 @@ const ViewEvent = () => {
             <div className="grid grid-cols-1 gap-4">
               <div className="overflow-hidden rounded-lg bg-white shadow">
                 <div className="p-6">
-                  { membersPage && <MembersModal data={membersPage.content} totalCount={membersPage.pageInfo.totalCount} />}
+                  {membersPage && (
+                    <MembersModal
+                      data={membersPage.content}
+                      totalCount={membersPage.pageInfo.totalCount}
+                    />
+                  )}
                 </div>
               </div>
               <div className="overflow-hidden rounded-lg bg-white shadow">
                 <div className="p-6">
-                  <NewComment onSuccessfullCreate={fetchComments} />
+                  {commentsPage && (
+                    <NewComment
+                      commentsPage={commentsPage}
+                      setCommentsPage={setCommentsPage}
+                    />
+                  )}
                 </div>
               </div>
               <div className="overflow-hidden rounded-lg bg-white shadow">
                 <div className="p-6 overflow-auto mx-h-[30rem]">
-                <Comments comments={commentsPage?.content.map(c => {
-                    return {
-                      createdAt: c.createdAt,
-                      createdBy: c.commenterInfo.name.trim() === "" ? c.commenterInfo.email : c.commenterInfo.name,
-                      content: c.content
-                    }
-                  }) || []} />
+                  {commentsPage && <Comments commentsPage={commentsPage} />}
                 </div>
               </div>
             </div>

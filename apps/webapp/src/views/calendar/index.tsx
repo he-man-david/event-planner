@@ -11,9 +11,10 @@ import { Fragment, useEffect, useState } from 'react';
 import { classNames } from 'utils/common';
 import dayjs from 'utils/day';
 import { FormattedDateObj } from './types';
-import { GetEvents } from 'apis/event';
+import useEventsApi from 'apis/event';
 
 const Calendar = () => {
+  const eventsApi = useEventsApi();
   const [currentMonth, setCurrentMonth] = useState(dayjs(new Date()));
   const [arrayOfDays, setArrayOfDays] = useState<FormattedDateObj[]>([]);
   const [selectedDay, setSelectedDay] = useState<number>(-1);
@@ -73,7 +74,7 @@ const Calendar = () => {
 
   const getEventsData = async (start: Dayjs, end: Dayjs) => {
     try {
-      const res = await GetEvents({
+      const res = await eventsApi.List({
         eventStartAfter: start.toISOString(),
         eventStartBefore: end.toISOString(),
         includeCounts: true,

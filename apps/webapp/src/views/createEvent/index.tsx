@@ -3,8 +3,8 @@ import { PlusIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import EditEventOptionModal from 'components/editEventOptionModal';
 import CreateEventBody from 'components/createEventBody';
 import DateTimeStartEnd from 'components/dateTimeStartEnd';
-import { useStytch, useStytchUser } from '@stytch/react';
-import { CreateEvent as CreateEventApi } from 'apis/event';
+import { useStytchUser } from '@stytch/react';
+import useEventsApi from 'apis/event';
 import { CreateEventRequest, EventOptionBody } from '@event-planner/types/src';
 import { useNavigate } from 'react-router-dom';
 import { routes } from 'const/routes';
@@ -13,7 +13,7 @@ import dayjs from 'utils/day';
 import { GetLinkPreviewData } from 'utils/common';
 
 const CreateEvent = () => {
-  const session_token = useStytch().session.getTokens()?.session_token || "";
+  const eventsApi = useEventsApi();
   const [eventTitle, setEventTitle] = useState<string>('');
   const [eventDesc, setEventDesc] = useState<string>('');
   const [loadingNewOption, setLoadingNewOption] = useState<boolean>(false);
@@ -41,7 +41,7 @@ const CreateEvent = () => {
           const req = JSON.parse(cached);
           req.createdBy = user.user_id;
           // creating event API
-          const event = await CreateEventApi(req, session_token);
+          const event = await eventsApi.Create(req);
           // cache localstorage so dont have to call GetEvent Api again
           localStorage.setItem(`event-${event?.id}`, JSON.stringify(event));
           navigate(`/event/${event?.id}?cached=true`);
@@ -75,7 +75,7 @@ const CreateEvent = () => {
     try {
       if (user) {
         req.createdBy = user.user_id;
-        const event = await CreateEventApi(req, session_token);
+        const event = await eventsApi.Create(req);
         // cache localstorage so dont have to call GetEvent Api again
         localStorage.setItem(`event-${event?.id}`, JSON.stringify(event));
         navigate(`/event/${event?.id}?cached=true`);

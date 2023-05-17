@@ -1,17 +1,18 @@
-import { CreateComment } from 'apis/comments';
+import useCommentsApi from 'apis/comments';
 import { useState } from 'react';
-import { useStytch, useStytchUser } from '@stytch/react';
+import { useStytchUser } from '@stytch/react';
 import { useParams } from 'react-router-dom';
-import { CreateEventCommentResponse } from '@event-planner/types/src';
+import { GetEventCommentsResponse } from '@event-planner/types/src';
 
 type NewCommentProps = {
-  onSuccessfullCreate?: (comment: CreateEventCommentResponse) => void;
+  commentsPage: GetEventCommentsResponse;
+  setCommentsPage: (comment: GetEventCommentsResponse) => void;
 };
 
-const NewComment = ({ onSuccessfullCreate = () => {} }: NewCommentProps) => {
-  const session_token = useStytch().session.getTokens()?.session_token || "";
+const NewComment = ({ commentsPage, setCommentsPage }: NewCommentProps) => {
   const params = useParams();
   const { user } = useStytchUser();
+  const commentsApi = useCommentsApi();
   const [comment, setComment] = useState<string>('');
 
   const handleSubmit = (e: any) => {
@@ -20,14 +21,18 @@ const NewComment = ({ onSuccessfullCreate = () => {} }: NewCommentProps) => {
       return;
     }
 
-    CreateComment({
-      createdBy: user?.user_id,
-      content: comment,
-      eventId: params.id,
-    }, session_token).then((res) => {
-      setComment('');
-      onSuccessfullCreate(res);
-    });
+    commentsApi
+      .Create({
+        createdBy: user?.user_id,
+        content: comment,
+        eventId: params.id,
+      })
+      .then((res) => {
+        setComment('');
+        const newCommentsPage = { ...commentsPage };
+        newCommentsPage.content.unshift(res);
+        setCommentsPage(newCommentsPage);
+      });
   };
 
   return (

@@ -8,6 +8,8 @@ import { UpdateEventBodyParam } from './types';
 import { EventOptionBodyWithVotes } from '@event-planner/types/src';
 import { Menu, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
+import useVotesApi from 'apis/votes';
+import { useStytchUser } from '@stytch/react';
 
 const UpdateEventBody = ({
   eventOptions,
@@ -15,23 +17,37 @@ const UpdateEventBody = ({
   editEventOptions,
   delEventOptions,
 }: UpdateEventBodyParam) => {
-  const handleVote = (position: number) => {
-    const newEventOptions: EventOptionBodyWithVotes[] = eventOptions.map(
-      (eventOption, idx) => {
-        if (position === idx) {
-          if (eventOption.voted) {
-            eventOption.voted = false;
-            eventOption.votes && eventOption.votes--;
-          } else {
-            eventOption.voted = true;
-            eventOption.votes && eventOption.votes++;
-          }
-        }
-        return eventOption;
-      }
-    );
+  const { user } = useStytchUser();
+  const votesApi = useVotesApi();
 
-    setEventOptions(newEventOptions);
+  const handleVote = async (position: number) => {
+    try {
+      const eventOpt = eventOptions[position];
+      const req = {
+        eventOptionId: eventOpt.id,
+        eventMemberId: user?.user_id || '',
+      };
+      const res = await votesApi.Vote(req);
+
+      const newEventOptions: EventOptionBodyWithVotes[] = eventOptions.map(
+        (eventOption, idx) => {
+          if (position === idx) {
+            if (!res) {
+              eventOption.voted = false;
+              eventOption.votes && eventOption.votes--;
+            } else {
+              eventOption.voted = true;
+              eventOption.votes && eventOption.votes++;
+            }
+          }
+          return eventOption;
+        }
+      );
+
+      setEventOptions(newEventOptions);
+    } catch {
+      // TODO: maybe throw a toast with msg if error
+    }
   };
 
   return (

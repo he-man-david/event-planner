@@ -4,43 +4,47 @@ import {
   GetEventCommentsRequest,
   GetEventCommentsResponse,
 } from '@event-planner/types/src';
-import axios from 'axios';
+import useAxios from './axios';
 
-const url = 'http://localhost:8080/comments';
+const useCommentsApi = () => {
+  const instance = useAxios();
 
-const axiosConfig = {
-  headers: {
-    'Access-Control-Allow-Origin': '*',
-    'Content-Type': 'application/json',
-  },
+  const CreateComment = async (
+    req: CreateEventCommentRequest
+  ): Promise<CreateEventCommentResponse> => {
+    try {
+      const res = await instance({
+        url: 'comments/',
+        method: 'POST',
+        data: req,
+      });
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  const GetComments = async (
+    req: GetEventCommentsRequest
+  ): Promise<GetEventCommentsResponse> => {
+    try {
+      const res = await instance({
+        url: 'comments/',
+        method: 'GET',
+        params: req,
+      });
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  return {
+    Create: CreateComment,
+    Get: GetComments,
+  };
 };
 
-export const CreateComment = async (
-  req: CreateEventCommentRequest,
-  token: string
-): Promise<CreateEventCommentResponse> => {
-  try {
-    const config:any = {...axiosConfig};
-    config.headers["session_token"] = token;
-    const res = await axios.post(url, req, config);
-    return res.data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-export const GetComments = async (
-  req: GetEventCommentsRequest,
-  token: string
-): Promise<GetEventCommentsResponse> => {
-  try {
-    const config:any = {...axiosConfig};
-    config.headers["session_token"] = token;
-    const res = await axios.get(url, { ...config, params: req });
-    return res.data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
+export default useCommentsApi;

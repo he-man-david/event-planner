@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const ToggleEventOptionVoteRequestParser = z.object({
   eventOptionId: UUID,
-  eventMemberId: UUID,
+  eventMemberId: z.string(),
 });
 
 export type ToogleEventOptionVoteRequest =

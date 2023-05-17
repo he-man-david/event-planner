@@ -3,7 +3,7 @@ import { useStytch, useStytchUser } from '@stytch/react';
 import { useNavigate } from 'react-router-dom';
 import { routes } from 'const/routes';
 import LoadingPage from 'components/loadingPage';
-import { UpdateUser } from 'apis/users';
+import useUsersApi from 'apis/users';
 import { User } from '@stytch/vanilla-js';
 
 /*
@@ -18,18 +18,17 @@ const Authenticate = () => {
   const stytch = useStytch();
   const { user } = useStytchUser();
   const navigate = useNavigate();
+  const usersApi = useUsersApi();
 
-  const updateUser = useCallback(
-    async (authenticatedUser: User, sessionToken: string) => {
-      console.log("Update user in db");
-      return await UpdateUser({
-        id: authenticatedUser.user_id,
-        email: authenticatedUser.emails[0].email, // Styctch user can have multipel emails??
-        name: `${authenticatedUser.name.first_name} ${authenticatedUser.name.middle_name} ${authenticatedUser.name.last_name}`,
-        imageUrl: null
-      }, sessionToken);
-    }, []
-  )
+  const updateUser = useCallback(async (authenticatedUser: User) => {
+    console.log('Update user in db');
+    return await usersApi.Update({
+      id: authenticatedUser.user_id,
+      email: authenticatedUser.emails[0].email, // Styctch user can have multipel emails??
+      name: `${authenticatedUser.name.first_name} ${authenticatedUser.name.middle_name} ${authenticatedUser.name.last_name}`,
+      imageUrl: null,
+    });
+  }, []);
 
   const successRedirect = useCallback(
     async (nextRoute: string | null) => {
@@ -62,7 +61,7 @@ const Authenticate = () => {
             .then((authInfo) => {
               console.log('Successfully authenticated via magic link');
               successRedirect(nextRoute);
-              updateUser(authInfo.user, authInfo.session_token);
+              updateUser(authInfo.user);
             });
         } else if (tokenType === 'oauth') {
           stytch.oauth
@@ -72,7 +71,7 @@ const Authenticate = () => {
             .then((authInfo) => {
               console.log('Successfully authenticated via OAuth');
               successRedirect(nextRoute);
-              updateUser(authInfo.user, authInfo.session_token);
+              updateUser(authInfo.user);
             });
         }
       }

@@ -1,6 +1,6 @@
 // TODO - Split into individual files!
 
-import { EventMember, PrismaClient, User } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
 import {
   UUID,
   Page,
@@ -57,21 +57,27 @@ export const getEventOptionVotes = async (eventOptionId: typeof UUID._type) => {
 export const toggleEventOptionVote = async (
   data: ToogleEventOptionVoteRequest
 ) => {
+  // TODO (Jaser): Is below considered a normal pattern? aka "good code"
   try {
-    return await prisma.eventOptionVote.delete({
+    await prisma.eventOptionVote.delete({
       where: {
         eventOptionId_eventMemberId: data,
       },
     });
+    return false;
   } catch (e) {
-    return await prisma.eventOptionVote.create({ data });
+    await prisma.eventOptionVote.create({ data });
+    return true;
   }
 };
 
 export const addEventComment = async (
   data: CreateEventCommentRequest
 ): Promise<CreateEventCommentResponse> => {
-  return await prisma.eventComment.create({ data, include: { commenterInfo: true } });
+  return await prisma.eventComment.create({
+    data,
+    include: { commenterInfo: true },
+  });
 };
 
 export const getEventComments = async (
@@ -88,6 +94,9 @@ export const getEventComments = async (
     take: req.limit,
     include: {
       commenterInfo: true,
+    },
+    orderBy: {
+      createdAt: 'desc',
     },
   });
   return createPage(totalCount, offset, content);
@@ -106,7 +115,7 @@ export const getEventMembers = async (
     take: req.limit,
     skip: offset,
     include: {
-      memberInfo: true
+      memberInfo: true,
     },
   });
   return createPage(totalCount, offset, content);
@@ -115,7 +124,10 @@ export const getEventMembers = async (
 export const addUserToEvent = async (
   data: CreateEventMemberRequest
 ): Promise<CreateEventMemberResponse> => {
-  return await prisma.eventMember.create({ data, include: {memberInfo: true} });
+  return await prisma.eventMember.create({
+    data,
+    include: { memberInfo: true },
+  });
 };
 
 export const removeUsersFromEvent = async (req: DeleteEventMembersRequest) => {
@@ -236,7 +248,10 @@ export const getEvent = async (
   return eventRes;
 };
 
-export const getEventsForUser = async (req: GetEventsRequest, userId: string): Promise<GetEventsResponse> =>{
+export const getEventsForUser = async (
+  req: GetEventsRequest,
+  userId: string
+): Promise<GetEventsResponse> => {
   const offset = req.offset ?? 0;
   const eventWhereFilter = {
     eventStart: {
@@ -254,33 +269,32 @@ export const getEventsForUser = async (req: GetEventsRequest, userId: string): P
       ...eventWhereFilter,
       members: {
         some: {
-          userId: userId
-        }
-      }
-    } 
-  })
+          userId: userId,
+        },
+      },
+    },
+  });
 
   const result = await prisma.event.findMany({
     where: {
       ...eventWhereFilter,
       members: {
         some: {
-          userId: userId
-        }
-      }
+          userId: userId,
+        },
+      },
     },
     include: {
-      _count: { select: { members: true, options: true } }
-    }
+      _count: { select: { members: true, options: true } },
+    },
   });
 
-
-  const mappedContent = result.map(row => {
+  const mappedContent = result.map((row) => {
     const { _count, ...event } = row;
     return { ...event, members: _count.members, options: _count.options };
   });
   return createPage(totalCount, offset, mappedContent);
-}
+};
 
 export const getEvents = async (
   req: GetEventsRequest
@@ -340,17 +354,14 @@ export const createEvent = async (
   return getEvent(event.id);
 };
 
-export const getEventMember = async (
-  userId: string,
-  eventId:string
-) => {
+export const getEventMember = async (userId: string, eventId: string) => {
   return await prisma.eventMember.findFirst({
     where: {
       eventId,
-      userId
-    }
+      userId,
+    },
   });
-}
+};
 
 export const updateEvent = async (
   id: string,
@@ -372,7 +383,7 @@ export const updateUser = async (data: UpdateUserRequest): Promise<User> => {
   // upsert is same as update or create
   return await prisma.user.upsert({
     where: {
-      id: data.id
+      id: data.id,
     },
     update: data,
     create: data,
