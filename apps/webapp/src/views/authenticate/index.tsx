@@ -11,7 +11,7 @@ During both the Magic link and OAuth flow, Stytch will redirect the user back to
 Stytch will append query parameters to the redirect URL which are then used to complete the authentication flow. 
 A redirect URL for this example app will look something like: http://localhost:4200/?stytch_token_type=magic_links&token=abc123
 Authenticate will detect the presence of a token in the query parameters, and attempt to authenticate it.
-On successful authentication, a session will be created and the user will be shown Profile.js 
+On successful authentication, a session will be created
 */
 
 const Authenticate = () => {
@@ -20,15 +20,24 @@ const Authenticate = () => {
   const navigate = useNavigate();
   const usersApi = useUsersApi();
 
-  const updateUser = useCallback(async (authenticatedUser: User) => {
-    console.log('Update user in db');
-    return await usersApi.Update({
-      id: authenticatedUser.user_id,
-      email: authenticatedUser.emails[0].email, // Styctch user can have multipel emails??
-      name: `${authenticatedUser.name.first_name} ${authenticatedUser.name.middle_name} ${authenticatedUser.name.last_name}`,
-      imageUrl: null,
-    });
-  }, []);
+  const updateUser = useCallback(
+    async (authenticatedUser: User) => {
+      // Is it possible if user have no email and name? probably not?
+      const email = authenticatedUser.emails.length
+        ? authenticatedUser.emails[0].email
+        : '';
+      const name = authenticatedUser?.name?.first_name
+        ? `${authenticatedUser.name.first_name} ${authenticatedUser.name.middle_name} ${authenticatedUser.name.last_name}`
+        : '';
+      return await usersApi.Update({
+        id: authenticatedUser.user_id,
+        email,
+        name,
+        imageUrl: null,
+      });
+    },
+    [usersApi]
+  );
 
   const successRedirect = useCallback(
     async (nextRoute: string | null) => {
@@ -76,7 +85,7 @@ const Authenticate = () => {
         }
       }
     }
-  }, [stytch, user, successRedirect]);
+  }, [stytch, user, successRedirect, updateUser]);
 
   return <LoadingPage />;
 };

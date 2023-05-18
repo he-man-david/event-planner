@@ -61,7 +61,7 @@ export const toggleEventOptionVote = async (
   try {
     await prisma.eventOptionVote.delete({
       where: {
-        eventOptionId_userId: data
+        eventOptionId_userId: data,
       },
     });
     return false;
@@ -210,7 +210,8 @@ export const deleteEventOption = async (req: DeleteEventOptionRequest) => {
 };
 
 export const getEvent = async (
-  eventId: typeof UUID._type
+  eventId: typeof UUID._type,
+  userId?: string
 ): Promise<EventResponse> => {
   const event = await prisma.event.findFirst({
     where: {
@@ -230,6 +231,11 @@ export const getEvent = async (
               eventOptionVote: true,
             },
           },
+          eventOptionVote: {
+            where: {
+              userId: userId,
+            },
+          },
         },
       },
     },
@@ -241,8 +247,9 @@ export const getEvent = async (
 
   const { options, ...rest } = event;
   const mappedOptions = options.map((opt) => {
-    const { _count, ...rest } = opt;
-    return { votes: _count.eventOptionVote, ...rest };
+    const { _count, eventOptionVote, ...rest } = opt;
+    const voted = eventOptionVote.length > 0;
+    return { votes: _count.eventOptionVote, voted, ...rest };
   });
   const eventRes = { ...rest, options: mappedOptions };
   return eventRes;

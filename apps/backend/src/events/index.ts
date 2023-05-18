@@ -16,8 +16,9 @@ const router = Router();
 router.get(
   '/:eventId',
   asyncHandler(async (req, res: Response<EventResponse>) => {
+    const user = res.locals.user as User;
     const eventId = UUID.parse(req.params.eventId);
-    const result = await db.getEvent(eventId);
+    const result = await db.getEvent(eventId, user.user_id);
     res.send(result);
   })
 );
