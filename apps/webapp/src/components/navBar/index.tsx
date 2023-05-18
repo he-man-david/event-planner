@@ -1,15 +1,11 @@
 import { Fragment } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  Bars3Icon,
-  PlusIcon,
-  XMarkIcon,
-  UserCircleIcon,
-} from '@heroicons/react/24/outline';
+import { Bars3Icon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { classNames } from 'utils/common';
 import { routes } from 'const/routes';
 import { useStytch, useStytchUser } from '@stytch/react';
+import Avatar from 'react-avatar';
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -54,17 +50,11 @@ const NavBar = () => {
   };
 
   const profileImg = () => {
-    /**
-     TODO: Store profile img, when we decide to have User entity in DB
-     1. Oauth profile img is unpredicatable, most people dont have one
-     2. Even if we random generate, it will not be stored, so each render will random gen img
-     3. We can generate avatar with user's firt/last name initials like google does (DH) david he
-        but problem is, if user login with magic link, user info dont have first/last name.
-
-     Solution eventually would be to have User entity, then user can SET a nickname and IMG for profile
-     if this is something they care to. Otherwise we always just have email.
-    */
-    return <UserCircleIcon className="h-10 w-10 rounded-full" />;
+    const email = user?.emails.length ? user.emails[0].email : '';
+    const name = user?.name?.first_name
+      ? `${user.name.first_name} ${user.name.middle_name} ${user.name.last_name}`
+      : email;
+    return <Avatar name={name} round={true} size="45" />;
   };
 
   const profileDropdown = () => {
@@ -94,7 +84,7 @@ const NavBar = () => {
                   ])}
                 >
                   <div className="flex items-center overflow-x-auto">
-                    <div className="text-indigo-600">{profileImg()}</div>
+                    <div className="mr-3">{profileImg()}</div>
                     <div className="text-left">
                       <p className="text-sm font-medium text-gray-800">
                         {user?.emails.length ? user.emails[0].email : '-'}

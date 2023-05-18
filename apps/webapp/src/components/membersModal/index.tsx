@@ -1,35 +1,27 @@
 import { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-
-const imageUrl = 'https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80';
+import Avatar from 'react-avatar';
 
 type MembersModalProps = {
-  data: Array<
-    {
-      userId: string
-    }
-  >,
-  totalCount: number
-}
+  data: any[];
+  totalCount: number;
+};
 
-const MembersModal = ({data, totalCount}: MembersModalProps) => {
+const MembersModal = ({ data, totalCount }: MembersModalProps) => {
   const [open, setOpen] = useState(false);
 
   const generateAvatars = () => {
-    // let data = MembersData;
-    // if (MembersData.length > 7) {
-    //   data = MembersData.slice(0, 6);
-    // }
     return (
       <div className="isolate flex -space-x-2 overflow-hidden">
-        {data.map(({ userId }, idx) => {
+        {data.map(({ memberInfo }, idx) => {
+          const { name, email } = memberInfo;
           return (
-            <img
-              key={userId + '-avatar-row-' + idx}
-              className="relative z-30 inline-block h-10 w-10 rounded-full ring-2 ring-white"
-              src={imageUrl}
-              alt={userId}
+            <Avatar
+              key={idx}
+              name={name ? name : email}
+              round={true}
+              size="45"
             />
           );
         })}
@@ -92,19 +84,19 @@ const MembersModal = ({data, totalCount}: MembersModalProps) => {
                         </div>
                       </div>
                       <div className="relative mt-6 flex-1 px-4 sm:px-6 overflow-auto">
-                        {data.map(({ userId }, idx) => {
+                        {data.map(({ userId, memberInfo }, idx) => {
+                          const { name, email } = memberInfo;
                           return (
                             <div
                               key={userId + '-avatar-row-' + idx}
                               className="flex items-center my-5"
                             >
-                              <div>
-                                <img
-                                  className="relative z-30 inline-block h-10 w-10 rounded-full ring-2 ring-white"
-                                  src={imageUrl}
-                                  alt={userId}
-                                />
-                              </div>
+                              <Avatar
+                                key={idx}
+                                name={name ? name : email}
+                                round={true}
+                                size="45"
+                              />
                               <div className="ml-3">
                                 <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
                                   Tom Cook

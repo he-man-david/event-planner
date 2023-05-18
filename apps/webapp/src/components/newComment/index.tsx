@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useStytchUser } from '@stytch/react';
 import { useParams } from 'react-router-dom';
 import { GetEventCommentsResponse } from '@event-planner/types/src';
+import Avatar from 'react-avatar';
 
 type NewCommentProps = {
   commentsPage: GetEventCommentsResponse;
@@ -14,6 +15,14 @@ const NewComment = ({ commentsPage, setCommentsPage }: NewCommentProps) => {
   const { user } = useStytchUser();
   const commentsApi = useCommentsApi();
   const [comment, setComment] = useState<string>('');
+
+  const profileImg = () => {
+    const email = user?.emails.length ? user.emails[0].email : '';
+    const name = user?.name?.first_name
+      ? `${user.name.first_name} ${user.name.middle_name} ${user.name.last_name}`
+      : email;
+    return <Avatar name={name} round={true} size="45" />;
+  };
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -37,13 +46,7 @@ const NewComment = ({ commentsPage, setCommentsPage }: NewCommentProps) => {
 
   return (
     <div className="flex items-start space-x-4">
-      <div className="flex-shrink-0">
-        <img
-          className="inline-block h-10 w-10 rounded-full"
-          src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-          alt=""
-        />
-      </div>
+      <div className="flex-shrink-0">{profileImg()}</div>
       <div className="min-w-0 flex-1">
         <form onSubmit={handleSubmit}>
           <div className="border-b border-gray-200 focus-within:border-indigo-600">

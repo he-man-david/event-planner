@@ -35,7 +35,7 @@ const EventsList = ({ data }: { data: GetEventsResponse['content'] }) => {
                     {description}
                   </p>
                   <div className="mt-3 sm:flex sm:justify-between">
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-gray-500 mr-5">
                       <UsersIcon
                         className="mr-1.5 h-5 w-5 flex-shrink-0 text-indigo-500"
                         aria-hidden="true"

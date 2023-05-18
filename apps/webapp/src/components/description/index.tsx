@@ -12,7 +12,7 @@ const Description = ({ description, setDescription }: DescriptionParam) => {
         <div className="mx-auto lg:w-[50rem] w-full px-4 sm:px-6 lg:px-8">
           <label
             htmlFor="comment"
-            className="block text-sm font-medium leading-6 text-gray-900"
+            className="block text-sm font-medium leading-6 text-white"
           >
             Description
           </label>
@@ -55,12 +55,12 @@ const Description = ({ description, setDescription }: DescriptionParam) => {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-5">
       {editMode ? (
         showEdit()
       ) : (
         <div className="flex justify-center">
-          <h1 className="topic-title text-3xl font-bold tracking-tight text-white">
+          <h1 className="topic-title text-1xl tracking-tight text-white">
             {description}
           </h1>
           <div>
