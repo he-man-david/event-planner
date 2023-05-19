@@ -24,12 +24,16 @@ import useEventOptionsApi from 'apis/eventOptions';
 import useEventsApi from 'apis/event';
 import useCommentsApi from 'apis/comments';
 import useMembersApi from 'apis/members';
+import EventActionDropdown, {
+  EventActionsType,
+} from 'components/eventActionDropdown';
 
 const ViewEvent = () => {
   const commentsApi = useCommentsApi();
   const eventsApi = useEventsApi();
   const membersApi = useMembersApi();
   const eventOptionsApi = useEventOptionsApi();
+  const [isComplete, setIsComplete] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [eventOptions, setEventOptions] = useState<EventOptionBodyWithVotes[]>(
@@ -86,7 +90,15 @@ const ViewEvent = () => {
         if (cachedEvent) {
           const event: EventResponse = JSON.parse(cachedEvent);
           if (event) {
-            const { title, description, options, eventStart, eventEnd } = event;
+            const {
+              title,
+              description,
+              options,
+              eventStart,
+              eventEnd,
+              planned,
+            } = event;
+            setIsComplete(planned);
             setTitle(title || '');
             setDescription(description || '');
             setEventOptions(options || []);
@@ -107,7 +119,15 @@ const ViewEvent = () => {
             // TODO: Maybe 404 if event not found? -- Yes, redir to 404 page, we dont have now
             throw new Error(`Event not found - ${params.id}!`);
           } else {
-            const { title, description, options, eventStart, eventEnd } = event;
+            const {
+              title,
+              description,
+              options,
+              eventStart,
+              eventEnd,
+              planned,
+            } = event;
+            setIsComplete(planned);
             setTitle(title || '');
             setDescription(description || '');
             setEventOptions(options || []);
@@ -239,9 +259,50 @@ const ViewEvent = () => {
     setShowAddOptionForm(open);
   };
 
+  const handleEventDropdownActions = (action: EventActionsType) => {
+    switch (action) {
+      case EventActionsType.status:
+        handleEventActionStatus();
+        break;
+      case EventActionsType.calendar:
+        handleEventActionCalendar();
+        break;
+      case EventActionsType.share:
+        handleEventActionShare();
+        break;
+      case EventActionsType.delete:
+        handleEventActionDelete();
+        break;
+    }
+  };
+
+  const handleEventActionStatus = () => {
+    console.log('change status here');
+  };
+
+  const handleEventActionCalendar = () => {
+    console.log('send calendar here');
+  };
+
+  const handleEventActionShare = () => {
+    console.log('share event here');
+  };
+
+  const handleEventActionDelete = () => {
+    console.log('delete event here');
+  };
+
   return (
     <div className="view-event-container min-h-full">
       <div className="header-container bg-indigo-600 pb-20">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+          <div className="float-right mt-3">
+            <EventActionDropdown
+              callBack={handleEventDropdownActions}
+              status={isComplete}
+            />
+          </div>
+        </div>
         <header className="py-10">
           <Title title={title} setTitle={handleUpdateTitle} />
           {description && (
