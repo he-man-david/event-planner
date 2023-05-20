@@ -69,9 +69,8 @@ const ViewEvent = () => {
   const [membersPage, setMembersPage] = useState<
     GetEventMembersResponse | undefined
   >();
-  const [showRequireLoginModal, setShowRequireLoginModal] = useState<boolean>(
-    false
-  )
+  const [showRequireLoginModal, setShowRequireLoginModal] =
+    useState<boolean>(false);
 
   const navigate = useNavigate();
   const params = useParams();
@@ -194,18 +193,20 @@ const ViewEvent = () => {
 
   const wrapWithRequireLoggedIn = (callback: any) => {
     if (!isLoggedIn) {
-      return () => {setShowRequireLoginModal(true)};
+      return () => {
+        setShowRequireLoginModal(true);
+      };
     }
     return callback;
-  }
+  };
 
-  const requireLoogedIn = (args: unknown): boolean => {
+  const requireLoogedIn = (): boolean => {
     if (!isLoggedIn) {
       setShowRequireLoginModal(true);
       return false;
     }
-    return true
-  }
+    return true;
+  };
 
   const createOption = async (option: EventOptionBody) => {
     setLoadingNewOption(true);
@@ -423,6 +424,7 @@ const ViewEvent = () => {
           setEventOptions={setEventOptions}
           editEventOptions={handleEditOption}
           delEventOptions={handleDeleteOption}
+          preHandleVote={requireLoogedIn}
         />
         <button
           type="button"
@@ -441,10 +443,12 @@ const ViewEvent = () => {
       <div className="header-container bg-indigo-600 pb-20">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
           <div className="float-right mt-3">
-            <EventActionDropdown
-              callBack={wrapWithRequireLoggedIn(handleEventDropdownActions)}
-              status={isComplete}
-            />
+            {isLoggedIn && (
+              <EventActionDropdown
+                callBack={wrapWithRequireLoggedIn(handleEventDropdownActions)}
+                status={isComplete}
+              />
+            )}
           </div>
         </div>
         <header className="py-10">
@@ -538,10 +542,10 @@ const ViewEvent = () => {
         setOpen={setOpenShareEventModal}
         url={window.location.href}
       />
-      <RequireLoginModal 
-      show={showRequireLoginModal}
-      onClose={() => setShowRequireLoginModal(false)}
-      eventId={params.id}
+      <RequireLoginModal
+        show={showRequireLoginModal}
+        onClose={() => setShowRequireLoginModal(false)}
+        eventId={params.id}
       />
     </div>
   );

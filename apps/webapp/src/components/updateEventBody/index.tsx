@@ -16,11 +16,16 @@ const UpdateEventBody = ({
   setEventOptions,
   editEventOptions,
   delEventOptions,
+  preHandleVote
 }: UpdateEventBodyParam) => {
   const { user } = useStytchUser();
   const votesApi = useVotesApi();
+  const isLoggedIn: boolean = user !== null && user !== undefined;
 
   const handleVote = async (position: number) => {
+    if (!preHandleVote()) {
+      return;
+    }
     try {
       const eventOpt = eventOptions[position];
       const req = {
@@ -62,56 +67,58 @@ const UpdateEventBody = ({
             ])}
           >
             <div className="flex flex-1 flex-col p-8">
-              <div className="w-full flex justify-end -mt-6 ml-6">
-                <Menu as="div" className="relative ml-3 flex-shrink-0">
-                  <div>
-                    <Menu.Button>
-                      <EllipsisVerticalIcon
-                        className="h-4 w-4 ml-5 hover:cursor-pointer text-slate-500 hover:text-slate-600"
-                        aria-hidden="true"
-                      />
-                    </Menu.Button>
-                  </div>
-                  <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
-                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      <Menu.Item>
-                        {({ active }) => (
-                          <span
-                            onClick={() => editEventOptions(idx)}
-                            className={classNames([
-                              active ? 'bg-gray-100' : '',
-                              'block py-2 px-4 text-sm text-gray-700',
-                            ])}
-                          >
-                            Edit
-                          </span>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <span
-                            onClick={() => delEventOptions(idx)}
-                            className={classNames([
-                              active ? 'bg-gray-100' : '',
-                              'block py-2 px-4 text-sm text-red-700',
-                            ])}
-                          >
-                            Delete
-                          </span>
-                        )}
-                      </Menu.Item>
-                    </Menu.Items>
-                  </Transition>
-                </Menu>
-              </div>
+              {isLoggedIn && (
+                <div className="w-full flex justify-end -mt-6 ml-6">
+                  <Menu as="div" className="relative ml-3 flex-shrink-0">
+                    <div>
+                      <Menu.Button>
+                        <EllipsisVerticalIcon
+                          className="h-4 w-4 ml-5 hover:cursor-pointer text-slate-500 hover:text-slate-600"
+                          aria-hidden="true"
+                        />
+                      </Menu.Button>
+                    </div>
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-100"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration-75"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                    >
+                      <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <Menu.Item>
+                          {({ active }) => (
+                            <span
+                              onClick={() => editEventOptions(idx)}
+                              className={classNames([
+                                active ? 'bg-gray-100' : '',
+                                'block py-2 px-4 text-sm text-gray-700',
+                              ])}
+                            >
+                              Edit
+                            </span>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <span
+                              onClick={() => delEventOptions(idx)}
+                              className={classNames([
+                                active ? 'bg-gray-100' : '',
+                                'block py-2 px-4 text-sm text-red-700',
+                              ])}
+                            >
+                              Delete
+                            </span>
+                          )}
+                        </Menu.Item>
+                      </Menu.Items>
+                    </Transition>
+                  </Menu>
+                </div>
+              )}
               <h3 className="text-md font-medium text-gray-900">{title}</h3>
               <div className="mt-1 flex flex-grow flex-col">
                 <p className="text-md text-gray-500 pb-3">{description}</p>
