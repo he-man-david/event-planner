@@ -83,7 +83,7 @@ export const addEventComment = async (
 export const getEventComments = async (
   req: GetEventCommentsRequest
 ): Promise<GetEventCommentsResponse> => {
-  const offset = req.offset;
+  const offset = req.offset ?? 0;
   const where = {
     eventId: req.eventId,
   };
@@ -105,7 +105,7 @@ export const getEventComments = async (
 export const getEventMembers = async (
   req: GetEventMembersRequest
 ): Promise<GetEventMembersResponse> => {
-  const offset = req.offset;
+  const offset = req.offset ?? 0;
   const where = {
     eventId: req.eventId,
   };
@@ -144,7 +144,7 @@ export const removeUsersFromEvent = async (req: DeleteEventMembersRequest) => {
 export const getEventOptions = async (
   req: GetEventOptionsRequest
 ): Promise<GetEventOptionsResponse> => {
-  const offset = req.offset;
+  const offset = req.offset ?? 0;
   const where = { eventId: req.eventId };
 
   const totalCount = await prisma.eventOption.count({ where });
@@ -175,9 +175,7 @@ export const createEventOption = async (req: CreateEventOptionRequest) => {
   };
   return await prisma.eventOption.create({ data: optionData });
 };
-export const getEventOption = async (
-  id: string,
-) => {
+export const getEventOption = async (id: string) => {
   const content = await prisma.eventOption.findFirst({
     where: { id },
     include: {
@@ -231,15 +229,17 @@ export const getEvent = async (
           comments: true,
         },
       },
-      members: { ...commonQuery, 
+      members: {
+        ...commonQuery,
         include: {
           memberInfo: true,
-        }
+        },
       },
-      comments: { ...commonQuery, 
+      comments: {
+        ...commonQuery,
         include: {
           commenterInfo: true,
-        }
+        },
       },
       options: {
         ...commonQuery,

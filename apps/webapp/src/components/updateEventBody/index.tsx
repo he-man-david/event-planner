@@ -12,27 +12,27 @@ import useVotesApi from 'apis/votes';
 import { useStytchUser } from '@stytch/react';
 
 const UpdateEventBody = ({
-  eventOptions,
-  setEventOptions,
+  optionsPage,
+  setOptionsPage,
   editEventOptions,
   delEventOptions,
 }: UpdateEventBodyParam) => {
   const { user } = useStytchUser();
   const votesApi = useVotesApi();
 
-  const handleVote setEventOptions= async (position: number) => {
+  const handleVote = async (position: number) => {
     try {
-      const eventOpt = eventOptions[position];
+      const eventOpt = optionsPage.content[position];
       const req = {
         eventOptionId: eventOpt.id,
         userId: user?.user_id || '',
       };
-      const res = await votesApi.Vote(req);
+      const voteAdded = await votesApi.Vote(req);
 
-      const newEventOptions: EventOptionBodyWithVotes[] = eventOptions.map(
+      const newEventOptions: EventOptionBodyWithVotes[] = optionsPage.content.map(
         (eventOption, idx) => {
           if (position === idx) {
-            if (!res) {
+            if (!voteAdded) {
               eventOption.voted = false;
               eventOption.votes && eventOption.votes--;
             } else {
@@ -43,8 +43,8 @@ const UpdateEventBody = ({
           return eventOption;
         }
       );
-
-      setEventOptions(newEventOptions);
+      optionsPage.content = newEventOptions;
+      setOptionsPage(optionsPage);
     } catch {
       // TODO: maybe throw a toast with msg if error
     }
@@ -52,7 +52,7 @@ const UpdateEventBody = ({
 
   return (
     <ul className="grid grid-cols-1 gap-6 sm:grid-cols-1 md:grid-cols-2">
-      {eventOptions.map(
+      {optionsPage.content.map(
         ({ id, title, description, votes, voted, ...linkPreview }, idx) => (
           <li
             key={title + id}

@@ -21,8 +21,8 @@ export type EventOptionBodyWithVotes = EventOption & {
 // GET Event Option
 export const GetEventOptionsQueryParser = z.object({
   eventId: UUID,
-  offset: z.number(),
-  limit: z.number(),
+  offset: z.preprocess(Number, z.number()).default(0).optional(),
+  limit: z.preprocess(Number, z.number()).default(10).optional(),
 });
 export type GetEventOptionsRequest = typeof GetEventOptionsQueryParser._type;
 export type GetEventOptionsResponse = Page<EventOptionBodyWithVotes>;

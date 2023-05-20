@@ -348,8 +348,8 @@ const ViewEvent = () => {
               <div className="overflow-hidden rounded-lg bg-white shadow flex flex-col items-center">
                 <div className="p-6">
                   <UpdateEventBody
-                    eventOptions={eventOptions}
-                    setEventOptions={setEventOptions}
+                    optionsPage={optionsPage}
+                    setOptionsPage={setOptionsPage}
                     editEventOptions={setEdittingOption}
                     delEventOptions={handleDeleteOption}
                   />

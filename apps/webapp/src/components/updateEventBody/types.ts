@@ -1,8 +1,8 @@
-import { EventOptionBodyWithVotes } from '@event-planner/types/src';
+import { EventOptionBodyWithVotes, Page } from '@event-planner/types/src';
 
 export interface UpdateEventBodyParam {
-  eventOptions: EventOptionBodyWithVotes[];
-  setEventOptions: (e: EventOptionBodyWithVotes[]) => void;
+  optionsPage: Page<EventOptionBodyWithVotes>;
+  setOptionsPage: (e: Page<EventOptionBodyWithVotes>) => void;
   editEventOptions: (p: number) => void;
   delEventOptions: (eventOptionId: string) => void;
 }
