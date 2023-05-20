@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import UpdateEventBody from 'components/updateEventBody';
 import Comments from 'components/comments';
 import NewComment from 'components/newComment';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import MembersModal from 'components/membersModal';
 import Title from 'components/title';
 import Description from 'components/description';
@@ -29,6 +29,7 @@ import EventActionDropdown, {
 } from 'components/eventActionDropdown';
 import SelectFinalEventModal from 'components/selectFinalEventModal';
 import LinkPreview from 'components/linkPreview';
+import { routes } from 'const/routes';
 
 const ViewEvent = () => {
   const commentsApi = useCommentsApi();
@@ -63,9 +64,14 @@ const ViewEvent = () => {
     GetEventMembersResponse | undefined
   >();
 
+  const navigate = useNavigate();
   const params = useParams();
   const queryParams = new URLSearchParams(window.location.search);
   const cached = queryParams.get('cached');
+
+  const showEventBody = useMemo(() => {
+    return (isComplete && finalOptionInfo) || !isComplete;
+  }, [isComplete, finalOptionInfo]);
 
   const fetchComments = useCallback(() => {
     if (!params.id) return;
@@ -321,9 +327,9 @@ const ViewEvent = () => {
       if (eventOptions.length <= 1) {
         // if only 1 or 0 options, just select that one
         handleUpdateStatus(eventOptions[0] ? eventOptions[0].id : '', true);
+        // if multiple options, user needs to select one
+        setOpenMarkCompleteModal(true);
       }
-      // if multiple options, user needs to select one
-      setOpenMarkCompleteModal(true);
     }
   };
 
@@ -335,8 +341,14 @@ const ViewEvent = () => {
     console.log('share event here');
   };
 
-  const handleEventActionDelete = () => {
-    console.log('delete event here');
+  const handleEventActionDelete = async () => {
+    if (!params.id) return;
+    try {
+      await eventsApi.Delete(params.id);
+      navigate(routes.HOME);
+    } catch (err) {
+      // TODO: maybe show err toast here
+    }
   };
 
   const showCompleteStatusEventOptionBody = () => {
@@ -429,15 +441,17 @@ const ViewEvent = () => {
           {/* Main 3 column grid */}
           <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-3 lg:gap-8">
             {/* Left column */}
-            <div className="grid grid-cols-1 gap-4 lg:col-span-2">
-              <div className="overflow-hidden rounded-lg bg-white shadow flex flex-col items-center">
-                <div className="p-10">
-                  {isComplete
-                    ? showCompleteStatusEventOptionBody()
-                    : showPlanningStatusEventOptionBody()}
+            {showEventBody ? (
+              <div className="grid grid-cols-1 gap-4 lg:col-span-2">
+                <div className="overflow-hidden rounded-lg bg-white shadow flex flex-col items-center">
+                  <div className="p-10">
+                    {isComplete
+                      ? showCompleteStatusEventOptionBody()
+                      : showPlanningStatusEventOptionBody()}
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : null}
             {/* Right column */}
             <div className="grid grid-cols-1 gap-4">
               <div className="overflow-hidden rounded-lg bg-white shadow">

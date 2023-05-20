@@ -255,6 +255,18 @@ export const getEvent = async (
   return eventRes;
 };
 
+export const deleteEvent = async (
+  eventId: typeof UUID._type
+): Promise<boolean> => {
+  await prisma.event.delete({
+    where: {
+      id: eventId,
+    },
+  });
+
+  return true;
+};
+
 export const getEventsForUser = async (
   req: GetEventsRequest,
   userId: string

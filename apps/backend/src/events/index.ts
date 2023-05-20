@@ -52,4 +52,13 @@ router.put(
   })
 );
 
+router.delete(
+  '/:eventId',
+  asyncHandler(async (req, res: Response<boolean | null>) => {
+    const id = UUID.parse(req.params.eventId);
+    const resp = await db.deleteEvent(id);
+    res.send(resp);
+  })
+);
+
 export default router;

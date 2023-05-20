@@ -45,6 +45,16 @@ const useEventsApi = () => {
     }
   };
 
+  const DeleteEvent = async (eventId: string): Promise<EventResponse> => {
+    try {
+      const res = await instance.delete(`/events/${eventId}`);
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
   const GetEvents = async (
     req: GetEventsRequest
   ): Promise<GetEventsResponse> => {
@@ -62,6 +72,7 @@ const useEventsApi = () => {
     Update: UpdateEvent,
     Get: GetEvent,
     List: GetEvents,
+    Delete: DeleteEvent,
   };
 };
 
