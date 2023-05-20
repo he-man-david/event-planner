@@ -30,6 +30,7 @@ import EventActionDropdown, {
 import SelectFinalEventModal from 'components/selectFinalEventModal';
 import LinkPreview from 'components/linkPreview';
 import { routes } from 'const/routes';
+import ShareEventModal from 'components/shareEventModal';
 
 const ViewEvent = () => {
   const commentsApi = useCommentsApi();
@@ -42,6 +43,8 @@ const ViewEvent = () => {
   const [description, setDescription] = useState<string>('');
   const [eventOptionId, setEventOptionId] = useState<string>('');
   const [openMarkCompleteModal, setOpenMarkCompleteModal] =
+    useState<boolean>(false);
+  const [openShareEventModal, setOpenShareEventModal] =
     useState<boolean>(false);
   const [eventOptions, setEventOptions] = useState<EventOptionBodyWithVotes[]>(
     []
@@ -338,7 +341,7 @@ const ViewEvent = () => {
   };
 
   const handleEventActionShare = () => {
-    console.log('share event here');
+    setOpenShareEventModal(true);
   };
 
   const handleEventActionDelete = async () => {
@@ -499,6 +502,11 @@ const ViewEvent = () => {
         setEventOptionId={setEventOptionId}
         eventOptions={eventOptions}
         handleUpdateStatus={handleUpdateStatus}
+      />
+      <ShareEventModal
+        open={openShareEventModal}
+        setOpen={setOpenShareEventModal}
+        url={window.location.href}
       />
     </div>
   );
