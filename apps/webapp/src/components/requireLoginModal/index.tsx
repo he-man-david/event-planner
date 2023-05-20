@@ -1,17 +1,24 @@
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
+import { useNavigate } from 'react-router-dom';
+import { routes } from 'const/routes';
 
 
 interface RequireLoginModalProps {
   show: boolean;
-  onLoginClicked: () => void;
-  resource: string;
+  onClose: () => void;
+  // onLoginClicked: () => void;
+  eventId: string;
 }
 
-const RequireLoginModal = ({ show: open, onLoginClicked, resource }: RequireLoginModalProps) => {
+const RequireLoginModal = ({ show: open, onClose, eventId }: RequireLoginModalProps) => {
+  const navigate = useNavigate();
+  const onLoginClicked = () => {
+    navigate(routes.LOGIN + `?next_route=${routes.EVENT_ID.replace(":id", eventId)}`);
+  }
   return (
     <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={() => {}}>
+      <Dialog as="div" className="relative z-10" onClose={onClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"

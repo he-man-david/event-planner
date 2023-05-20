@@ -8,9 +8,10 @@ import Avatar from 'react-avatar';
 type NewCommentProps = {
   commentsPage: GetEventCommentsResponse;
   setCommentsPage: (comment: GetEventCommentsResponse) => void;
+  onPreSubmit: (e: any) => boolean;
 };
 
-const NewComment = ({ commentsPage, setCommentsPage }: NewCommentProps) => {
+const NewComment = ({ commentsPage, setCommentsPage, onPreSubmit }: NewCommentProps) => {
   const params = useParams();
   const { user } = useStytchUser();
   const commentsApi = useCommentsApi();
@@ -25,6 +26,10 @@ const NewComment = ({ commentsPage, setCommentsPage }: NewCommentProps) => {
   };
 
   const handleSubmit = (e: any) => {
+    console.log("Post new comment!");
+    if (!onPreSubmit(e)) {
+      return;
+    }
     e.preventDefault();
     if (!user?.user_id || !params.id) {
       return;
@@ -48,7 +53,7 @@ const NewComment = ({ commentsPage, setCommentsPage }: NewCommentProps) => {
     <div className="flex items-start space-x-4">
       <div className="flex-shrink-0">{profileImg()}</div>
       <div className="min-w-0 flex-1">
-        <form onSubmit={handleSubmit}>
+        {/* <form onSubmit={handleSubmit}> */}
           <div className="border-b border-gray-200 focus-within:border-indigo-600">
             <label htmlFor="comment" className="sr-only">
               Add your comment
@@ -67,11 +72,12 @@ const NewComment = ({ commentsPage, setCommentsPage }: NewCommentProps) => {
             <button
               type="submit"
               className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              onClick={handleSubmit}
             >
               Post
             </button>
           </div>
-        </form>
+        {/* </form> */}
       </div>
     </div>
   );

@@ -190,6 +190,23 @@ const ViewEvent = () => {
     return <h1 className="text-slate-200 mx-auto">404 Event Not Found</h1>;
   }
 
+  const isLoggedIn: boolean = user !== null && user !== undefined;
+
+  const wrapWithRequireLoggedIn = (callback: any) => {
+    if (!isLoggedIn) {
+      return () => {setShowRequireLoginModal(true)};
+    }
+    return callback;
+  }
+
+  const requireLoogedIn = (args: unknown): boolean => {
+    if (!isLoggedIn) {
+      setShowRequireLoginModal(true);
+      return false;
+    }
+    return true
+  }
+
   const createOption = async (option: EventOptionBody) => {
     setLoadingNewOption(true);
     if (option.linkUrl) {
@@ -410,7 +427,7 @@ const ViewEvent = () => {
         <button
           type="button"
           className="w-32 my-9 inline-flex items-center gap-x-1.5 rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
-          onClick={() => setShowAddOptionForm(true)}
+          onClick={wrapWithRequireLoggedIn(() => setShowAddOptionForm(true))}
         >
           <PlusIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
           Add option
@@ -425,7 +442,7 @@ const ViewEvent = () => {
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
           <div className="float-right mt-3">
             <EventActionDropdown
-              callBack={handleEventDropdownActions}
+              callBack={wrapWithRequireLoggedIn(handleEventDropdownActions)}
               status={isComplete}
             />
           </div>
@@ -434,20 +451,20 @@ const ViewEvent = () => {
           <Title
             title={title}
             setTitle={handleUpdateTitle}
-            editable={!isComplete}
+            editable={!isComplete && isLoggedIn}
           />
           {description && (
             <Description
               description={description}
               setDescription={handleUpdateDescription}
-              editable={!isComplete}
+              editable={!isComplete && isLoggedIn}
             />
           )}
           <DateTimeStartEnd
             startDate={startDate}
             endDate={endDate}
             handleUpdateSchedule={handleUpdateSchedule}
-            editable={!isComplete}
+            editable={!isComplete && isLoggedIn}
           />
         </header>
       </div>
@@ -485,6 +502,7 @@ const ViewEvent = () => {
                     <NewComment
                       commentsPage={commentsPage}
                       setCommentsPage={setCommentsPage}
+                      onPreSubmit={requireLoogedIn}
                     />
                   )}
                 </div>
@@ -522,8 +540,8 @@ const ViewEvent = () => {
       />
       <RequireLoginModal 
       show={showRequireLoginModal}
-      onLoginClicked={() => {}}
-      resource={"asdf"}
+      onClose={() => setShowRequireLoginModal(false)}
+      eventId={params.id}
       />
     </div>
   );
