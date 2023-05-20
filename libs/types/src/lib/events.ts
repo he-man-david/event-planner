@@ -3,14 +3,17 @@ import { Page, UUID } from './common';
 import { EventOptionBodyParser, EventOptionBodyWithVotes } from './options';
 import { z } from 'zod';
 import dayjs = require('dayjs');
+import { EventCommentWithCommenterInfo } from './comments';
+import { EventMemberWithMemberInfo } from './members';
 
 // GET event
 export const GetEventRequestParser = UUID;
 export type GetEventRequest = typeof GetEventRequestParser._type;
 export type EventResponse =
   | (Event & {
-      members: EventMember[];
-      options: EventOptionBodyWithVotes[];
+      members: Page<EventMemberWithMemberInfo>;
+      options: Page<EventOptionBodyWithVotes>;
+      comments: Page<EventCommentWithCommenterInfo>;
     })
   | null;
 

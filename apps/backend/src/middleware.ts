@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import * as stytch from 'stytch';
 import { z } from 'zod';
+import { unless } from "express-unless";
+import { isGetEventApiCall } from './events';
 
 console.log("Creating middlewares");
 
@@ -34,8 +36,12 @@ export const StytchTokenAuth = async (
   res: Response,
   next: any
 ) => {
+  const session_token = String(req.headers.session_token);
+  if (!session_token && isGetEventApiCall(req)) {
+    next()
+    return;
+  }
   try {
-    const session_token = String(req.headers.session_token);
     const authRes = await client.sessions.authenticate({ session_token });
     if (!authRes.user) {
       throw new Error("User is missing!");
@@ -47,3 +53,6 @@ export const StytchTokenAuth = async (
     res.status(401).json(error);
   }
 };
+
+// add unless function to allow filtering out paths from middleware
+StytchTokenAuth.unless = unless;

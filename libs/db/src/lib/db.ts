@@ -28,6 +28,17 @@ import {
 } from '@event-planner/types';
 import dayjs = require('dayjs');
 
+const EMPTY_PAGE = {
+  content: [],
+  pageInfo: {
+    size:0,
+    offset: 0,
+    totalCount: 0,
+    hasNext: false,
+
+  }
+}
+
 const prisma = new PrismaClient();
 
 export const createPage = <T>(
@@ -124,6 +135,19 @@ export const getEventMembers = async (
 export const addUserToEvent = async (
   data: CreateEventMemberRequest
 ): Promise<CreateEventMemberResponse> => {
+  const existingEventMember = await prisma.eventMember.findFirst(
+    {
+      where: {
+        ...data
+      },
+      include: {
+        memberInfo: true
+      }
+    }
+  );
+  if (existingEventMember) {
+    return existingEventMember;
+  }
   return await prisma.eventMember.create({
     data,
     include: { memberInfo: true },
@@ -213,18 +237,34 @@ export const getEvent = async (
   eventId: typeof UUID._type,
   userId?: string
 ): Promise<EventResponse> => {
+  const commonQuery = {
+    take: 10,
+    skip: 0,
+  };
   const event = await prisma.event.findFirst({
     where: {
       id: eventId,
     },
     include: {
-      members: {
-        skip: 0,
-        take: 10,
+      _count: {
+        select: {
+          options: true,
+          members: true,
+          comments: true,
+        },
+      },
+      members: { ...commonQuery, 
+        include: {
+          memberInfo: true,
+        }
+      },
+      comments: { ...commonQuery, 
+        include: {
+          commenterInfo: true,
+        }
       },
       options: {
-        skip: 0,
-        take: 10,
+        ...commonQuery,
         include: {
           _count: {
             select: {
@@ -232,9 +272,7 @@ export const getEvent = async (
             },
           },
           eventOptionVote: {
-            where: {
-              userId: userId,
-            },
+            where: { userId: userId },
           },
         },
       },
@@ -244,15 +282,21 @@ export const getEvent = async (
   if (!event) {
     return null;
   }
-
-  const { options, ...rest } = event;
+  if (userId) {
+    await addUserToEvent({userId, eventId: event.id});
+  }
+  const { options, _count, members, comments, ...rest } = event;
   const mappedOptions = options.map((opt) => {
     const { _count, eventOptionVote, ...rest } = opt;
-    const voted = eventOptionVote.length > 0;
+    const voted = !!userId && eventOptionVote.length > 0;
     return { votes: _count.eventOptionVote, voted, ...rest };
   });
-  const eventRes = { ...rest, options: mappedOptions };
-  return eventRes;
+  return {
+    ...rest,
+    options: createPage(_count.options, commonQuery.skip, mappedOptions),
+    members: createPage(_count.members, commonQuery.skip, members),
+    comments: createPage(_count.comments, commonQuery.skip, comments),
+  };
 };
 
 export const deleteEvent = async (
@@ -269,8 +313,11 @@ export const deleteEvent = async (
 
 export const getEventsForUser = async (
   req: GetEventsRequest,
-  userId: string
+  userId?: string
 ): Promise<GetEventsResponse> => {
+  if (!userId) {
+    return EMPTY_PAGE
+  }
   const offset = req.offset ?? 0;
   const eventWhereFilter = {
     eventStart: {
@@ -370,7 +417,7 @@ export const createEvent = async (
 
   await addUserToEvent({ userId: req.createdBy, eventId: event.id });
 
-  return getEvent(event.id);
+  return getEvent(event.id, req.createdBy);
 };
 
 export const getEventMember = async (userId: string, eventId: string) => {

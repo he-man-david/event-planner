@@ -25,6 +25,8 @@ model Event {
 
   members     EventMember[]
   options     EventOption[]
+  comments    EventComment[]
+
   creatorInfo User          @relation(fields: [createdBy], references: [id], onDelete: Cascade)
 
   @@index([updatedAt(sort: Desc), eventStart(sort: Desc)])
@@ -70,6 +72,7 @@ model EventComment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
   commenterInfo User @relation(fields: [createdBy], references: [id], onDelete: Cascade)
 
   @@id([createdAt, eventId])

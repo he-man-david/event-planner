@@ -31,8 +31,11 @@ import SelectFinalEventModal from 'components/selectFinalEventModal';
 import LinkPreview from 'components/linkPreview';
 import { routes } from 'const/routes';
 import ShareEventModal from 'components/shareEventModal';
+import RequireLoginModal from 'components/requireLoginModal';
+import { useStytchUser } from '@stytch/react';
 
 const ViewEvent = () => {
+  const { user } = useStytchUser();
   const commentsApi = useCommentsApi();
   const eventsApi = useEventsApi();
   const membersApi = useMembersApi();
@@ -66,6 +69,9 @@ const ViewEvent = () => {
   const [membersPage, setMembersPage] = useState<
     GetEventMembersResponse | undefined
   >();
+  const [showRequireLoginModal, setShowRequireLoginModal] = useState<boolean>(
+    false
+  )
 
   const navigate = useNavigate();
   const params = useParams();
@@ -117,17 +123,21 @@ const ViewEvent = () => {
             eventEnd,
             planned,
             eventOptionId,
+            members,
+            comments,
           } = event;
           setEventOptionId(eventOptionId || '');
           setIsComplete(planned);
           setTitle(title || '');
           setDescription(description || '');
-          setEventOptions(options || []);
+          setEventOptions(options.content);
+          setMembersPage(members);
+          setCommentsPage(comments);
           setStartDate(dateToLocalTimeZoneDate(new Date(eventStart)).toDate());
           setEndDate(dateToLocalTimeZoneDate(new Date(eventEnd)).toDate());
 
           if (eventOptionId) {
-            const option = options.find(
+            const option = options.content.find(
               (option) => option.id === eventOptionId
             );
             if (option) setFinalOptionInfo(option);
@@ -152,12 +162,16 @@ const ViewEvent = () => {
               eventEnd,
               planned,
               eventOptionId,
+              comments,
+              members,
             } = event;
             setEventOptionId(eventOptionId || '');
             setIsComplete(planned);
             setTitle(title || '');
             setDescription(description || '');
-            setEventOptions(options || []);
+            setEventOptions(options.content);
+            setCommentsPage(comments);
+            setMembersPage(members);
             setStartDate(
               dateToLocalTimeZoneDate(new Date(eventStart)).toDate()
             );
@@ -169,8 +183,6 @@ const ViewEvent = () => {
       }
 
       getEventInfoApi();
-      fetchComments();
-      fetchMembers();
     }
   }, []);
 
@@ -507,6 +519,11 @@ const ViewEvent = () => {
         open={openShareEventModal}
         setOpen={setOpenShareEventModal}
         url={window.location.href}
+      />
+      <RequireLoginModal 
+      show={showRequireLoginModal}
+      onLoginClicked={() => {}}
+      resource={"asdf"}
       />
     </div>
   );
