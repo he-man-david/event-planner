@@ -16,14 +16,14 @@ const UpdateEventBody = ({
   setEventOptions,
   editEventOptions,
   delEventOptions,
-  preHandleVote
+  handleVotePrecondition
 }: UpdateEventBodyParam) => {
   const { user } = useStytchUser();
   const votesApi = useVotesApi();
   const isLoggedIn: boolean = user !== null && user !== undefined;
 
   const handleVote = async (position: number) => {
-    if (!preHandleVote()) {
+    if (!handleVotePrecondition()) {
       return;
     }
     try {

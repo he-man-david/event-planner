@@ -80,18 +80,6 @@ const ViewEvent = () => {
     return (isComplete && finalOptionInfo) || !isComplete;
   }, [isComplete, finalOptionInfo]);
 
-  const fetchMembers = useCallback(() => {
-    if (!params.id) return;
-    // TODO make use of pagination
-    membersApi
-      .Get({
-        eventId: params.id,
-        limit: 100,
-        offset: 0,
-      })
-      .then(setMembersPage);
-  }, [params.id, membersApi]);
-
   const getEventInfoApi = useCallback(() => {
     if (!params.id) return;
     eventsApi
@@ -187,7 +175,7 @@ const ViewEvent = () => {
     return callback;
   };
 
-  const requireLoogedIn = (): boolean => {
+  const requireLoggedIn = (): boolean => {
     console.log("Checking if looged in!");
     if (!isLoggedIn) {
       setShowRequireLoginModal(true);
@@ -412,7 +400,7 @@ const ViewEvent = () => {
           setEventOptions={setEventOptions}
           editEventOptions={handleEditOption}
           delEventOptions={handleDeleteOption}
-          preHandleVote={requireLoogedIn}
+          handleVotePrecondition={requireLoggedIn}
         />
         <button
           type="button"
@@ -491,7 +479,7 @@ const ViewEvent = () => {
               {commentsPage && (
                 <Comments
                   initialCommentsPage={commentsPage}
-                  allowSubmission={requireLoogedIn}
+                  allowSubmission={requireLoggedIn}
                 />
               )}
             </div>

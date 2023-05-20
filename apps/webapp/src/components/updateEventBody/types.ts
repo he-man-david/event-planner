@@ -5,5 +5,5 @@ export interface UpdateEventBodyParam {
   setEventOptions: (e: EventOptionBodyWithVotes[]) => void;
   editEventOptions: (p: number) => void;
   delEventOptions: (p: number) => void;
-  preHandleVote: () => boolean;
+  handleVotePrecondition: () => boolean;
 }
