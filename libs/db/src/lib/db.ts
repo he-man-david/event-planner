@@ -238,7 +238,7 @@ export const getEvent = async (
   userId?: string
 ): Promise<EventResponse> => {
   const commonQuery = {
-    take: 10,
+    take: 3,
     skip: 0,
   };
   const event = await prisma.event.findFirst({
@@ -261,6 +261,9 @@ export const getEvent = async (
       comments: { ...commonQuery, 
         include: {
           commenterInfo: true,
+        },
+        orderBy: {
+          createdAt: 'desc'
         }
       },
       options: {

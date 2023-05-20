@@ -36,7 +36,6 @@ import { useStytchUser } from '@stytch/react';
 
 const ViewEvent = () => {
   const { user } = useStytchUser();
-  const commentsApi = useCommentsApi();
   const eventsApi = useEventsApi();
   const membersApi = useMembersApi();
   const eventOptionsApi = useEventOptionsApi();
@@ -80,18 +79,6 @@ const ViewEvent = () => {
   const showEventBody = useMemo(() => {
     return (isComplete && finalOptionInfo) || !isComplete;
   }, [isComplete, finalOptionInfo]);
-
-  const fetchComments = useCallback(() => {
-    if (!params.id) return;
-    // TODO make use of pagination
-    commentsApi
-      .Get({
-        eventId: params.id,
-        limit: 100,
-        offset: 0,
-      })
-      .then(setCommentsPage);
-  }, [params.id, commentsApi]);
 
   const fetchMembers = useCallback(() => {
     if (!params.id) return;
@@ -201,6 +188,7 @@ const ViewEvent = () => {
   };
 
   const requireLoogedIn = (): boolean => {
+    console.log("Checking if looged in!");
     if (!isLoggedIn) {
       setShowRequireLoginModal(true);
       return false;
@@ -500,23 +488,11 @@ const ViewEvent = () => {
                   )}
                 </div>
               </div>
-              <div className="overflow-hidden rounded-lg bg-white shadow">
-                <div className="p-6">
-                  {commentsPage && (
-                    <NewComment
-                      commentsPage={commentsPage}
-                      setCommentsPage={setCommentsPage}
-                      onPreSubmit={requireLoogedIn}
-                    />
-                  )}
-                </div>
-              </div>
-              {commentsPage?.content.length && (
-                <div className="overflow-hidden rounded-lg bg-white shadow">
-                  <div className="p-6 overflow-auto mx-h-[30rem]">
-                    <Comments commentsPage={commentsPage} />
-                  </div>
-                </div>
+              {commentsPage && (
+                <Comments
+                  initialCommentsPage={commentsPage}
+                  allowSubmission={requireLoogedIn}
+                />
               )}
             </div>
           </div>
