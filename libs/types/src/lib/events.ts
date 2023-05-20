@@ -61,6 +61,8 @@ export type GetEventsResponse = Page<
 export const UpdateEventRequestParser = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
+  eventOptionId: UUID.optional(),
+  planned: z.boolean().optional(),
   eventStart: IsoDateTimeParser.optional(),
   eventEnd: IsoDateTimeParser.optional(),
 });

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import UpdateEventBody from 'components/updateEventBody';
 import Comments from 'components/comments';
 import NewComment from 'components/newComment';
@@ -27,22 +27,29 @@ import useMembersApi from 'apis/members';
 import EventActionDropdown, {
   EventActionsType,
 } from 'components/eventActionDropdown';
+import SelectFinalEventModal from 'components/selectFinalEventModal';
+import LinkPreview from 'components/linkPreview';
 
 const ViewEvent = () => {
   const commentsApi = useCommentsApi();
   const eventsApi = useEventsApi();
   const membersApi = useMembersApi();
   const eventOptionsApi = useEventOptionsApi();
+
   const [isComplete, setIsComplete] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
+  const [eventOptionId, setEventOptionId] = useState<string>('');
+  const [openMarkCompleteModal, setOpenMarkCompleteModal] =
+    useState<boolean>(false);
   const [eventOptions, setEventOptions] = useState<EventOptionBodyWithVotes[]>(
     []
   );
   const [loadingNewOption, setLoadingNewOption] = useState<boolean>(false);
-  const params = useParams();
   const [showAddOptionForm, setShowAddOptionForm] = useState<boolean>(false);
   const [editOptionInfo, setEditOptionInfo] =
+    useState<EventOptionBodyWithVotes | null>(null);
+  const [finalOptionInfo, setFinalOptionInfo] =
     useState<EventOptionBodyWithVotes | null>(null);
   const [editOptionPos, setEditOptionPos] = useState<number>(-1);
   const [startDate, setStartDate] = useState<Date>(
@@ -56,10 +63,11 @@ const ViewEvent = () => {
     GetEventMembersResponse | undefined
   >();
 
+  const params = useParams();
   const queryParams = new URLSearchParams(window.location.search);
   const cached = queryParams.get('cached');
 
-  const fetchComments = () => {
+  const fetchComments = useCallback(() => {
     if (!params.id) return;
     // TODO make use of pagination
     commentsApi
@@ -69,9 +77,9 @@ const ViewEvent = () => {
         offset: 0,
       })
       .then(setCommentsPage);
-  };
+  }, [params.id, commentsApi]);
 
-  const fetchMembers = () => {
+  const fetchMembers = useCallback(() => {
     if (!params.id) return;
     // TODO make use of pagination
     membersApi
@@ -81,7 +89,44 @@ const ViewEvent = () => {
         offset: 0,
       })
       .then(setMembersPage);
-  };
+  }, [params.id, membersApi]);
+
+  const getEventInfoApi = useCallback(() => {
+    if (!params.id) return;
+    eventsApi
+      .Get(params.id)
+      .then((event: EventResponse) => {
+        if (!event) {
+          // TODO: Maybe 404 if event not found? -- Yes, redir to 404 page, we dont have now
+          throw new Error(`Event not found - ${params.id}!`);
+        } else {
+          const {
+            title,
+            description,
+            options,
+            eventStart,
+            eventEnd,
+            planned,
+            eventOptionId,
+          } = event;
+          setEventOptionId(eventOptionId || '');
+          setIsComplete(planned);
+          setTitle(title || '');
+          setDescription(description || '');
+          setEventOptions(options || []);
+          setStartDate(dateToLocalTimeZoneDate(new Date(eventStart)).toDate());
+          setEndDate(dateToLocalTimeZoneDate(new Date(eventEnd)).toDate());
+
+          if (eventOptionId) {
+            const option = options.find(
+              (option) => option.id === eventOptionId
+            );
+            if (option) setFinalOptionInfo(option);
+          }
+        }
+      })
+      .catch((err) => console.error(err));
+  }, [params.id, eventsApi]);
 
   useEffect(() => {
     if (params.id) {
@@ -97,7 +142,9 @@ const ViewEvent = () => {
               eventStart,
               eventEnd,
               planned,
+              eventOptionId,
             } = event;
+            setEventOptionId(eventOptionId || '');
             setIsComplete(planned);
             setTitle(title || '');
             setDescription(description || '');
@@ -112,39 +159,11 @@ const ViewEvent = () => {
         }
       }
 
-      eventsApi
-        .Get(params.id)
-        .then((event: EventResponse) => {
-          if (!event) {
-            // TODO: Maybe 404 if event not found? -- Yes, redir to 404 page, we dont have now
-            throw new Error(`Event not found - ${params.id}!`);
-          } else {
-            const {
-              title,
-              description,
-              options,
-              eventStart,
-              eventEnd,
-              planned,
-            } = event;
-            setIsComplete(planned);
-            setTitle(title || '');
-            setDescription(description || '');
-            setEventOptions(options || []);
-            setStartDate(
-              dateToLocalTimeZoneDate(new Date(eventStart)).toDate()
-            );
-            setEndDate(dateToLocalTimeZoneDate(new Date(eventEnd)).toDate());
-            fetchComments();
-            fetchMembers();
-          }
-        })
-        .catch((err) => console.error(err));
-
-      // TODO: this will need to be a poll
+      getEventInfoApi();
       fetchComments();
+      fetchMembers();
     }
-  }, [params.id, cached]);
+  }, []);
 
   if (!params.id) {
     return <h1 className="text-slate-200 mx-auto">404 Event Not Found</h1>;
@@ -237,6 +256,23 @@ const ViewEvent = () => {
     }
   };
 
+  const handleUpdateStatus = (eventOptionId: string, planned: boolean) => {
+    if (params.id) {
+      const req: UpdateEventRequest = {
+        planned,
+      };
+      if (eventOptionId.length) req.eventOptionId = eventOptionId;
+
+      eventsApi.Update(params.id, req).then((event) => {
+        if (event) {
+          setEventOptionId(event.eventOptionId || '');
+          setIsComplete(event.planned);
+          getEventInfoApi();
+        }
+      });
+    }
+  };
+
   const handleEditOption = (position: number) => {
     setEditOptionPos(position);
     setEditOptionInfo(() => {
@@ -277,7 +313,18 @@ const ViewEvent = () => {
   };
 
   const handleEventActionStatus = () => {
-    console.log('change status here');
+    if (isComplete) {
+      // if status is complete, change to planning (false), set eventOptionId ""
+      handleUpdateStatus('', false);
+    } else {
+      // if status is planning, change to complete (true)
+      if (eventOptions.length <= 1) {
+        // if only 1 or 0 options, just select that one
+        handleUpdateStatus(eventOptions[0] ? eventOptions[0].id : '', true);
+      }
+      // if multiple options, user needs to select one
+      setOpenMarkCompleteModal(true);
+    }
   };
 
   const handleEventActionCalendar = () => {
@@ -292,6 +339,59 @@ const ViewEvent = () => {
     console.log('delete event here');
   };
 
+  const showCompleteStatusEventOptionBody = () => {
+    if (!finalOptionInfo) return null;
+    const {
+      title,
+      description,
+      linkPreviewImgUrl,
+      linkUrl,
+      linkPreviewTitle,
+      linkPreviewDesc,
+      votes,
+    } = finalOptionInfo;
+    return (
+      <div className="max-w-xl">
+        <h3 className="text-md font-medium text-gray-900">{title}</h3>
+        <div className="mt-1 flex flex-grow flex-col">
+          <p className="text-md text-gray-500 pb-3">{description}</p>
+          {linkPreviewImgUrl && (
+            <LinkPreview
+              linkUrl={linkUrl}
+              linkPreviewTitle={linkPreviewTitle}
+              linkPreviewDesc={linkPreviewDesc}
+              linkPreviewImgUrl={linkPreviewImgUrl}
+            />
+          )}
+          <p className="mt-4 flex items-center text-md font-bold text-indigo-600">
+            {votes + ' votes'}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
+  const showPlanningStatusEventOptionBody = () => {
+    return (
+      <div>
+        <UpdateEventBody
+          eventOptions={eventOptions}
+          setEventOptions={setEventOptions}
+          editEventOptions={handleEditOption}
+          delEventOptions={handleDeleteOption}
+        />
+        <button
+          type="button"
+          className="w-32 my-9 inline-flex items-center gap-x-1.5 rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+          onClick={() => setShowAddOptionForm(true)}
+        >
+          <PlusIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
+          Add option
+        </button>
+      </div>
+    );
+  };
+
   return (
     <div className="view-event-container min-h-full">
       <div className="header-container bg-indigo-600 pb-20">
@@ -304,17 +404,23 @@ const ViewEvent = () => {
           </div>
         </div>
         <header className="py-10">
-          <Title title={title} setTitle={handleUpdateTitle} />
+          <Title
+            title={title}
+            setTitle={handleUpdateTitle}
+            editable={!isComplete}
+          />
           {description && (
             <Description
               description={description}
               setDescription={handleUpdateDescription}
+              editable={!isComplete}
             />
           )}
           <DateTimeStartEnd
             startDate={startDate}
             endDate={endDate}
             handleUpdateSchedule={handleUpdateSchedule}
+            editable={!isComplete}
           />
         </header>
       </div>
@@ -325,22 +431,11 @@ const ViewEvent = () => {
             {/* Left column */}
             <div className="grid grid-cols-1 gap-4 lg:col-span-2">
               <div className="overflow-hidden rounded-lg bg-white shadow flex flex-col items-center">
-                <div className="p-6">
-                  <UpdateEventBody
-                    eventOptions={eventOptions}
-                    setEventOptions={setEventOptions}
-                    editEventOptions={handleEditOption}
-                    delEventOptions={handleDeleteOption}
-                  />
+                <div className="p-10">
+                  {isComplete
+                    ? showCompleteStatusEventOptionBody()
+                    : showPlanningStatusEventOptionBody()}
                 </div>
-                <button
-                  type="button"
-                  className="w-32 my-9 inline-flex items-center gap-x-1.5 rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
-                  onClick={() => setShowAddOptionForm(true)}
-                >
-                  <PlusIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
-                  Add option
-                </button>
               </div>
             </div>
             {/* Right column */}
@@ -365,11 +460,13 @@ const ViewEvent = () => {
                   )}
                 </div>
               </div>
-              <div className="overflow-hidden rounded-lg bg-white shadow">
-                <div className="p-6 overflow-auto mx-h-[30rem]">
-                  {commentsPage && <Comments commentsPage={commentsPage} />}
+              {commentsPage?.content.length && (
+                <div className="overflow-hidden rounded-lg bg-white shadow">
+                  <div className="p-6 overflow-auto mx-h-[30rem]">
+                    <Comments commentsPage={commentsPage} />
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
@@ -380,6 +477,14 @@ const ViewEvent = () => {
         createOption={createOption}
         editOptionInfo={editOptionInfo}
         loading={loadingNewOption}
+      />
+      <SelectFinalEventModal
+        open={openMarkCompleteModal}
+        setOpen={setOpenMarkCompleteModal}
+        eventOptionId={eventOptionId}
+        setEventOptionId={setEventOptionId}
+        eventOptions={eventOptions}
+        handleUpdateStatus={handleUpdateStatus}
       />
     </div>
   );

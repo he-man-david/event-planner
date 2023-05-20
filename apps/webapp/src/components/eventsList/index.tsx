@@ -1,6 +1,7 @@
 import { CalendarIcon, UsersIcon } from '@heroicons/react/24/outline';
 import { GetEventsResponse } from '@event-planner/types/src';
 import { dateToLocalTimeZoneDate, dayjsToFormattedString } from 'utils/common';
+import EventStatus from 'components/eventStatus';
 
 const EventsList = ({ data }: { data: GetEventsResponse['content'] }) => {
   return (
@@ -23,13 +24,7 @@ const EventsList = ({ data }: { data: GetEventsResponse['content'] }) => {
                     <p className="truncate text-sm font-medium text-indigo-600">
                       {title}
                     </p>
-                    {isPlanned && (
-                      <div className="ml-2 flex flex-shrink-0">
-                        <p className="inline-flex rounded-full bg-yellow-100 px-2 text-xs font-semibold leading-5 text-yellow-800">
-                          Planning
-                        </p>
-                      </div>
-                    )}
+                    <EventStatus status={isPlanned} />
                   </div>
                   <p className="truncate text-left text-gray-500 lg:w-full lg:mt-4 w-64 mt-2">
                     {description}

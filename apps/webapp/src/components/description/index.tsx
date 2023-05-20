@@ -2,7 +2,11 @@ import { PlusIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { DescriptionParam } from './types';
 
-const Description = ({ description, setDescription }: DescriptionParam) => {
+const Description = ({
+  description,
+  setDescription,
+  editable,
+}: DescriptionParam) => {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [value, setValue] = useState<string>(description);
 
@@ -63,13 +67,15 @@ const Description = ({ description, setDescription }: DescriptionParam) => {
           <h1 className="topic-title text-1xl tracking-tight text-white">
             {description}
           </h1>
-          <div>
-            <PencilSquareIcon
-              className="h-4 w-4 ml-5 hover:cursor-pointer text-slate-100 hover:text-slate-300"
-              aria-hidden="true"
-              onClick={() => setEditMode(true)}
-            />
-          </div>
+          {editable && (
+            <div>
+              <PencilSquareIcon
+                className="h-4 w-4 ml-5 hover:cursor-pointer text-slate-100 hover:text-slate-300"
+                aria-hidden="true"
+                onClick={() => setEditMode(true)}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>

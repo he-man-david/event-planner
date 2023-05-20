@@ -8,6 +8,7 @@ const DateTimeStartEnd = ({
   startDate,
   endDate,
   handleUpdateSchedule,
+  editable,
 }: DateTimeStartEndParam) => {
   const filterPassedTime = (time: Date) => {
     const currentDate = dayjs();
@@ -30,6 +31,7 @@ const DateTimeStartEnd = ({
           startDate={startDate}
           endDate={endDate}
           dateFormat="MMMM d, yyyy h:mm aa"
+          disabled={!editable}
         />
       </div>
       <div className="flex mt-2 w-full items-center bg-white border rounded-lg py-2 px-3 sm:ml-3 sm:mt-0 sm:w-auto">
@@ -46,6 +48,7 @@ const DateTimeStartEnd = ({
           minDate={startDate}
           filterTime={filterPassedTime}
           dateFormat="MMMM d, yyyy h:mm aa"
+          disabled={!editable}
         />
       </div>
     </div>

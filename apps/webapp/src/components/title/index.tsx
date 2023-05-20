@@ -2,7 +2,7 @@ import { PlusIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { TitleParam } from './types';
 
-const Title = ({ title, setTitle }: TitleParam) => {
+const Title = ({ title, setTitle, editable }: TitleParam) => {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [value, setValue] = useState<string>(title);
 
@@ -62,13 +62,15 @@ const Title = ({ title, setTitle }: TitleParam) => {
           <h1 className="topic-title text-3xl font-bold tracking-tight text-white">
             {title}
           </h1>
-          <div>
-            <PencilSquareIcon
-              className="h-4 w-4 ml-5 hover:cursor-pointer text-slate-100 hover:text-slate-300"
-              aria-hidden="true"
-              onClick={() => setEditMode(true)}
-            />
-          </div>
+          {editable && (
+            <div>
+              <PencilSquareIcon
+                className="h-4 w-4 ml-5 hover:cursor-pointer text-slate-100 hover:text-slate-300"
+                aria-hidden="true"
+                onClick={() => setEditMode(true)}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>
