@@ -1,16 +1,19 @@
-import { Event, EventMember } from '@prisma/client';
+import { Event, EventComment, EventMember } from '@prisma/client';
 import { Page, UUID } from './common';
 import { EventOptionBodyParser, EventOptionBodyWithVotes } from './options';
 import { z } from 'zod';
 import dayjs = require('dayjs');
+import { EventMemberWithMemberInfo } from './members';
+import { EventCommentWithCommenterInfo } from './comments';
 
 // GET event
 export const GetEventRequestParser = UUID;
 export type GetEventRequest = typeof GetEventRequestParser._type;
 export type EventResponse =
   | (Event & {
-      members: EventMember[];
-      options: EventOptionBodyWithVotes[];
+      members: Page<EventMemberWithMemberInfo>;
+      options: Page<EventOptionBodyWithVotes>;
+      comments: Page<EventCommentWithCommenterInfo>;
     })
   | null;
 

@@ -16,6 +16,7 @@ import {
   CreateEventOptionRequest,
   GetEventCommentsResponse,
   GetEventMembersResponse,
+  GetEventOptionsResponse,
 } from '@event-planner/types/src';
 import { GetLinkPreviewData, dateToLocalTimeZoneDate } from 'utils/common';
 import dayjs from 'dayjs';
@@ -28,6 +29,16 @@ import EventActionDropdown, {
   EventActionsType,
 } from 'components/eventActionDropdown';
 
+const EMPTY_PAGE = {
+  content: [],
+  pageInfo: {
+    offset: 0,
+    size: 0,
+    hasNext: false,
+    totalCount: 0,
+  }
+};
+
 const ViewEvent = () => {
   const commentsApi = useCommentsApi();
   const eventsApi = useEventsApi();
@@ -36,9 +47,7 @@ const ViewEvent = () => {
   const [isComplete, setIsComplete] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [eventOptions, setEventOptions] = useState<EventOptionBodyWithVotes[]>(
-    []
-  );
+
   const [loadingNewOption, setLoadingNewOption] = useState<boolean>(false);
   const params = useParams();
   const [showAddOptionForm, setShowAddOptionForm] = useState<boolean>(false);
@@ -50,14 +59,28 @@ const ViewEvent = () => {
   );
   const [endDate, setEndDate] = useState<Date>(dayjs().add(2, 'hour').toDate());
   const [commentsPage, setCommentsPage] = useState<
-    GetEventCommentsResponse | undefined
-  >();
+    GetEventCommentsResponse
+  >(EMPTY_PAGE);
   const [membersPage, setMembersPage] = useState<
-    GetEventMembersResponse | undefined
-  >();
+    GetEventMembersResponse
+  >(EMPTY_PAGE);
+  const [optionsPage, setOptionsPage ] = useState<
+  GetEventOptionsResponse>(EMPTY_PAGE);
 
   const queryParams = new URLSearchParams(window.location.search);
   const cached = queryParams.get('cached');
+
+  const fetchOptions = () => {
+    if (!params.id) return;
+    // TODO make use of pagination
+    return eventOptionsApi
+      .Get({
+        eventId: params.id,
+        limit: 100,
+        offset: 0,
+      })
+      .then(setOptionsPage);
+  };
 
   const fetchComments = () => {
     if (!params.id) return;
@@ -97,11 +120,15 @@ const ViewEvent = () => {
               eventStart,
               eventEnd,
               planned,
+              comments,
+              members
             } = event;
             setIsComplete(planned);
             setTitle(title || '');
             setDescription(description || '');
-            setEventOptions(options || []);
+            setOptionsPage(options);
+            setCommentsPage(comments);
+            setMembersPage(members);
             setStartDate(
               dateToLocalTimeZoneDate(new Date(eventStart)).toDate()
             );
@@ -126,23 +153,26 @@ const ViewEvent = () => {
               eventStart,
               eventEnd,
               planned,
+              comments,
+              members,
             } = event;
             setIsComplete(planned);
             setTitle(title || '');
             setDescription(description || '');
-            setEventOptions(options || []);
             setStartDate(
               dateToLocalTimeZoneDate(new Date(eventStart)).toDate()
             );
             setEndDate(dateToLocalTimeZoneDate(new Date(eventEnd)).toDate());
-            fetchComments();
-            fetchMembers();
+
+            setOptionsPage(options);
+            setCommentsPage(comments);
+            setMembersPage(members);
           }
         })
         .catch((err) => console.error(err));
 
       // TODO: this will need to be a poll
-      fetchComments();
+      // fetchComments();
     }
   }, [params.id, cached]);
 
@@ -150,7 +180,7 @@ const ViewEvent = () => {
     return <h1 className="text-slate-200 mx-auto">404 Event Not Found</h1>;
   }
 
-  const createOption = async (option: EventOptionBody) => {
+  const upsertOption = async (option: EventOptionBody) => {
     setLoadingNewOption(true);
     if (option.linkUrl) {
       const res = await GetLinkPreviewData(option.linkUrl);
@@ -163,29 +193,21 @@ const ViewEvent = () => {
       }
     }
 
-    const newEvtOptions = [...eventOptions];
-    // editing
     if (editOptionPos >= 0) {
-      const newOption = newEvtOptions[editOptionPos];
-      eventOptionsApi.Update(newOption.id, option).then((opt) => {
-        newEvtOptions.splice(editOptionPos, 1, opt);
-        setEditOptionPos(-1);
-        setEventOptions(newEvtOptions);
-        setLoadingNewOption(false);
-      });
+      // editing
+      const newOption = optionsPage.content[editOptionPos];
+      await eventOptionsApi.Update(newOption.id, option);
     } else {
       // creating
       const createOptionReq: CreateEventOptionRequest = {
         eventId: params.id || '',
         option,
       };
-      eventOptionsApi.Create(createOptionReq).then((opt) => {
-        newEvtOptions.unshift(opt);
-        setEventOptions(newEvtOptions);
-        setLoadingNewOption(false);
-      });
+      await eventOptionsApi.Create(createOptionReq);
     }
+    await fetchOptions();
     setEditOptionInfo(null);
+    setLoadingNewOption(false);
   };
 
   const handleUpdateTitle = (title: string) => {
@@ -237,18 +259,17 @@ const ViewEvent = () => {
     }
   };
 
-  const handleEditOption = (position: number) => {
+  const setEdittingOption = (position: number) => {
     setEditOptionPos(position);
     setEditOptionInfo(() => {
       setShowAddOptionForm(true);
-      return eventOptions[position];
+      return optionsPage.content[position];
     });
   };
 
-  const handleDeleteOption = (position: number) => {
-    const newEvtOptions = [...eventOptions];
-    newEvtOptions.splice(position, 1);
-    setEventOptions(newEvtOptions);
+  const handleDeleteOption = async (eventOptionId: string) => {
+    await eventOptionsApi.Delete({eventOptionId});
+    fetchOptions();
   };
 
   const handleOptionModalDisplay = (open: boolean) => {
@@ -329,7 +350,7 @@ const ViewEvent = () => {
                   <UpdateEventBody
                     eventOptions={eventOptions}
                     setEventOptions={setEventOptions}
-                    editEventOptions={handleEditOption}
+                    editEventOptions={setEdittingOption}
                     delEventOptions={handleDeleteOption}
                   />
                 </div>
@@ -377,7 +398,7 @@ const ViewEvent = () => {
       <EditEventOptionModal
         open={showAddOptionForm}
         setOpen={handleOptionModalDisplay}
-        createOption={createOption}
+        createOption={upsertOption}
         editOptionInfo={editOptionInfo}
         loading={loadingNewOption}
       />

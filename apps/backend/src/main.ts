@@ -36,7 +36,7 @@ app.get('/', (_, res) => {
 });
 
 // Stytch middleware for sessiontoken auth
-app.use(StytchTokenAuth);
+app.use(StytchTokenAuth.unless({ path: [{ url: '/events', method: 'GET' }] }));
 
 app.use('/members', asyncHandler(membersRoutes));
 app.use('/comments', asyncHandler(commentRoutes));

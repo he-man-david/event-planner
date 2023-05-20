@@ -26,9 +26,9 @@ router.get(
 router.get(
   '/',
   asyncHandler(async (req, res: Response<GetEventsResponse>) => {
-    const user = res.locals.user as User;
+    const user = res?.locals?.user as (User | undefined);
     const query = GetEventsRequestParser.parse(req.query);
-    const result = await db.getEventsForUser(query, user.user_id);
+    const result = await db.getEventsForUser(query, user?.user_id);
     res.send(result);
   })
 );

@@ -20,7 +20,7 @@ const UpdateEventBody = ({
   const { user } = useStytchUser();
   const votesApi = useVotesApi();
 
-  const handleVote = async (position: number) => {
+  const handleVote setEventOptions= async (position: number) => {
     try {
       const eventOpt = eventOptions[position];
       const req = {
@@ -98,7 +98,7 @@ const UpdateEventBody = ({
                       <Menu.Item>
                         {({ active }) => (
                           <span
-                            onClick={() => delEventOptions(idx)}
+                            onClick={() => delEventOptions(id)}
                             className={classNames([
                               active ? 'bg-gray-100' : '',
                               'block py-2 px-4 text-sm text-red-700',

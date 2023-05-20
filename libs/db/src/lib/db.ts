@@ -175,7 +175,9 @@ export const createEventOption = async (req: CreateEventOptionRequest) => {
   };
   return await prisma.eventOption.create({ data: optionData });
 };
-export const getEventOption = async (id: string) => {
+export const getEventOption = async (
+  id: string,
+) => {
   const content = await prisma.eventOption.findFirst({
     where: { id },
     include: {
@@ -211,20 +213,36 @@ export const deleteEventOption = async (req: DeleteEventOptionRequest) => {
 
 export const getEvent = async (
   eventId: typeof UUID._type,
-  userId?: string
+  showVotedForUserId?: string
 ): Promise<EventResponse> => {
+  const commonQuery = {
+    take: 10,
+    skip: 0,
+  };
   const event = await prisma.event.findFirst({
     where: {
       id: eventId,
     },
     include: {
-      members: {
-        skip: 0,
-        take: 10,
+      _count: {
+        select: {
+          options: true,
+          members: true,
+          comments: true,
+        },
+      },
+      members: { ...commonQuery, 
+        include: {
+          memberInfo: true,
+        }
+      },
+      comments: { ...commonQuery, 
+        include: {
+          commenterInfo: true,
+        }
       },
       options: {
-        skip: 0,
-        take: 10,
+        ...commonQuery,
         include: {
           _count: {
             select: {
@@ -232,9 +250,7 @@ export const getEvent = async (
             },
           },
           eventOptionVote: {
-            where: {
-              userId: userId,
-            },
+            where: { userId: showVotedForUserId },
           },
         },
       },
@@ -245,19 +261,23 @@ export const getEvent = async (
     return null;
   }
 
-  const { options, ...rest } = event;
+  const { options, _count, members, comments, ...rest } = event;
   const mappedOptions = options.map((opt) => {
     const { _count, eventOptionVote, ...rest } = opt;
-    const voted = eventOptionVote.length > 0;
+    const voted = !!showVotedForUserId && eventOptionVote.length > 0;
     return { votes: _count.eventOptionVote, voted, ...rest };
   });
-  const eventRes = { ...rest, options: mappedOptions };
-  return eventRes;
+  return {
+    ...rest,
+    options: createPage(_count.options, commonQuery.skip, mappedOptions),
+    members: createPage(_count.members, commonQuery.skip, members),
+    comments: createPage(_count.comments, commonQuery.skip, comments),
+  };
 };
 
 export const getEventsForUser = async (
   req: GetEventsRequest,
-  userId: string
+  userId?: string
 ): Promise<GetEventsResponse> => {
   const offset = req.offset ?? 0;
   const eventWhereFilter = {
@@ -297,35 +317,6 @@ export const getEventsForUser = async (
   });
 
   const mappedContent = result.map((row) => {
-    const { _count, ...event } = row;
-    return { ...event, members: _count.members, options: _count.options };
-  });
-  return createPage(totalCount, offset, mappedContent);
-};
-
-export const getEvents = async (
-  req: GetEventsRequest
-): Promise<GetEventsResponse> => {
-  const offset = req.offset ?? 0;
-  const where = {
-    eventStart: {
-      gte: req.eventStartAfter
-        ? dayjs(req.eventStartAfter).toISOString()
-        : undefined,
-      lte: req.eventStartBefore
-        ? dayjs(req.eventStartBefore).toISOString()
-        : undefined,
-    },
-  };
-  const totalCount = await prisma.event.count({ where });
-  const content = await prisma.event.findMany({
-    where,
-    skip: offset,
-    take: req.size,
-    include: { _count: { select: { members: true, options: true } } },
-  });
-
-  const mappedContent = content.map((row) => {
     const { _count, ...event } = row;
     return { ...event, members: _count.members, options: _count.options };
   });

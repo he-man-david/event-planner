@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import * as stytch from 'stytch';
 import { z } from 'zod';
+import { unless } from "express-unless";
+
 
 console.log("Creating middlewares");
 
@@ -47,3 +49,6 @@ export const StytchTokenAuth = async (
     res.status(401).json(error);
   }
 };
+
+// add unless function to allow filtering out paths from middleware
+StytchTokenAuth.unless = unless;
