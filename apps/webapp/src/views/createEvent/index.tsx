@@ -35,10 +35,11 @@ const CreateEvent = () => {
 
   useEffect(() => {
     const createEventFromCacheAndRedir = async () => {
-      const cached = localStorage.getItem('CreateEventRequest');
-      if (cached && user) {
+      const cachedRequest = localStorage.getItem('CreateEventRequest');
+      if (cachedRequest && user) {
+        localStorage.removeItem('CreateEventRequest');
         try {
-          const req = JSON.parse(cached);
+          const req = JSON.parse(cachedRequest);
           req.createdBy = user.user_id;
           // creating event API
           const event = await eventsApi.Create(req);
@@ -47,6 +48,7 @@ const CreateEvent = () => {
           navigate(`/event/${event?.id}?cached=true`);
         } catch (error) {
           console.error(error);
+          // TODO: If create event API fails, show toast via portal, redir to error page
         }
       }
     };
@@ -54,7 +56,7 @@ const CreateEvent = () => {
     if (cached) {
       createEventFromCacheAndRedir();
     }
-  }, [cached, navigate, user]);
+  }, [cached, navigate, user, eventsApi]);
 
   if (cached) {
     return <LoadingPage />;

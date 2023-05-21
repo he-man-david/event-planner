@@ -33,13 +33,12 @@ const DEFAULT_TAKE = 3;
 const EMPTY_PAGE = {
   content: [],
   pageInfo: {
-    size:0,
+    size: 0,
     offset: 0,
     totalCount: 0,
     hasNext: false,
-
-  }
-}
+  },
+};
 
 const prisma = new PrismaClient();
 
@@ -137,16 +136,14 @@ export const getEventMembers = async (
 export const addUserToEvent = async (
   data: CreateEventMemberRequest
 ): Promise<CreateEventMemberResponse> => {
-  const existingEventMember = await prisma.eventMember.findFirst(
-    {
-      where: {
-        ...data
-      },
-      include: {
-        memberInfo: true
-      }
-    }
-  );
+  const existingEventMember = await prisma.eventMember.findFirst({
+    where: {
+      ...data,
+    },
+    include: {
+      memberInfo: true,
+    },
+  });
   if (existingEventMember) {
     return existingEventMember;
   }
@@ -237,7 +234,7 @@ export const deleteEventOption = async (req: DeleteEventOptionRequest) => {
 
 export const getEvent = async (
   eventId: typeof UUID._type,
-  userId?: string,
+  userId?: string
 ): Promise<EventResponse> => {
   const commonQuery = { take: DEFAULT_TAKE, skip: 0 };
   const event = await prisma.event.findFirst({
@@ -252,18 +249,20 @@ export const getEvent = async (
           comments: true,
         },
       },
-      members: { ...commonQuery, 
+      members: {
+        ...commonQuery,
         include: {
           memberInfo: true,
-        }
+        },
       },
-      comments: { ...commonQuery, 
+      comments: {
+        ...commonQuery,
         include: {
           commenterInfo: true,
         },
         orderBy: {
-          createdAt: 'desc'
-        }
+          createdAt: 'desc',
+        },
       },
       options: {
         ...commonQuery,
@@ -285,7 +284,7 @@ export const getEvent = async (
     return null;
   }
   if (userId) {
-    await addUserToEvent({userId, eventId: event.id});
+    await addUserToEvent({ userId, eventId: event.id });
   }
   const { options, _count, members, comments, ...rest } = event;
   const mappedOptions = options.map((opt) => {
@@ -318,9 +317,10 @@ export const getEventsForUser = async (
   userId?: string
 ): Promise<GetEventsResponse> => {
   if (!userId) {
-    return EMPTY_PAGE
+    return EMPTY_PAGE;
   }
   const offset = req.offset ?? 0;
+  const size = req.offset ?? DEFAULT_TAKE;
   const eventWhereFilter = {
     eventStart: {
       gte: req.eventStartAfter
@@ -351,6 +351,9 @@ export const getEventsForUser = async (
           userId: userId,
         },
       },
+    },
+    orderBy: {
+      eventStart: 'desc',
     },
     include: {
       _count: { select: { members: true, options: true } },
