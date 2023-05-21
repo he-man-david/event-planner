@@ -2,7 +2,6 @@ import nodemailer from 'nodemailer';
 import SESTransport from 'nodemailer/lib/ses-transport';
 import AWS from 'aws-sdk';
 import ical, { ICalCalendar } from 'ical-generator';
-import dayjs from 'dayjs';
 
 // Run Lambda
 
@@ -18,32 +17,30 @@ type Transporter = nodemailer.Transporter<SESTransport.SentMessageInfo>;
 const transporter: Transporter = nodemailer.createTransport({
   SES: new AWS.SES({
     region: process.env.NX_REGION,
-    apiVersion: dayjs().format('MM/DD/YYYY'),
   }),
 });
 
 // function that sends email
-const sendEmail = (
+export const sendEmail = (
+  from: string,
   to: string,
   subject: string,
   html: any,
   calendarObj: ICalCalendar | null
 ) => {
-  const mailOptions = {
+  const mailOptions: any = {
+    from,
     to,
     subject,
     html,
   };
 
   if (calendarObj) {
-    const alternatives = {
-      'Content-Type': 'text/calendar',
-      method: 'REQUEST',
-      content: Buffer.from(calendarObj.toString()),
-      component: 'VEVENT',
-      'Content-Class': 'urn:content-classes:calendarmessage',
+    mailOptions.icalEvent = {
+      filename: 'Event-invite.ics',
+      method: 'request',
+      content: calendarObj.toString(),
     };
-    mailOptions['alternatives'] = alternatives;
   }
 
   transporter.sendMail(mailOptions, function (error, response) {
@@ -56,19 +53,17 @@ const sendEmail = (
 };
 
 // create ICS calendar invite attachment
-const getIcalObjectInstance = (
+export const getIcalObjectInstance = (
   startTime,
   endTime,
   summary,
   description,
   location,
-  url,
-  name,
-  email
+  url
 ) => {
   const cal: ICalCalendar = ical({
     url,
-    name: 'My test calendar event',
+    name: 'Event calendar invite',
   });
 
   cal.createEvent({
@@ -77,17 +72,7 @@ const getIcalObjectInstance = (
     summary, // this is like long title
     description,
     location,
-    organizer: {
-      // 'organizer details'
-      name: name,
-      email: email,
-    },
   });
 
   return cal;
-};
-
-module.exports = {
-  sendEmail,
-  getIcalObjectInstance,
 };

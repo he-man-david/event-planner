@@ -4,6 +4,7 @@ import Comments from 'components/comments';
 import NewComment from 'components/newComment';
 import { useNavigate, useParams } from 'react-router-dom';
 import MembersModal from 'components/membersModal';
+import NotificationPopup from 'components/notificationPopup';
 import Title from 'components/title';
 import Description from 'components/description';
 import EditEventOptionModal from 'components/editEventOptionModal';
@@ -24,6 +25,7 @@ import useEventOptionsApi from 'apis/eventOptions';
 import useEventsApi from 'apis/event';
 import useCommentsApi from 'apis/comments';
 import useMembersApi from 'apis/members';
+import useEmailsApi from 'apis/emails';
 import EventActionDropdown, {
   EventActionsType,
 } from 'components/eventActionDropdown';
@@ -40,6 +42,7 @@ const ViewEvent = () => {
   const eventsApi = useEventsApi();
   const membersApi = useMembersApi();
   const eventOptionsApi = useEventOptionsApi();
+  const emailsApi = useEmailsApi();
 
   const [isComplete, setIsComplete] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
@@ -54,6 +57,8 @@ const ViewEvent = () => {
   );
   const [loadingNewOption, setLoadingNewOption] = useState<boolean>(false);
   const [showAddOptionForm, setShowAddOptionForm] = useState<boolean>(false);
+  const [showToast, setShowToast] = useState<boolean>(false);
+  const [toastData, setToastData] = useState({ msg: '', isSuccess: false });
   const [editOptionInfo, setEditOptionInfo] =
     useState<EventOptionBodyWithVotes | null>(null);
   const [finalOptionInfo, setFinalOptionInfo] =
@@ -69,9 +74,8 @@ const ViewEvent = () => {
   const [membersPage, setMembersPage] = useState<
     GetEventMembersResponse | undefined
   >();
-  const [showRequireLoginModal, setShowRequireLoginModal] = useState<boolean>(
-    false
-  )
+  const [showRequireLoginModal, setShowRequireLoginModal] =
+    useState<boolean>(false);
 
   const navigate = useNavigate();
   const params = useParams();
@@ -194,18 +198,20 @@ const ViewEvent = () => {
 
   const wrapWithRequireLoggedIn = (callback: any) => {
     if (!isLoggedIn) {
-      return () => {setShowRequireLoginModal(true)};
+      return () => {
+        setShowRequireLoginModal(true);
+      };
     }
     return callback;
-  }
+  };
 
   const requireLoogedIn = (args: unknown): boolean => {
     if (!isLoggedIn) {
       setShowRequireLoginModal(true);
       return false;
     }
-    return true
-  }
+    return true;
+  };
 
   const createOption = async (option: EventOptionBody) => {
     setLoadingNewOption(true);
@@ -365,8 +371,30 @@ const ViewEvent = () => {
     }
   };
 
-  const handleEventActionCalendar = () => {
-    console.log('send calendar here');
+  const handleEventActionCalendar = async () => {
+    try {
+      if (user?.emails[0] && user.emails[0].email) {
+        const req = {
+          toEmail: user.emails[0].email,
+          toName: user?.name?.first_name
+            ? user.name.first_name
+            : user.emails[0].email,
+          fromDate: startDate.toISOString(),
+          toDate: endDate.toISOString(),
+          eventName: title,
+          eventUrl: window.location.href.split('?')[0],
+        };
+        await emailsApi.SendCalendarInvite(req);
+        setToastData({ msg: 'Calendar invite sent!', isSuccess: true });
+        setShowToast(true);
+      } else {
+        setToastData({ msg: 'Failed to send invite', isSuccess: false });
+        setShowToast(true);
+      }
+    } catch (error) {
+      setToastData({ msg: 'Failed to send invite', isSuccess: false });
+      setShowToast(true);
+    }
   };
 
   const handleEventActionShare = () => {
@@ -538,10 +566,16 @@ const ViewEvent = () => {
         setOpen={setOpenShareEventModal}
         url={window.location.href}
       />
-      <RequireLoginModal 
-      show={showRequireLoginModal}
-      onClose={() => setShowRequireLoginModal(false)}
-      eventId={params.id}
+      <RequireLoginModal
+        show={showRequireLoginModal}
+        onClose={() => setShowRequireLoginModal(false)}
+        eventId={params.id}
+      />
+      <NotificationPopup
+        show={showToast}
+        setShow={setShowToast}
+        title={toastData.msg}
+        isSuccess={toastData.isSuccess}
       />
     </div>
   );

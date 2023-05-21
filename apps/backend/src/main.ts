@@ -6,6 +6,7 @@ import optionsRoutes from './options';
 import votesRoutes from './votes';
 import membersRoutes from './members';
 import usersRoutes from './users';
+import emailsRoutes from './emails';
 import asyncHandler from 'express-async-handler';
 import cors from 'cors';
 import { PORT } from './env';
@@ -37,9 +38,7 @@ app.get('/', (_, res) => {
 });
 
 // Stytch middleware for sessiontoken auth
-app.use(
-  StytchTokenAuth
-);
+app.use(StytchTokenAuth);
 
 app.use('/members', asyncHandler(membersRoutes));
 app.use('/comments', asyncHandler(commentRoutes));
@@ -47,6 +46,7 @@ app.use('/events', asyncHandler(eventRoutes));
 app.use('/options', asyncHandler(optionsRoutes));
 app.use('/votes', asyncHandler(votesRoutes));
 app.use('/users', asyncHandler(usersRoutes));
+app.use('/emails', asyncHandler(emailsRoutes));
 
 // Error handler has to be last middleware!
 app.use(errorHandler);
