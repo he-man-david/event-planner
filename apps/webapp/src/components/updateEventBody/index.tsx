@@ -16,7 +16,7 @@ const UpdateEventBody = ({
   setEventOptions,
   editEventOptions,
   delEventOptions,
-  handleVotePrecondition
+  handleVotePrecondition,
 }: UpdateEventBodyParam) => {
   const { user } = useStytchUser();
   const votesApi = useVotesApi();
@@ -33,19 +33,19 @@ const UpdateEventBody = ({
         userId: user?.user_id || '',
       };
       const res = await votesApi.Vote(req);
+      console.log(res);
 
       const newEventOptions: EventOptionBodyWithVotes[] = eventOptions.map(
         (eventOption, idx) => {
-          if (position === idx) {
-            if (!res) {
-              eventOption.voted = false;
-              eventOption.votes && eventOption.votes--;
-            } else {
-              eventOption.voted = true;
-              eventOption.votes && eventOption.votes++;
-            }
+          if (position !== idx) {
+            return eventOption;
           }
-          return eventOption;
+          const updatedOption = {
+            ...eventOption,
+            voted: res,
+            votes: Number(eventOption.votes) + (res ? 1 : -1),
+          };
+          return updatedOption;
         }
       );
 
