@@ -320,7 +320,7 @@ export const getEventsForUser = async (
     return EMPTY_PAGE;
   }
   const offset = req.offset ?? 0;
-  const size = req.offset ?? DEFAULT_TAKE;
+  const size = req.size ?? DEFAULT_TAKE;
   const eventWhereFilter = {
     eventStart: {
       gte: req.eventStartAfter
@@ -333,6 +333,8 @@ export const getEventsForUser = async (
   };
 
   const totalCount = await prisma.event.count({
+    take: size,
+    skip: offset,
     where: {
       ...eventWhereFilter,
       members: {
@@ -344,6 +346,8 @@ export const getEventsForUser = async (
   });
 
   const result = await prisma.event.findMany({
+    take: size,
+    skip: offset,
     where: {
       ...eventWhereFilter,
       members: {
@@ -353,7 +357,7 @@ export const getEventsForUser = async (
       },
     },
     orderBy: {
-      eventStart: 'desc',
+      eventStart: "asc",
     },
     include: {
       _count: { select: { members: true, options: true } },
