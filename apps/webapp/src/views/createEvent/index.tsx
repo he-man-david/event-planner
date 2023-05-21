@@ -207,6 +207,7 @@ const CreateEvent = () => {
               startDate={startDate}
               endDate={endDate}
               handleUpdateSchedule={handleUpdateSchedule}
+              editable={true}
             />
           </div>
         </header>

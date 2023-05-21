@@ -22,7 +22,6 @@ import dayjs from 'dayjs';
 import DateTimeStartEnd from 'components/dateTimeStartEnd';
 import useEventOptionsApi from 'apis/eventOptions';
 import useEventsApi from 'apis/event';
-import useMembersApi from 'apis/members';
 import useEmailsApi from 'apis/emails';
 import EventActionDropdown, {
   EventActionsType,
@@ -37,10 +36,10 @@ import { useStytchUser } from '@stytch/react';
 const ViewEvent = () => {
   const { user } = useStytchUser();
   const eventsApi = useEventsApi();
-  const membersApi = useMembersApi();
   const eventOptionsApi = useEventOptionsApi();
   const emailsApi = useEmailsApi();
 
+  // TODO: we have way too many usestates here.... clean up
   const [isComplete, setIsComplete] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
@@ -339,6 +338,7 @@ const ViewEvent = () => {
       if (eventOptions.length <= 1) {
         // if only 1 or 0 options, just select that one
         handleUpdateStatus(eventOptions[0] ? eventOptions[0].id : '', true);
+      } else {
         // if multiple options, user needs to select one
         setOpenMarkCompleteModal(true);
       }
