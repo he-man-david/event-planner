@@ -46,20 +46,15 @@ const RequireLoginModal = ({ show: open, onClose, eventId }: RequireLoginModalPr
                 <div>
                   <div className="mt-3 text-center sm:mt-5">
                     <Dialog.Title
-                      as="h3"
-                      className="text-base font-semibold leading-6 text-gray-900"
+                      as="h2"
+                      className="text-2xl font-semibold leading-6 text-gray-900"
                     >
-                      Please login
+                    Please login to interact with this event
                     </Dialog.Title>
-                    <div className="mt-2">
-                      <p className="text-sm text-gray-500">
-                        Login to interact with this event!
-                      </p>
-                    </div>
-                    <div className="flex-shrink-0 pt-2 float-center">
+                    <div className="flex-shrink-0 pt-2 float-center sm:mt-5">
                         <button
                         type="submit"
-                        className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-m font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         onClick={onLoginClicked}
                         >
                         Login

@@ -28,6 +28,8 @@ import {
 } from '@event-planner/types';
 import dayjs = require('dayjs');
 
+const DEFAULT_TAKE = 3;
+
 const EMPTY_PAGE = {
   content: [],
   pageInfo: {
@@ -235,12 +237,9 @@ export const deleteEventOption = async (req: DeleteEventOptionRequest) => {
 
 export const getEvent = async (
   eventId: typeof UUID._type,
-  userId?: string
+  userId?: string,
 ): Promise<EventResponse> => {
-  const commonQuery = {
-    take: 10,
-    skip: 0,
-  };
+  const commonQuery = { take: DEFAULT_TAKE, skip: 0 };
   const event = await prisma.event.findFirst({
     where: {
       id: eventId,
@@ -261,6 +260,9 @@ export const getEvent = async (
       comments: { ...commonQuery, 
         include: {
           commenterInfo: true,
+        },
+        orderBy: {
+          createdAt: 'desc'
         }
       },
       options: {
@@ -356,35 +358,6 @@ export const getEventsForUser = async (
   });
 
   const mappedContent = result.map((row) => {
-    const { _count, ...event } = row;
-    return { ...event, members: _count.members, options: _count.options };
-  });
-  return createPage(totalCount, offset, mappedContent);
-};
-
-export const getEvents = async (
-  req: GetEventsRequest
-): Promise<GetEventsResponse> => {
-  const offset = req.offset ?? 0;
-  const where = {
-    eventStart: {
-      gte: req.eventStartAfter
-        ? dayjs(req.eventStartAfter).toISOString()
-        : undefined,
-      lte: req.eventStartBefore
-        ? dayjs(req.eventStartBefore).toISOString()
-        : undefined,
-    },
-  };
-  const totalCount = await prisma.event.count({ where });
-  const content = await prisma.event.findMany({
-    where,
-    skip: offset,
-    take: req.size,
-    include: { _count: { select: { members: true, options: true } } },
-  });
-
-  const mappedContent = content.map((row) => {
     const { _count, ...event } = row;
     return { ...event, members: _count.members, options: _count.options };
   });

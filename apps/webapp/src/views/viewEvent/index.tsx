@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import UpdateEventBody from 'components/updateEventBody';
 import Comments from 'components/comments';
-import NewComment from 'components/newComment';
 import { useNavigate, useParams } from 'react-router-dom';
 import MembersModal from 'components/membersModal';
 import NotificationPopup from 'components/notificationPopup';
@@ -23,7 +22,6 @@ import dayjs from 'dayjs';
 import DateTimeStartEnd from 'components/dateTimeStartEnd';
 import useEventOptionsApi from 'apis/eventOptions';
 import useEventsApi from 'apis/event';
-import useCommentsApi from 'apis/comments';
 import useMembersApi from 'apis/members';
 import useEmailsApi from 'apis/emails';
 import EventActionDropdown, {
@@ -38,7 +36,6 @@ import { useStytchUser } from '@stytch/react';
 
 const ViewEvent = () => {
   const { user } = useStytchUser();
-  const commentsApi = useCommentsApi();
   const eventsApi = useEventsApi();
   const membersApi = useMembersApi();
   const eventOptionsApi = useEventOptionsApi();
@@ -85,30 +82,6 @@ const ViewEvent = () => {
   const showEventBody = useMemo(() => {
     return (isComplete && finalOptionInfo) || !isComplete;
   }, [isComplete, finalOptionInfo]);
-
-  const fetchComments = useCallback(() => {
-    if (!params.id) return;
-    // TODO make use of pagination
-    commentsApi
-      .Get({
-        eventId: params.id,
-        limit: 100,
-        offset: 0,
-      })
-      .then(setCommentsPage);
-  }, [params.id, commentsApi]);
-
-  const fetchMembers = useCallback(() => {
-    if (!params.id) return;
-    // TODO make use of pagination
-    membersApi
-      .Get({
-        eventId: params.id,
-        limit: 100,
-        offset: 0,
-      })
-      .then(setMembersPage);
-  }, [params.id, membersApi]);
 
   const getEventInfoApi = useCallback(() => {
     if (!params.id) return;
@@ -205,7 +178,8 @@ const ViewEvent = () => {
     return callback;
   };
 
-  const requireLoogedIn = (args: unknown): boolean => {
+  const requireLoggedIn = (): boolean => {
+    console.log('Checking if looged in!');
     if (!isLoggedIn) {
       setShowRequireLoginModal(true);
       return false;
@@ -451,6 +425,7 @@ const ViewEvent = () => {
           setEventOptions={setEventOptions}
           editEventOptions={handleEditOption}
           delEventOptions={handleDeleteOption}
+          handleVotePrecondition={requireLoggedIn}
         />
         <button
           type="button"
@@ -469,10 +444,12 @@ const ViewEvent = () => {
       <div className="header-container bg-indigo-600 pb-20">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
           <div className="float-right mt-3">
-            <EventActionDropdown
-              callBack={wrapWithRequireLoggedIn(handleEventDropdownActions)}
-              status={isComplete}
-            />
+            {isLoggedIn && (
+              <EventActionDropdown
+                callBack={wrapWithRequireLoggedIn(handleEventDropdownActions)}
+                status={isComplete}
+              />
+            )}
           </div>
         </div>
         <header className="py-10">
@@ -524,23 +501,11 @@ const ViewEvent = () => {
                   )}
                 </div>
               </div>
-              <div className="overflow-hidden rounded-lg bg-white shadow">
-                <div className="p-6">
-                  {commentsPage && (
-                    <NewComment
-                      commentsPage={commentsPage}
-                      setCommentsPage={setCommentsPage}
-                      onPreSubmit={requireLoogedIn}
-                    />
-                  )}
-                </div>
-              </div>
-              {commentsPage?.content.length && (
-                <div className="overflow-hidden rounded-lg bg-white shadow">
-                  <div className="p-6 overflow-auto mx-h-[30rem]">
-                    <Comments commentsPage={commentsPage} />
-                  </div>
-                </div>
+              {commentsPage && (
+                <Comments
+                  initialCommentsPage={commentsPage}
+                  allowSubmission={requireLoggedIn}
+                />
               )}
             </div>
           </div>
