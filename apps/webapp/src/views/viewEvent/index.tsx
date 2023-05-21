@@ -446,7 +446,7 @@ const ViewEvent = () => {
           <div className="float-right mt-3">
             {isLoggedIn && (
               <EventActionDropdown
-                callBack={wrapWithRequireLoggedIn(handleEventDropdownActions)}
+                callBack={handleEventDropdownActions}
                 status={isComplete}
               />
             )}
