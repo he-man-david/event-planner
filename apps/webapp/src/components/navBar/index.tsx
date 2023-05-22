@@ -28,7 +28,7 @@ const NavBar = () => {
     return location.pathname !== routes.NEW_EVENT ? (
       <button
         type="button"
-        className="relative inline-flex items-center gap-x-1.5 rounded-md bg-emerald-500 mx-7 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
+        className="relative inline-flex items-center gap-x-1.5 rounded-md bg-emerald-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
         onClick={() => navigate(routes.NEW_EVENT)}
       >
         <PlusIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
@@ -170,13 +170,11 @@ const NavBar = () => {
             <div className="relative flex h-16 items-center justify-between lg:border-b lg:border-indigo-400 lg:border-opacity-25">
               {/* Logo icon */}
               <div className="flex items-center px-2 lg:px-0">
-                <div className="flex-shrink-0 mr-12 lg:mr-3 md:mr-3 hover:cursor-pointer">
-                  <img
-                    className="block h-8 w-8"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=300"
-                    alt="Your Company"
-                    onClick={() => navigate(routes.HOME)}
-                  />
+                <div
+                  className="flex-shrink-0 mr-12 lg:mr-3 md:mr-3 hover:cursor-pointer text-white font-medium text-lg sm:text-2xl"
+                  onClick={() => navigate(routes.HOME)}
+                >
+                  Teamtartar
                 </div>
                 {newEventButton()}
               </div>

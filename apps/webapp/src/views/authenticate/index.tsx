@@ -46,7 +46,7 @@ const Authenticate = () => {
       if (nextRoute) {
         // TODO: make sure nextRoute is valid, so we dont get injected attacked
         navigate(nextRoute);
-      } else if (nextRoute === null) navigate(routes.HOME);
+      } else if (nextRoute === null) navigate(routes.MY_EVENTS);
       console.error('Route is illegal! Unable to redirect!');
     },
     [navigate]

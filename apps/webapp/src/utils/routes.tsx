@@ -6,6 +6,7 @@ import Login from 'views/login';
 import Authenticate from 'views/authenticate';
 import MyEvents from 'views/myEvents';
 import Calendar from 'views/calendar';
+import AboutUs from 'views/aboutUs';
 import { routes } from 'const/routes';
 
 const Router = () => {
@@ -30,7 +31,7 @@ const Router = () => {
     },
     {
       path: routes.HOME,
-      element: <Navigate to={routes.MY_EVENTS} />,
+      element: <AboutUs />,
     },
   ]);
 
