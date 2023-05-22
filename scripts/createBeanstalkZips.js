@@ -6,7 +6,10 @@ const DIST_APPS_FOLDER = './dist/apps';
 const LIBS_DB_SRC_FOLDER = './libs/db/src';
 const ZIP_OUTPUT_FOLDERS = './dist/zips';
 
-const dirs = fs.readdirSync(DIST_APPS_FOLDER);
+const prepare = () => {
+  fs.mkdirSync("./dist/zips");
+}
+
 
 const setupBackendZip = () => {
   const archive = archiver('zip', {
@@ -27,4 +30,6 @@ const setupBackendZip = () => {
   archive.finalize();
 };
 
+
+prepare();
 setupBackendZip();

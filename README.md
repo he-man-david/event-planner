@@ -1,5 +1,7 @@
 # EventPlanner
 
+start webapp, link preview and email service with npm run start (backend is hosted on beanstalk).
+
 # Backend
 
 nx run backend:dbs
