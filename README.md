@@ -19,3 +19,6 @@ nx run db:docker
 
 Migrate db with:
 npm run db:migrate
+
+# Prepare zip for beanstalk
+- run `npm run createZips`. This will create the zip files to uplod to beanstalk at `./dist/zips`

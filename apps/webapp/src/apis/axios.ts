@@ -3,7 +3,7 @@ import { useStytch } from '@stytch/react';
 
 const useAxios = () => {
   const session = useStytch().session;
-  const baseURL = 'http://localhost:8080/';
+  const baseURL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080/';
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json',
@@ -15,7 +15,7 @@ const useAxios = () => {
   axiosInstance.interceptors.request.use(
     async (config) => {
       const session_token = (await session.getTokens())?.session_token || '';
-      config.headers['session_token'] = session_token;
+      config.headers['sessiontoken'] = session_token;
       return config;
     },
     (error) => {

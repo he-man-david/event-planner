@@ -1,10 +1,3 @@
-## Local dev
-
-- build package with `npm run build`
-- start DB with `docker-compose up -d`
-- migrate DB with `npm run db-migrate:execute`
-- start app with `npm run dev:start-proxy`
-
 ## Technologies
 
 - prisma

@@ -1,3 +1,7 @@
+// dotenv has to be first code that runs
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import { errorHandler, StytchTokenAuth } from './middleware';
 import eventRoutes from './events';
@@ -9,28 +13,13 @@ import usersRoutes from './users';
 import emailsRoutes from './emails';
 import asyncHandler from 'express-async-handler';
 import cors from 'cors';
-import { PORT } from './env';
-import dotenv from 'dotenv';
 import * as _ from 'lodash';
-dotenv.config();
-
-const allowedOrigins = ['http://localhost:4200', 'http://localhost:8080'];
-
-const corsOptions = {
-  origin: function (origin: any, callback: any) {
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-};
 
 const app = express();
 
 app.use(express.json());
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 // health check endpoint
 app.get('/', (_, res) => {
@@ -51,5 +40,7 @@ app.use('/emails', asyncHandler(emailsRoutes));
 // Error handler has to be last middleware!
 app.use(errorHandler);
 
+
+const PORT = Number(process.env.PORT) || 8080;
 console.log(`Server at port ${PORT}`);
 app.listen(PORT);

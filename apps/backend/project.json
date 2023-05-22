@@ -12,14 +12,20 @@
         "target": "node",
         "compiler": "tsc",
         "outputPath": "dist/apps/backend",
-        "main": "apps/backend/src/main.ts",
+        "outputFileName": "app.js",
+        "main": "apps/backend/src/app.ts",
         "tsConfig": "apps/backend/tsconfig.app.json",
         "isolatedConfig": true,
         "webpackConfig": "apps/backend/webpack.config.js"
       },
       "configurations": {
-        "development": {},
-        "production": {}
+        "development": {
+          "externalDependencies": "all"
+        },
+        "production": {
+          "externalDependencies": "none",
+          "sourceMap": false
+        }
       }
     },
     "serve": {

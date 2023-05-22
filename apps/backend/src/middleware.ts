@@ -36,7 +36,8 @@ export const StytchTokenAuth = async (
   res: Response,
   next: any
 ) => {
-  const session_token = String(req.headers.session_token);
+  const session_token = String(req.headers.sessiontoken || "");
+
   if (!session_token && isGetEventApiCall(req)) {
     next()
     return;
@@ -50,7 +51,8 @@ export const StytchTokenAuth = async (
     next();
   } catch (error) {
     console.log("Session token is empty or user is not athorized!");
-    res.status(401).json(error);
+    console.error(error);
+    res.status(401).send("No where to go :(");
   }
 };
 
