@@ -3,12 +3,14 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "db:migrate:dry": "npx prisma migrate --create-only --schema ./libs/db/src/schema.prisma",
-    "db:migrate": "npx prisma migrate --schema ./libs/db/src/schema.prisma",
+    "db:migrate:dry": "npx prisma migrate deploy --create-only --schema ./libs/db/src/schema.prisma",
+    "db:migrate": "npx prisma migrate deploy --schema ./libs/db/src/schema.prisma",
     "db:generate:schema": "nx run db:generate:schema",
     "start:local": "npm run db:generate:schema && nx run db:docker && npm run db:migrate && nx run-many --target serve --projects webapp,linkpreview,backend,emailservice --parallel 4",
-    "start": "npm run db:generate:schema && npm run db:migrate && nx run-many --target serve --projects webapp,linkpreview,backend,emailservice --parallel 4",
+    "start": "nx run-many --target serve --projects webapp,linkpreview,backend,emailservice --parallel 4",
+    "start:prod": "nx run-many --target serve --configuration production --projects webapp,linkpreview,backend,emailservice --parallel 4",
     "backend:prettier": "npx prettier --write ./apps/backend/src",
+    "db:run": "npm run db:generate:schema && npm run db:migrate",
     "build": "nx run-many --target build --projects webapp,linkpreview,backend,emailservice --parallel 4",
     "createZips": "npm run build && rm -rf ./dist/zips && node ./scripts/createBeanstalkZips.js"
   },
