@@ -6,9 +6,7 @@
     "db:migrate:dry": "npx prisma migrate dev --create-only --schema ./libs/db/src/schema.prisma",
     "db:migrate": "npx prisma migrate dev --schema ./libs/db/src/schema.prisma",
     "db:generate:schema": "nx run db:generate:schema",
-    "start:local": "npm run db:generate:schema && nx run db:docker && npm run db:migrate && nx run-many --target serve --projects webapp,linkpreview,backend,emailservice --parallel 4",
-    "start": "nx run-many --target serve --projects webapp,linkpreview,emailservice --parallel 3",
-    "prettier": "npx prettier --write ./",
+    "start": "npm run db:generate:schema && nx run db:docker && npm run db:migrate && nx run-many --target serve --projects webapp,linkpreview,backend,emailservice --parallel 4",
     "backend:prettier": "npx prettier --write ./apps/backend/src",
     "build": "nx run-many --target build --projects webapp,linkpreview,backend,emailservice --parallel 4",
     "createZips": "npm run build && rm -rf ./dist/zips && node ./scripts/createBeanstalkZips.js"
