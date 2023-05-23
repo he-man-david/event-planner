@@ -6,13 +6,17 @@
     "db:migrate:dry": "npx prisma migrate deploy --create-only --schema ./libs/db/src/schema.prisma",
     "db:migrate": "npx prisma migrate deploy --schema ./libs/db/src/schema.prisma",
     "db:generate:schema": "nx run db:generate:schema",
-    "start:local": "npm run db:generate:schema && nx run db:docker && npm run db:migrate && nx run-many --target serve --projects webapp,linkpreview,backend,emailservice --parallel 4",
-    "start": "nx run-many --target serve --projects webapp,linkpreview,backend,emailservice --parallel 4",
-    "start:prod": "nx run-many --target serve --configuration production --projects webapp,linkpreview,backend,emailservice --parallel 4",
-    "backend:prettier": "npx prettier --write ./apps/backend/src",
     "db:run": "npm run db:generate:schema && npm run db:migrate",
-    "build": "nx run-many --target build --projects webapp,linkpreview,backend,emailservice --parallel 4",
-    "createZips": "npm run build && rm -rf ./dist/zips && node ./scripts/createBeanstalkZips.js"
+    "start:all": "npm run db:generate:schema && nx run db:docker && npm run db:migrate && nx run-many --target serve --projects webapp,linkpreview,backend,emailservice --parallel 4",
+    "start:all:prod": "nx run-many --target serve --configuration production --projects webapp,linkpreview,backend,emailservice --parallel 4",
+    "start:backend": "nx run-many --target serve --projects linkpreview,backend,emailservice --parallel 3",
+    "start:backend:prod": "nx run-many --target serve --configuration production --projects linkpreview,backend,emailservice --parallel 3",
+    "start:webapp:prod": "nx run --configuration production webapp:serve",
+    "build:all": "nx run-many --target build --projects webapp,linkpreview,backend,emailservice --parallel 4",
+    "build:backend": "nx run-many --target build --projects linkpreview,backend,emailservice --parallel 3",
+    "build:webapp": "nx run webapp:build",
+    "createZips": "npm run build && rm -rf ./dist/zips && node ./scripts/createBeanstalkZips.js",
+    "backend:prettier": "npx prettier --write ./apps/backend/src"
   },
   "private": true,
   "dependencies": {
