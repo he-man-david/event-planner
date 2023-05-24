@@ -21,7 +21,7 @@ const Login = () => {
   const queryParams = new URLSearchParams(window.location.search);
   const nextRoute = queryParams.get('next_route');
 
-  let redirectURL = process.env.VITE_WEB_URL ?? 'http://localhost:4200/';
+  let redirectURL = import.meta.env.VITE_WEB_URL ?? 'http://localhost:4200/';
   redirectURL += 'authenticate';
   if (nextRoute) redirectURL += `?next_route=${nextRoute}`;
 

@@ -6,7 +6,7 @@ import { StytchProvider } from '@stytch/react';
 import { StytchUIClient } from '@stytch/vanilla-js';
 import { BrowserRouter } from 'react-router-dom';
 
-const stytch = new StytchUIClient(process.env.VITE_STYTCH_PUBLIC_TOKEN);
+const stytch = new StytchUIClient(import.meta.env.VITE_STYTCH_PUBLIC_TOKEN);
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
