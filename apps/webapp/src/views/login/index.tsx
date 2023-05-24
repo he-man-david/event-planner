@@ -21,7 +21,8 @@ const Login = () => {
   const queryParams = new URLSearchParams(window.location.search);
   const nextRoute = queryParams.get('next_route');
 
-  let redirectURL = 'http://localhost:4200/authenticate';
+  let redirectURL = import.meta.env.VITE_WEB_URL ?? 'http://localhost:4200/';
+  redirectURL += 'authenticate';
   if (nextRoute) redirectURL += `?next_route=${nextRoute}`;
 
   const config = {
@@ -45,7 +46,7 @@ const Login = () => {
   return (
     <div className="sm:mt-8 lg:mt-28 sm:mx-auto sm:w-full sm:max-w-md">
       <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-        <StytchLogin config={config} styles={styles}/>
+        <StytchLogin config={config} styles={styles} />
       </div>
     </div>
   );
