@@ -1,10 +1,10 @@
-import * as dayjs from 'dayjs';
-import objectPlugin from 'dayjs/plugin/toObject';
-import isTodayPlugin from 'dayjs/plugin/isToday';
-import weekdayPlugin from 'dayjs/plugin/weekday';
-import updateLocale from 'dayjs/plugin/updateLocale';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
+import dayjs from 'dayjs/esm/index.js';
+import objectPlugin from 'dayjs/esm/plugin/toObject';
+import isTodayPlugin from 'dayjs/esm/plugin/isToday';
+import weekdayPlugin from 'dayjs/esm/plugin/weekday';
+import updateLocale from 'dayjs/esm/plugin/updateLocale';
+import utc from 'dayjs/esm/plugin/utc';
+import timezone from 'dayjs/esm/plugin/timezone';
 
 dayjs.extend(weekdayPlugin);
 dayjs.extend(objectPlugin);
