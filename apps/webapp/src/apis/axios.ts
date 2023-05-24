@@ -3,7 +3,9 @@ import { useStytch } from '@stytch/react';
 
 const useAxios = () => {
   const session = useStytch().session;
-  const baseURL = import.meta.env.VITE_BACKEND_URL || "http://eventplanner.us-west-2.elasticbeanstalk.com/";
+  const baseURL =
+    import.meta.env.VITE_BACKEND_URL ||
+    'https://oyster-app-64pps.ondigitalocean.app/api';
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json',
