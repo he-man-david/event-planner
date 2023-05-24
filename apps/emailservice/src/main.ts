@@ -11,19 +11,9 @@ app.use(express.json());
 
 // TODO: set cors here to only take calls from our backend
 
-app.get('/', (req, res) => {
-  res.send('this is email service....');
-});
-
-app.get('/test', (req, res) => {
-  const html = calendarInviteHtml(
-    'David',
-    new Date().toISOString(),
-    new Date().toISOString(),
-    'Kayaking event',
-    'https://airbnb.com'
-  );
-  res.send(html);
+// health check endpoint
+app.get('/', (_, res) => {
+  res.send(true);
 });
 
 app.post('/', (req, res) => {
