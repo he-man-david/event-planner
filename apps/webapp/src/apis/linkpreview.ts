@@ -20,7 +20,7 @@ interface SiteData {
   largestImage?: string;
 }
 
-const requestUrl = 'http://localhost:3003/';
+const requestUrl = 'https://oyster-app-64pps.ondigitalocean.app/linkpreview';
 
 const axiosConfig = {
   headers: {
