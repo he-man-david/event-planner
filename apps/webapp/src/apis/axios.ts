@@ -3,8 +3,7 @@ import { useStytch } from '@stytch/react';
 
 const useAxios = () => {
   const session = useStytch().session;
-  const baseURL =
-    import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080/api';
+  const baseURL = process.env.VITE_BACKEND_URL || 'http://localhost:8080/api';
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json',
