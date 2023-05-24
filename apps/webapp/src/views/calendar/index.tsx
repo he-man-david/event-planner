@@ -1,12 +1,11 @@
 import { Menu, Transition } from '@headlessui/react';
 import {
-  ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   EllipsisHorizontalIcon,
 } from '@heroicons/react/24/outline';
 import EventsList from 'components/eventsList';
-import { Dayjs } from 'dayjs';
+import { Dayjs } from 'dayjs/esm/index';
 import { Fragment, useEffect, useState } from 'react';
 import { classNames } from 'utils/common';
 import dayjs from 'utils/day';

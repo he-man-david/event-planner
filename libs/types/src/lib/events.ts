@@ -1,4 +1,4 @@
-import { Event, EventMember } from '@prisma/client';
+import { Event } from '@prisma/client';
 import { Page, UUID } from './common';
 import { EventOptionBodyParser, EventOptionBodyWithVotes } from './options';
 import { z } from 'zod';

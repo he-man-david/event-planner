@@ -1,7 +1,7 @@
 import { GetEventCommentsResponse } from '@event-planner/types/src';
 import useCommentsApi from 'apis/comments';
 import NewComment from 'components/newComment';
-import dayjs from 'dayjs';
+import dayjs from 'utils/day';
 import { useState, useCallback } from 'react';
 import Avatar from 'react-avatar';
 import { useParams } from 'react-router-dom';

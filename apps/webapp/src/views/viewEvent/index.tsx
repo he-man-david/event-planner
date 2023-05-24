@@ -18,7 +18,7 @@ import {
   GetEventMembersResponse,
 } from '@event-planner/types/src';
 import { GetLinkPreviewData, dateToLocalTimeZoneDate } from 'utils/common';
-import dayjs from 'dayjs';
+import dayjs from 'utils/day';
 import DateTimeStartEnd from 'components/dateTimeStartEnd';
 import useEventOptionsApi from 'apis/eventOptions';
 import useEventsApi from 'apis/event';

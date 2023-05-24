@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import EventsList from 'components/eventsList';
 import { classNames } from 'utils/common';
 import useEventsApi from 'apis/event';
-import dayjs from 'dayjs';
+import dayjs from 'utils/day';
 import { GetEventsResponse } from '@event-planner/types/src';
 
 const MyEvents = () => {
@@ -23,7 +23,7 @@ const MyEvents = () => {
         if (!eventsPage) return;
         setData(eventsPage.content);
       });
-  }, [showUpcoming]);
+  }, [showUpcoming, eventsApi]);
 
   const tabsNavigation = () => {
     return (
