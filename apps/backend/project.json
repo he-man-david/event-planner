@@ -12,7 +12,7 @@
         "target": "node",
         "compiler": "tsc",
         "outputPath": "dist/apps/backend",
-        "outputFileName": "app.js",
+        "outputFileName": "main.js",
         "main": "apps/backend/src/app.ts",
         "tsConfig": "apps/backend/tsconfig.app.json",
         "isolatedConfig": true,
