@@ -4,12 +4,14 @@
 generator client {
   provider = "prisma-client-js"
   binaryTargets = ["rhel-openssl-1.0.x", "native"]
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
   provider     = "postgresql"
   url          = env("NX_DATABASE_URL")
   relationMode = "foreignKeys"
+  extensions = [pgcrypto]
 }
 
 model Event {
