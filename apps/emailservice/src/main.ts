@@ -3,7 +3,7 @@ import { sendEmail, getIcalObjectInstance } from './index';
 import calendarInviteHtml from './calendarInviteHtml';
 import { calendarInviteEmailRequestParser } from '@event-planner/types';
 
-const host = process.env.NX_CLOUD_HOST ?? 'localhost';
+// const host = process.env.NX_CLOUD_HOST ?? 'localhost';
 const port = process.env.NX_EMAILSERVICE_PORT
   ? Number(process.env.NX_EMAILSERVICE_PORT)
   : 7070;
@@ -50,6 +50,5 @@ app.post('/', (req, res) => {
   res.send({ message: 'Event calendar invite sent' });
 });
 
-app.listen(port, host, () => {
-  console.log(`[Email service] http://${host}:${port}`);
-});
+console.log(`Server at port ${port}`);
+app.listen(port);
