@@ -1,22 +1,16 @@
 import nodemailer from 'nodemailer';
 import SESTransport from 'nodemailer/lib/ses-transport';
-import AWS from 'aws-sdk';
+import { SES } from 'aws-sdk';
 import ical, { ICalCalendar } from 'ical-generator';
-
-// Run Lambda
-
-// Load configurations
-// TODO: Jaser remember to ask me for these
-AWS.config.update({
-  accessKeyId: process.env.NX_ACCESS_KEY_ID,
-  secretAccessKey: process.env.NX_SMTP_PASSWORD,
-  region: process.env.NX_REGION,
-});
 
 type Transporter = nodemailer.Transporter<SESTransport.SentMessageInfo>;
 const transporter: Transporter = nodemailer.createTransport({
-  SES: new AWS.SES({
+  SES: new SES({
     region: process.env.NX_REGION,
+    credentials: {
+      accessKeyId: process.env.NX_ACCESS_KEY_ID,
+      secretAccessKey: process.env.NX_SMTP_PASSWORD,
+    }
   }),
 });
 
