@@ -353,8 +353,8 @@ const ViewEvent = () => {
           toName: user?.name?.first_name
             ? user.name.first_name
             : user.emails[0].email,
-          fromDate: startDate.toISOString(),
-          toDate: endDate.toISOString(),
+          fromDate: startDate.toLocaleString(),
+          toDate: endDate.toLocaleString(),
           eventName: title,
           eventUrl: window.location.href.split('?')[0],
         };
@@ -443,7 +443,7 @@ const ViewEvent = () => {
     <div className="view-event-container min-h-full">
       <div className="header-container bg-indigo-600 pb-20">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-          <div className="float-right mt-3">
+          <div className="float-right my-5">
             {isLoggedIn && (
               <EventActionDropdown
                 callBack={handleEventDropdownActions}

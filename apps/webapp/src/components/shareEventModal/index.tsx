@@ -1,7 +1,6 @@
 import { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
-import { classNames } from 'utils/common';
 
 interface ShareEventModalProps {
   open: boolean;
@@ -77,16 +76,16 @@ const ShareEventModal = ({ open, setOpen, url }: ShareEventModalProps) => {
                       </p>
                     </div>
                     <div className="mt-4 p-2 w-full font-medium flex flex-wrap gap-3">
-                      <p className="ring-2 ring-indigo-600 rounded-md p-2">
+                      <p className="ring-2 ring-indigo-600 rounded-md p-2 overflow-scroll">
                         {url}
                       </p>
                       <div
                         onClick={handleCopy}
-                        className="ring-2 ring-indigo-600 rounded-md p-2 w-20 flex justify-center"
+                        className="rounded-md p-2 w-20 flex justify-center bg-indigo-600 hover:cursor-pointer hover:bg-indigo-900"
                       >
                         {copied ? (
                           <CheckCircleIcon
-                            className={classNames(['h-6 w-6 text-indigo-900'])}
+                            className="h-6 w-6 text-slate-200 font-bold"
                             aria-hidden="true"
                           />
                         ) : (

@@ -353,7 +353,7 @@ const calendarInviteHtml = (
             <td>&nbsp;</td>
             <td class="container">
               <div class="content">
-                <h1>Logo here</h1>
+                <h1>Teamtartar</h1>
                 <!-- START CENTERED WHITE CONTAINER -->
                 <table role="presentation" class="main">
     
@@ -405,13 +405,7 @@ const calendarInviteHtml = (
                   <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                     <tr>
                       <td class="content-block">
-                        <span class="apple-link">Indo-China alliance 2023</span>
-                        <br> Don't like these emails? <a href="http://i.imgur.com/CScmqnj.gif">Unsubscribe</a>.
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="content-block powered-by">
-                        Powered by <a href="http://htmlemail.io">Indo-China</a>.
+                        <span class="apple-link">&copy; Teamtartar 2023</span>
                       </td>
                     </tr>
                   </table>

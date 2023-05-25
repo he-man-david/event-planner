@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import EventsList from 'components/eventsList';
 import { classNames } from 'utils/common';
 import useEventsApi from 'apis/event';
@@ -11,10 +11,16 @@ const MyEvents = () => {
   const [data, setData] = useState<GetEventsResponse['content']>([]);
 
   useEffect(() => {
+    getEventsList(showUpcoming);
+  }, []);
+
+  const getEventsList = (showUpcomingEvent: boolean) => {
     eventsApi
       .List({
-        eventStartAfter: showUpcoming ? dayjs().toISOString() : undefined,
-        eventStartBefore: !showUpcoming ? dayjs().toISOString() : undefined,
+        eventStartAfter: showUpcomingEvent ? dayjs().toISOString() : undefined,
+        eventStartBefore: !showUpcomingEvent
+          ? dayjs().toISOString()
+          : undefined,
         includeCounts: true,
         offset: 0,
         size: 10,
@@ -23,7 +29,12 @@ const MyEvents = () => {
         if (!eventsPage) return;
         setData(eventsPage.content);
       });
-  }, [showUpcoming, eventsApi]);
+  };
+
+  const handleTabSwitch = () => {
+    getEventsList(!showUpcoming);
+    setShowUpcoming(!showUpcoming);
+  };
 
   const tabsNavigation = () => {
     return (
@@ -35,7 +46,7 @@ const MyEvents = () => {
               : 'text-gray-500 hover:text-indigo-600 hover:bg-gray-100 hover:cursor-pointer',
             'rounded-md px-3 py-2 text-sm font-medium',
           ])}
-          onClick={() => setShowUpcoming(true)}
+          onClick={handleTabSwitch}
         >
           Upcoming events
         </div>
@@ -46,7 +57,7 @@ const MyEvents = () => {
               : 'text-gray-500 hover:text-indigo-600 hover:bg-gray-100 hover:cursor-pointer',
             'rounded-md px-3 py-2 text-sm font-medium',
           ])}
-          onClick={() => setShowUpcoming(false)}
+          onClick={handleTabSwitch}
         >
           Past events
         </div>
@@ -55,8 +66,8 @@ const MyEvents = () => {
   };
 
   return (
-    <div className="overflow-hidde shadow sm:rounded-md mx-auto my-6 max-w-6xl px-4 p-8 sm:px-6 lg:mt-12 lg:px-8 bg-white border rounded-lg">
-      <div className="mx-auto w-full sm:w-[700px]">
+    <div className="overflow-hidde shadow sm:rounded-md w-full sm:w-[700px] mx-auto my-6 max-w-6xl px-4 p-8 sm:px-6 lg:mt-12 lg:px-8 bg-white border rounded-lg">
+      <div className="mx-auto">
         {tabsNavigation()}
         <EventsList data={data} />
       </div>

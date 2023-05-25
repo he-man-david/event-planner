@@ -156,7 +156,7 @@ const CreateEvent = () => {
       <div className="mx-auto h-10 max-w-6xl mb-6">
         <button
           type="button"
-          className="relative float-right inline-flex items-center gap-x-1.5 rounded-md bg-emerald-500 mx-7 px-3 py-2 text-lg font-semibold text-white shadow-sm hover:bg-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
+          className="mx-auto flex items-center gap-x-1.5 rounded-md bg-emerald-500 mx-7 px-3 py-2 text-lg font-semibold text-white shadow-sm hover:bg-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
           onClick={createEvent}
         >
           <CheckCircleIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
@@ -199,6 +199,7 @@ const CreateEvent = () => {
                   rows={2}
                   name="description"
                   id="description"
+                  placeholder="Hey fellas! Creating this event to help us plan where we want to stay!"
                   className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   value={eventDesc}
                   onChange={(e) => setEventDesc(e.target.value)}
@@ -215,13 +216,13 @@ const CreateEvent = () => {
         </header>
       </div>
       <main className="-mt-32">
-        <div className="mx-auto max-w-6xl px-4 p-8 sm:px-6 lg:px-8 bg-white border rounded-lg mb-5 flex items-center flex-col">
-          <p className="mb-6 text-lg lg:text-2xl">
+        <div className="mx-auto max-w-6xl px-4 p-5 sm:px-6 lg:px-8 bg-white border rounded-lg mb-5 flex items-center flex-col">
+          <p className="mb-4 text-lg lg:text-2xl">
             Create event options below for voting
           </p>
           <button
             type="button"
-            className="relative mb-9 inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 mx-7 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+            className="mb-5 flex items-center gap-x-1.5 rounded-md bg-indigo-600 mx-7 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
             onClick={() => setShowAddOptionForm(true)}
           >
             <PlusIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />

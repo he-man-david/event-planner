@@ -90,8 +90,7 @@ const Calendar = () => {
   };
 
   const goToToday = () => {
-    const currMonth = currentMonth.month(0);
-    setCurrentMonth(currMonth);
+    setCurrentMonth(dayjs(new Date()));
   };
 
   const nextMonth = () => {
