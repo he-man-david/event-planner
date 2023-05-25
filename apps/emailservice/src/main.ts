@@ -3,8 +3,8 @@ import { sendEmail, getIcalObjectInstance } from './index';
 import calendarInviteHtml from './calendarInviteHtml';
 import { calendarInviteEmailRequestParser } from '@event-planner/types';
 
-const host = process.env.HOST ?? 'localhost';
-const port = process.env.PORT ? Number(process.env.PORT) : 7070;
+const host = process.env.NX_EMAILSERVICE_HOST ?? 'localhost';
+const port = process.env.NX_EMAILSERVICE_PORT ? Number(process.env.PORT) : 7070;
 
 const app = express();
 app.use(express.json());
