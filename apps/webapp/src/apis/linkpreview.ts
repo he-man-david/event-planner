@@ -21,7 +21,7 @@ interface SiteData {
 }
 
 const linkpreviewUrl =
-  process.env.VITE_LINKPREVIEW_URL ?? 'http://localhost:3003';
+  import.meta.env.VITE_LINKPREVIEW_URL ?? 'http://localhost:3003';
 
 const axiosConfig = {
   headers: {
