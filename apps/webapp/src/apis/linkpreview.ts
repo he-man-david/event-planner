@@ -20,7 +20,8 @@ interface SiteData {
   largestImage?: string;
 }
 
-const requestUrl = 'https://oyster-app-64pps.ondigitalocean.app/linkpreview';
+const linkpreviewUrl =
+  process.env.NX_LINKPREVIEW_URL ?? 'http://localhost:3003';
 
 const axiosConfig = {
   headers: {
@@ -31,7 +32,7 @@ const axiosConfig = {
 
 export const GetLinkPreviewData = async (url: string): Promise<ApiData> => {
   try {
-    const res = await axios.post(requestUrl, { url }, axiosConfig);
+    const res = await axios.post(linkpreviewUrl, { url }, axiosConfig);
     return res.data;
   } catch (error) {
     console.error(error);
