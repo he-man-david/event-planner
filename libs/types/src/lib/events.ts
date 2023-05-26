@@ -50,7 +50,7 @@ export const GetEventsRequestParser = z.object({
   eventStartAfter: z.string().optional(),
   includeCounts: z.preprocess(Boolean, z.boolean()).default(false).optional(),
   offset: z.preprocess(Number, z.number()).default(0).optional(),
-  size: z.preprocess(Number, z.number()).default(5).optional(),
+  size: z.preprocess(Number, z.number()).default(15).optional(),
 });
 export type GetEventsRequest = typeof GetEventsRequestParser._type;
 export type GetEventsResponse = Page<

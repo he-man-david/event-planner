@@ -79,8 +79,6 @@ const Calendar = () => {
         eventStartAfter: start.toISOString(),
         eventStartBefore: end.toISOString(),
         includeCounts: true,
-        offset: 0,
-        size: 10,
       });
       return res.content || [];
     } catch (error) {

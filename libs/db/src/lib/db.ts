@@ -236,7 +236,6 @@ export const getEvent = async (
   eventId: typeof UUID._type,
   userId?: string
 ): Promise<EventResponse> => {
-  const commonQuery = { take: DEFAULT_TAKE, skip: 0 };
   const event = await prisma.event.findFirst({
     where: {
       id: eventId,
@@ -250,13 +249,15 @@ export const getEvent = async (
         },
       },
       members: {
-        ...commonQuery,
+        take: 100,
+        skip: 0,
         include: {
           memberInfo: true,
         },
       },
       comments: {
-        ...commonQuery,
+        take: 3,
+        skip: 0,
         include: {
           commenterInfo: true,
         },
@@ -265,7 +266,8 @@ export const getEvent = async (
         },
       },
       options: {
-        ...commonQuery,
+        take: 10,
+        skip: 0,
         include: {
           _count: {
             select: {
@@ -294,9 +296,9 @@ export const getEvent = async (
   });
   return {
     ...rest,
-    options: createPage(_count.options, commonQuery.skip, mappedOptions),
-    members: createPage(_count.members, commonQuery.skip, members),
-    comments: createPage(_count.comments, commonQuery.skip, comments),
+    options: createPage(_count.options, 0, mappedOptions),
+    members: createPage(_count.members, 0, members),
+    comments: createPage(_count.comments, 0, comments),
   };
 };
 
@@ -320,7 +322,7 @@ export const getEventsForUser = async (
     return EMPTY_PAGE;
   }
   const offset = req.offset ?? 0;
-  const size = req.size ?? DEFAULT_TAKE;
+  const size = req.size ?? 5;
   const eventWhereFilter = {
     eventStart: {
       gte: req.eventStartAfter

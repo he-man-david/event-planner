@@ -22,8 +22,6 @@ const MyEvents = () => {
           ? dayjs().toISOString()
           : undefined,
         includeCounts: true,
-        offset: 0,
-        size: 10,
       })
       .then((eventsPage) => {
         if (!eventsPage) return;

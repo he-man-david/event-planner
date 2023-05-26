@@ -9,8 +9,8 @@ export type EventMemberWithMemberInfo = EventMember & {
 // GET Event Members
 export const GetEventMembersRequestParser = z.object({
   eventId: UUID,
-  offset:  z.preprocess(Number, z.number()),
-  limit:  z.preprocess(Number, z.number()),
+  offset:  z.preprocess(Number, z.number()).default(0),
+  limit:  z.preprocess(Number, z.number()).default(15),
 });
 export type GetEventMembersRequest = typeof GetEventMembersRequestParser._type;
 export type GetEventMembersResponse = Page<EventMemberWithMemberInfo>;

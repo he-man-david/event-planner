@@ -9,8 +9,8 @@ export type EventCommentWithCommenterInfo = EventComment & {
 //GET Event Comments
 export const GetEventCommentsRequestParser = z.object({
   eventId: UUID,
-  offset: z.preprocess(Number, z.number()),
-  limit: z.preprocess(Number, z.number()),
+  offset: z.preprocess(Number, z.number()).default(0),
+  limit: z.preprocess(Number, z.number()).default(3),
 });
 export type GetEventCommentsRequest =
   typeof GetEventCommentsRequestParser._type;
