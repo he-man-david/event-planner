@@ -41,11 +41,6 @@ export type CreateEventOptionResponse = EventOption &
   }[];
 
 // DELETE Event Option
-export const DeleteEventOptionRequestParser = z.object({
-  eventOptionId: UUID,
-});
-export type DeleteEventOptionRequest =
-  typeof DeleteEventOptionRequestParser._type;
 export type DeleteEventOptionResponse = boolean;
 
 // UPDATE Event Option

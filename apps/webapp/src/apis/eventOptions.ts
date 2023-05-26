@@ -3,6 +3,7 @@ import {
   CreateEventOptionRequest,
   UpdateEventOptionRequest,
   UpdateEventOptionResponse,
+  DeleteEventOptionResponse,
 } from '@event-planner/types/src';
 import useAxios from './axios';
 
@@ -35,9 +36,22 @@ const useOptionsApi = () => {
     }
   };
 
+  const DeleteOption = async (
+    id: string
+  ): Promise<DeleteEventOptionResponse> => {
+    try {
+      const res = await instance.delete(`${url}/${id}`);
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
   return {
     Create: CreateOption,
     Update: UpdateOption,
+    Delete: DeleteOption,
   };
 };
 

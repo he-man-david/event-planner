@@ -11,7 +11,6 @@ import {
   CreateEventOptionRequest,
   DeleteEventMembersRequest,
   CreateEventMemberRequest,
-  DeleteEventOptionRequest,
   CreateEventCommentRequest,
   CreateEventRequest,
   ToogleEventOptionVoteRequest,
@@ -228,8 +227,8 @@ export const updateEventOption = async (
   return getEventOption(result.id);
 };
 
-export const deleteEventOption = async (req: DeleteEventOptionRequest) => {
-  return await prisma.eventOption.delete({ where: { id: req.eventOptionId } });
+export const deleteEventOption = async (eventOptionId: string) => {
+  return await prisma.eventOption.delete({ where: { id: eventOptionId } });
 };
 
 export const getEvent = async (
@@ -359,7 +358,7 @@ export const getEventsForUser = async (
       },
     },
     orderBy: {
-      eventStart: "asc",
+      eventStart: 'asc',
     },
     include: {
       _count: { select: { members: true, options: true } },

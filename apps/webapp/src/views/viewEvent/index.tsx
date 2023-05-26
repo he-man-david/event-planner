@@ -298,10 +298,16 @@ const ViewEvent = () => {
     });
   };
 
-  const handleDeleteOption = (position: number) => {
-    const newEvtOptions = [...eventOptions];
-    newEvtOptions.splice(position, 1);
-    setEventOptions(newEvtOptions);
+  const handleDeleteOption = async (position: number) => {
+    try {
+      const newEvtOptions = [...eventOptions];
+      const option = newEvtOptions[position];
+      await eventOptionsApi.Delete(option.id);
+      newEvtOptions.splice(position, 1);
+      setEventOptions(newEvtOptions);
+    } catch {
+      // TODO: handle errors by showing toast notification
+    }
   };
 
   const handleOptionModalDisplay = (open: boolean) => {

@@ -2,7 +2,6 @@ import { Response, Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import {
   CreateEventOptionRequestParser,
-  DeleteEventOptionRequestParser,
   GetEventOptionsResponse,
   GetEventOptionsQueryParser,
   UUID,
@@ -41,10 +40,10 @@ router.put(
 );
 
 router.delete(
-  '/',
+  '/:eventOptionId',
   asyncHandler(async (req, res) => {
-    const deleteEventOptionReq = DeleteEventOptionRequestParser.parse(req.body);
-    const result = await db.deleteEventOption(deleteEventOptionReq);
+    const id = UUID.parse(req.params.eventOptionId);
+    const result = await db.deleteEventOption(id);
     res.send(result);
   })
 );
