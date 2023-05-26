@@ -62,10 +62,21 @@ router.put(
 
 router.delete(
   '/:eventId',
-  asyncHandler(async (req, res: Response<boolean | null>) => {
+  asyncHandler(async (req, res: Response<boolean>) => {
+    const user = res.locals.user as User | undefined;
+    const userId = user?.user_id;
     const id = UUID.parse(req.params.eventId);
-    const resp = await db.deleteEvent(id);
-    res.send(resp);
+    const createdBy = await db.getEventCreatedBy(id);
+
+    if (createdBy === userId) {
+      const resp = await db.deleteEvent(id);
+      res.send(resp);
+    } else if (userId) {
+      const resp = await db.removeUserFromEvent(userId, id);
+      res.send(resp >= 1);
+    } else {
+      res.status(400).send(false);
+    }
   })
 );
 

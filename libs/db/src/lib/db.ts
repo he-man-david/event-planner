@@ -152,6 +152,16 @@ export const addUserToEvent = async (
   });
 };
 
+export const removeUserFromEvent = async (userId: string, eventId: typeof UUID._type): Promise<number> => {
+  const result = await prisma.eventMember.deleteMany({
+    where: {
+      eventId,
+      userId,
+    }
+  });
+  return result.count;
+}
+
 export const removeUsersFromEvent = async (req: DeleteEventMembersRequest) => {
   const result = await prisma.eventMember.deleteMany({
     where: {
@@ -301,9 +311,29 @@ export const getEvent = async (
   };
 };
 
+export const getEventCreatedBy = async (eventId: typeof UUID._type): Promise<string>  => {  
+  const { createdBy } = await prisma.event.findFirst({
+    where: {
+      id: eventId
+    },
+    select: {
+      createdBy: true
+    }
+  }) || {createdBy: ""};
+  return createdBy;
+}
+
 export const deleteEvent = async (
   eventId: typeof UUID._type
 ): Promise<boolean> => {
+  const { createdBy } = await prisma.event.findFirst({
+    where: {
+      id: eventId
+    },
+    select: {
+      createdBy: true
+    }
+  }) || {createdBy: ""};
   await prisma.event.delete({
     where: {
       id: eventId,
