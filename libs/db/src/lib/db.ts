@@ -245,6 +245,9 @@ export const getEvent = async (
   eventId: typeof UUID._type,
   userId?: string
 ): Promise<EventResponse> => {
+  if (userId) {
+    await addUserToEvent({ userId, eventId });
+  }
   const event = await prisma.event.findFirst({
     where: {
       id: eventId,
@@ -293,9 +296,6 @@ export const getEvent = async (
 
   if (!event) {
     return null;
-  }
-  if (userId) {
-    await addUserToEvent({ userId, eventId: event.id });
   }
   const { options, _count, members, comments, ...rest } = event;
   const mappedOptions = options.map((opt) => {
