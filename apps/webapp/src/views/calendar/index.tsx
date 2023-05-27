@@ -14,22 +14,21 @@ import useEventsApi from 'apis/event';
 
 const Calendar = () => {
   const eventsApi = useEventsApi();
-  const [currentMonth, setCurrentMonth] = useState(dayjs(new Date()));
+  const [calenderViewMonth, setCalendarViewMonth] = useState(dayjs(new Date()));
   const [arrayOfDays, setArrayOfDays] = useState<FormattedDateObj[]>([]);
   const [selectedDay, setSelectedDay] = useState<number>(-1);
 
   useEffect(() => {
     getAllDays();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentMonth]);
+  }, [calenderViewMonth]);
 
   const formattedDateObject = (date: Dayjs): FormattedDateObj => {
-    const clonedObject = { ...date.toObject() };
     const formattedDObject = {
-      day: clonedObject.date,
-      month: clonedObject.months,
-      year: clonedObject.years,
-      isCurrentMonth: clonedObject.months === currentMonth.month(),
+      day: date.date(),
+      month: date.month(),
+      year: date.year(),
+      isCurrentMonth: date.month() === calenderViewMonth.month(),
       isToday: date.isToday(),
       isSelected: false,
       events: [],
@@ -39,16 +38,20 @@ const Calendar = () => {
   };
 
   const getAllDays = async () => {
-    let currentDate = currentMonth.startOf('month');
-    const nextMonth = currentDate.add(1, 'month').month();
+    const firstDayOfMonth = calenderViewMonth.startOf('month');
+    const firstDayOfNextMonth = firstDayOfMonth.add(1, 'month').startOf('month');
 
-    const events = await getEventsData(
-      currentDate,
-      currentDate.add(1, 'month').startOf('month')
-    );
+    const events = await getEventsData(firstDayOfMonth, firstDayOfNextMonth);
 
     const allDates: FormattedDateObj[] = [];
 
+    // pad days to stat of month so calender view looks right
+    for (let i = 1; i <= firstDayOfMonth.day() ; i++) {
+      allDates.unshift(formattedDateObject(firstDayOfMonth.subtract(i, 'days')));
+    }
+
+    const nextMonth = firstDayOfMonth.add(1, 'month').month();
+    let currentDate = firstDayOfMonth;
     while (currentDate.weekday(0).toObject().months !== nextMonth) {
       const formatted = formattedDateObject(currentDate);
 
@@ -88,17 +91,17 @@ const Calendar = () => {
   };
 
   const goToToday = () => {
-    setCurrentMonth(dayjs(new Date()));
+    setCalendarViewMonth(dayjs(new Date()));
   };
 
   const nextMonth = () => {
-    const plus = currentMonth.add(1, 'month');
-    setCurrentMonth(plus);
+    const plus = calenderViewMonth.add(1, 'month');
+    setCalendarViewMonth(plus);
   };
 
   const prevMonth = () => {
-    const minus = currentMonth.subtract(1, 'month');
-    setCurrentMonth(minus);
+    const minus = calenderViewMonth.subtract(1, 'month');
+    setCalendarViewMonth(minus);
   };
 
   return (
@@ -106,7 +109,7 @@ const Calendar = () => {
       <div className="lg:flex lg:h-full lg:flex-col">
         <header className="flex items-center justify-between border-b border-gray-200 px-6 py-4 lg:flex-none">
           <h1 className="font-semibold leading-6 text-gray-100 text-2xl">
-            {currentMonth
+            {calenderViewMonth
               .toDate()
               .toLocaleDateString('en-us', { month: 'long', year: 'numeric' })}
           </h1>
