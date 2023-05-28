@@ -42,7 +42,15 @@ const NavBar = () => {
       <button
         type="button"
         className="text-white hover:bg-indigo-500 hover:bg-opacity-75 block rounded-md py-2 px-3 text-base font-medium"
-        onClick={() => navigate(routes.LOGIN)}
+        onClick={() => {
+          const url = new URL(window.location.href);
+          const eventId = url.pathname.split("/").at(-1);
+          if (eventId) {
+            navigate(routes.LOGIN + `?next_route=${routes.EVENT_ID.replace(":id", eventId)}`);
+          } else {
+            navigate(routes.LOGIN);
+          }
+        }}
       >
         Login
       </button>
